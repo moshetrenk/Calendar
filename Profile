@@ -1,199 +1,155 @@
-package lab3;
+package CalendarTest;
 
-import javax.swing.JPasswordField;
-import javax.swing.JScrollPane;
-public class DaysEvents extends javax.swing.JFrame {
+import javax.imageio.IIOException;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.table.*;
+import javax.swing.Timer; 
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JPanel jPanel1;
-    private JPasswordField jp1 = new JPasswordField();
-    private javax.swing.JTextField jTextField2;
+public class Profile {
+	
+	static JFrame frmMain;
+	static Container pane;
+	static JPanel pnlProfile;
+	static DefaultTableModel mtblFriends, mtblGroups;
+	static JTable tblFriends, tblGroups;
+	static JScrollPane stblFriends, stblGroups;
+	static JLabel lblUsername, profilePic;
+	static JButton btnMyCalendar, btnModifyEvents;
+	static private String username;
+	
+	static private void prepareFrame(){
+		//set-up frame
+				frmMain = new JFrame("Group Calendar");
+				frmMain.setSize(550,385);
+				pane = frmMain.getContentPane();
+				pane.setLayout(null);
+				frmMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Close when X is clicked
+	}
+	static private void createControls() throws IOException{
+		//create controls
+				mtblFriends = new DefaultTableModel(){public boolean isCellEditable(int rowIndex, int mColIndex){return false;}};
+				mtblGroups = new DefaultTableModel(){public boolean isCellEditable(int rowIndex, int mColIndex){return false;}};
+				
+				tblFriends = new JTable(mtblFriends);
+				tblGroups = new JTable(mtblGroups);
+				
+				stblFriends = new JScrollPane(tblFriends);
+				stblGroups = new JScrollPane(tblGroups);
+				
+				pnlProfile = new JPanel(null);
+				
+				btnMyCalendar = new JButton("My Calendar");
+				btnModifyEvents = new JButton("Modify Events");
+				
+				//CALL METHOD TO GET USERNAME FROM DATABASE
+				username = "BillGates"; // query
+				lblUsername = new JLabel(username);
+				
+				//CALL METHOD TO GET IMAGE FROM DATABASE
+				BufferedImage myPicture = ImageIO.read(new File("/Users/keiththompson/Downloads/src/edu/cuny/csi/csc330/j1f9DiJi_200x200.jpeg"));
+				profilePic = new JLabel(new ImageIcon(myPicture));
+	}
+	static private void setBorder(){
+		//set border
+				pnlProfile.setBorder(BorderFactory.createTitledBorder("Profile"));
+				
+				//set color
+				frmMain.getContentPane().setBackground(Color.BLUE);
+	}
+	static private void addControls(){
+		//add controls to pane
+				pane.add(pnlProfile);
+				pnlProfile.add(stblFriends);
+				pnlProfile.add(stblGroups);
+				pnlProfile.add(lblUsername);
+				pnlProfile.add(profilePic);
+				pnlProfile.add(btnMyCalendar);
+				pnlProfile.add(btnModifyEvents);
+	}
+	static private void registerActionListeners(){
+		//add action listeners
+				btnMyCalendar.addActionListener(new btnMyCalendar_Action());
+				btnModifyEvents.addActionListener(new btnModifyEvents_Action());
+	}
+	static private void setBounds(){
+		//set bounds
+		pnlProfile.setBounds(0,0,650,650);
+		lblUsername.setBounds(75,15,100,50);
+		stblGroups.setBounds(325,225,150,100);
+		stblFriends.setBounds(75,225,150,100);
+		profilePic.setBounds(325,45,150,150);
+		btnMyCalendar.setBounds(75,80 ,100,50);
+		btnModifyEvents.setBounds(75,150, 100,50);
+	}
+	static private void populateTables(){
+		//All must be a method from a query for database
+				tblFriends.setRowHeight(13);
+				mtblFriends.setRowCount(6);
+				mtblFriends.addColumn("Friends");
+				
+				mtblFriends.setValueAt("steveJobs",0,0);
+				mtblFriends.setValueAt("alanTuring", 1, 0);
+				mtblFriends.setValueAt("timCook",2,0);
+				
+				tblGroups.setRowHeight(13);
+				mtblGroups.setRowCount(6);
+				mtblGroups.addColumn("Groups");
+				mtblGroups.setValueAt("CSC330", 0, 0);
+				mtblGroups.setValueAt("JIG", 1, 0);
+	}
+	static private void makeFrameVisible(boolean decision){
+		frmMain.setVisible(decision);
+		frmMain.setResizable(false);
+	}
+	static private void backgroundProcesses(){}
+	public static void paintFrame() throws IOException{
+		prepareFrame();
+		createControls();
+		setBorder();
+		addControls();
+		registerActionListeners();
+		setBounds();
+		populateTables();
+		makeFrameVisible(true);
+		backgroundProcesses();
+	}
+	
+	
 
-    public DaysEvents() {
-        initComponents();
-    }
+	public static void main(String[] args) throws IOException {
+	
+		try {UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());}
+		catch (ClassNotFoundException e) {}
+		catch (InstantiationException e) {}
+		catch (IllegalAccessException e) {}
+		catch (UnsupportedLookAndFeelException e) {}
+	
+		paintFrame();
+	}
 
-    @SuppressWarnings("unchecked")
-    private void initComponents() {
-
-        jLabel3 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
-        jTextField2 = new javax.swing.JTextField();
-        //jTextField1 = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jLabel5.setVisible(false);
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jLabel3.setFont(new java.awt.Font("Sitka Heading", 2, 36)); // NOI18N
-        jLabel3.setText("                The Calendar");
-
-        jPanel1.setPreferredSize(new java.awt.Dimension(500, 385));
-        
-
-        jTextField2.setText("");
-        jTextField2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jTextField2.setName("user"); // NOI18N
-        jTextField2.setSelectedTextColor(new java.awt.Color(153, 153, 153));
-        jTextField2.setVerifyInputWhenFocusTarget(false);
-
-        //jTextField1.setText("jTextField1");
-
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel1.setText("Username:");
-
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel2.setText("Password:");
-
-        jLabel4.setFont(new java.awt.Font("Sitka Heading", 2, 36)); // NOI18N
-        jLabel4.setText("                The Calendar");
-
-        jLabel5.setForeground(new java.awt.Color(204, 0, 0));
-        jLabel5.setText("Invalid Username/Password");
-
-        jButton1.setFont(new java.awt.Font("Franklin Gothic Heavy", 0, 18)); // NOI18N
-        jButton1.setText("Login");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        jButton2.setForeground(new java.awt.Color(0, 102, 204));
-        jButton2.setText("Create New User");
-        jButton2.setBorderPainted(false);
-        jButton2.setContentAreaFilled(false);
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SelfClosingMessage.output("No. Go away.", "New User", 1500);
-            }
-        });
-
-        jp1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SelfClosingMessage.output("Logging in...", "Please Wait", 1500);
-            }
-        });
-        
-        jTextField2.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(30, 30, 30)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
-                    .addComponent(jp1))
-                .addGap(132, 132, 132))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(173, 173, 173)
-                        .addComponent(jLabel5))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(139, 139, 139)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(148, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(29, 29, 29)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jp1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
-                .addComponent(jLabel5)
-                .addGap(31, 31, 31)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
-                .addComponent(jButton2)
-                .addContainerGap())
-        );
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(323, Short.MAX_VALUE))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
-        );
-
-        pack();
-    }// </editor-fold>                        
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {                                         
-      jLabel5.setVisible(true);
-    }                                        
-
-    public static void main(String args[]) {
-         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DaysEvents.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DaysEvents.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DaysEvents.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DaysEvents.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-
-         java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
+	static class btnMyCalendar_Action implements ActionListener{
+		public void actionPerformed(ActionEvent e){
+			CalendarProgram.paintFrame();
+			frmMain.repaint();
+			frmMain.setVisible(false);
+		}
+	}
+	
+	static class btnModifyEvents_Action implements ActionListener{
+		public void actionPerformed(ActionEvent e){
+			
+		}
+	}
+	
+}
                 new DaysEvents().setVisible(true);
             }
         });
