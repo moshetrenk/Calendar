@@ -1,6 +1,6 @@
 package CalendarTest;
 
-/*Contents of CalendarProgran.class */
+/*Contents of CalendarProgram.class */
 
 //Import packages
 import javax.swing.*;
@@ -21,24 +21,17 @@ public class CalendarProgram{
 	static JScrollPane stblCalendar; //The scrollpane
 	static JPanel pnlCalendar;
 	static int realYear, realMonth, realDay, currentYear, currentMonth;
-
-	public static void main (String args[]){
-		//Look and feel
-		try {UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());}
-		catch (ClassNotFoundException e) {}
-		catch (InstantiationException e) {}
-		catch (IllegalAccessException e) {}
-		catch (UnsupportedLookAndFeelException e) {}
-
-		//Prepare frame
+	
+	static private void prepareFrame(){
 		frmMain = new JFrame ("Group Calendar"); //Create frame
 		frmMain.setSize(550, 385); //Set size to NxM pixels
 		pane = frmMain.getContentPane(); //Get content pane
 		pane.setLayout(null); //Apply null layout
 		frmMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Close when X is clicked
 		mtblCalendar = new DefaultTableModel(){public boolean isCellEditable(int rowIndex, int mColIndex){return false;}};
-
-		//Create controls
+	}
+	
+	static private void createControls(){
 		lblMonth = new JLabel ("January");
 		lblYear = new JLabel ("Change year:");
 		lblDay = new JLabel("View Day's Activities:");
@@ -50,17 +43,13 @@ public class CalendarProgram{
 		tblCalendar = new JTable(mtblCalendar);
 		stblCalendar = new JScrollPane(tblCalendar);
 		pnlCalendar = new JPanel(null);
+	}
 
-		//Set border
+	static private void setBorder(){
 		pnlCalendar.setBorder(BorderFactory.createTitledBorder("Calendar"));
-		
-		//Register action listeners
-		btnPrev.addActionListener(new btnPrev_Action());
-		btnNext.addActionListener(new btnNext_Action());
-		cmbYear.addActionListener(new cmbYear_Action());
-		//cmbDay.addActionListener(new cmbDay_Action());
-		
-		//Add controls to pane
+	}
+	
+	static private void addControls(){
 		pane.add(pnlCalendar);
 		pnlCalendar.add(lblDay);
 		pnlCalendar.add(lblMonth);
@@ -70,8 +59,15 @@ public class CalendarProgram{
 		pnlCalendar.add(btnPrev);
 		pnlCalendar.add(btnNext);
 		pnlCalendar.add(stblCalendar);
+	}
+	static private void registerActionListeners(){
 		
-		//Set bounds
+			btnPrev.addActionListener(new btnPrev_Action());
+			btnNext.addActionListener(new btnNext_Action());
+			cmbYear.addActionListener(new cmbYear_Action());
+	}
+	
+	static private void setBounds(){
 		pnlCalendar.setBounds(0, 0, 550, 550);
 		lblDay.setBounds(15,305,140,20);
 		lblMonth.setBounds(160-lblMonth.getPreferredSize().width/2, 25, 100, 25);
@@ -81,51 +77,75 @@ public class CalendarProgram{
 		btnPrev.setBounds(15, 25, 50, 25);
 		btnNext.setBounds(475, 25, 50, 25);
 		stblCalendar.setBounds(20, 50, 500, 250);
-		
+	}
+	static private void makeFrameVisible(boolean decision){
 		//Make frame visible
-		frmMain.setResizable(true);
-		frmMain.setVisible(true);
+				frmMain.setResizable(false);
+				frmMain.setVisible(decision);
+	}
+	
+	static private void getCurrentMonthAndYear(){
 		
-		//Get real month/year
-		GregorianCalendar cal = new GregorianCalendar(); //Create calendar
-		realDay = cal.get(GregorianCalendar.DAY_OF_MONTH); //Get day
-		realMonth = cal.get(GregorianCalendar.MONTH); //Get month
-		realYear = cal.get(GregorianCalendar.YEAR); //Get year
-		currentMonth = realMonth; //Match month and year
-		currentYear = realYear;
-		
+				GregorianCalendar cal = new GregorianCalendar(); //Create calendar
+				realDay = cal.get(GregorianCalendar.DAY_OF_MONTH); //Get day
+				realMonth = cal.get(GregorianCalendar.MONTH); //Get month
+				realYear = cal.get(GregorianCalendar.YEAR); //Get year
+				currentMonth = realMonth; //Match month and year
+				currentYear = realYear;
+	}
+	
+	 static private void backgroundProcesses(){
 		//Add headers
-		String[] headers = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}; //All headers
-		for (int i=0; i<7; i++){
-			mtblCalendar.addColumn(headers[i]);
-		}
-		
-		tblCalendar.getParent().setBackground(tblCalendar.getBackground()); //Set background
+				String[] headers = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}; //All headers
+				for (int i=0; i<7; i++){
+					mtblCalendar.addColumn(headers[i]);
+				}
+				
+				tblCalendar.getParent().setBackground(tblCalendar.getBackground()); //Set background
 
-		//No resize/reorder
-		tblCalendar.getTableHeader().setResizingAllowed(false);
-		tblCalendar.getTableHeader().setReorderingAllowed(false);
+				//No resize/reorder
+				tblCalendar.getTableHeader().setResizingAllowed(false);
+				tblCalendar.getTableHeader().setReorderingAllowed(false);
 
-		//Single cell selection
-		tblCalendar.setColumnSelectionAllowed(false);
-		tblCalendar.setRowSelectionAllowed(false);
-		tblCalendar.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				//Single cell selection
+				tblCalendar.setColumnSelectionAllowed(false);
+				tblCalendar.setRowSelectionAllowed(false);
+				tblCalendar.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		//Set row/column count
-		tblCalendar.setRowHeight(38);
-		mtblCalendar.setColumnCount(7);
-		mtblCalendar.setRowCount(6);
+				//Set row/column count
+				tblCalendar.setRowHeight(38);
+				mtblCalendar.setColumnCount(7);
+				mtblCalendar.setRowCount(6);
+	//Populate tables
+			for (int i=realYear-100; i<=realYear+100; i++){
+				cmbYear.addItem(String.valueOf(i));
+			}
+	}
+	
+	public static void paintFrame(){
+		prepareFrame();
+		createControls();
+		setBorder();
+		addControls();
+		registerActionListeners();
+		setBounds();
+		makeFrameVisible(true);
+		getCurrentMonthAndYear();
+		backgroundProcesses();
+		refreshCalendar(realMonth,realYear);
+		
+	}
+	public static void main (String args[]){
+		//Look and feel
+		try {UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());}
+		catch (ClassNotFoundException e) {}
+		catch (InstantiationException e) {}
+		catch (IllegalAccessException e) {}
+		catch (UnsupportedLookAndFeelException e) {}
+
+		paintFrame();
 		
 		
-		//Populate tables
-		for (int i=realYear-100; i<=realYear+100; i++){
-			cmbYear.addItem(String.valueOf(i));
-		}
-		
-		
-		
-		//Refresh calendar
-		refreshCalendar (realMonth, realYear); //Refresh calendar
 	}
 	
 	public static void refreshCalendar(int month, int year){
@@ -222,4 +242,3 @@ public class CalendarProgram{
 		}
 	}
 }
-	
