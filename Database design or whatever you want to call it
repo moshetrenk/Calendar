@@ -1,0 +1,39 @@
+create database theCalendar;
+
+create table friend (
+username varchar(16) primary key,
+userpassword varchar (16), 
+imgUrl varchar(100));
+
+create table theEvent (
+eventNumber int primary key,
+eventId varchar (16),
+dateOfEvent date,
+timeOfEvent time,
+description varchar(200));
+
+create table calGroup (
+idNum int primary key,
+username varchar (16),
+groupName varchar (16));
+
+insert calGroup values (1, 'Moshe', 'CSC330 Calendar');
+insert calGroup values (2, 'Keith', 'CSC330 Calendar');
+insert calGroup values (3, 'Omar', 'CSC330 Calendar');
+
+select * from calGroup;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
