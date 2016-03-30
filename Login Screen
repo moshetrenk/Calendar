@@ -1,5 +1,7 @@
 package lab3;
 
+import java.io.IOException;
+
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
@@ -16,7 +18,8 @@ public class login extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private JPasswordField jp1 = new JPasswordField();
     private javax.swing.JTextField jTextField2;
-
+    private static login one;
+    
     public login() {
         initComponents();
     }
@@ -73,7 +76,13 @@ public class login extends javax.swing.JFrame {
         jButton2.setContentAreaFilled(false);
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-            	SelfClosingMessage.output("Repaint to new user screen", "", 1000);
+            	
+            	//SelfClosingMessage.output("Repaint to new user screen", "", 1000);
+            	
+            	  NewUser.paintFrame();
+          		  one.rootPane.repaint();
+          		  one.setVisible(false);
+
             }
         });
 
@@ -82,11 +91,19 @@ public class login extends javax.swing.JFrame {
             	String input = jTextField2.getText();
           	  char[] input2C = jp1.getPassword();
           	  String input2 = new String(input2C);
-          	  String get = new String(SqlAccess.query("select username from calendar.friend where username = '" + input +"' and userpassword = '" + input2 +"'"));
+          	  String get = new String(SqlAccess.query("select username from theCalendar.friend where username = '" + input +"' and userpassword = '" + input2 +"'"));
          	  
           	  if ((input.toLowerCase()).equals((get.toLowerCase()))){
           		  jLabel5.setVisible(false);	
-          		  SelfClosingMessage.output("Logging in...", "Please Wait", 1000);
+            		//  SelfClosingMessage.output("Logging in...", "Please Wait", 1000);
+            		try {
+      				Profile.paintFrame();
+      			} catch (IOException e) {
+      				// TODO Auto-generated catch block
+      				e.printStackTrace();
+      			}
+            		  one.rootPane.repaint();
+            		  one.setVisible(false);
           	  }
           	  else
           	      jLabel5.setVisible(true);	
@@ -182,19 +199,33 @@ public class login extends javax.swing.JFrame {
     	  String input = jTextField2.getText();
     	  char[] input2C = jp1.getPassword();
     	  String input2 = new String(input2C);
-    	  String get = new String(SqlAccess.query("select username from calendar.friend where username = '" + input +"' and userpassword = '" + input2 +"'"));
+    	  String get = new String(SqlAccess.query("select username from theCalendar.friend where username = '" + input +"' and userpassword = '" + input2 +"'"));
    	  
     	  if ((input.toLowerCase()).equals((get.toLowerCase()))){
       		  jLabel5.setVisible(false);	
-      		  SelfClosingMessage.output("Logging in...", "Please Wait", 1000);
-      	  }
+      		//  SelfClosingMessage.output("Logging in...", "Please Wait", 1000);
+      		try {
+				Profile.paintFrame();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+      		  one.rootPane.repaint();
+      		  one.setVisible(false);
+    	  }
     	  else
     	      jLabel5.setVisible(true);	
-	    	
-  
-
     }                                        
 
+    public static void paintFrame(){
+    	java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+            	one = new login();
+                one.setVisible(true);
+            }
+        });
+    }
+    
     public static void main(String args[]) {
          try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -214,31 +245,11 @@ public class login extends javax.swing.JFrame {
         }
 
          java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-            	login one = new login();
-                one.setVisible(true);
-            }
-        });
+             public void run() {
+             	 one = new login();
+                 one.setVisible(true);
+             }
+         });
     }
-    }
+}
     
-    /*     public void actionPerformed(java.awt.event.ActionEvent evt) {
-            	String input = jTextField2.getText();
-          	  char[] input2C = jp1.getPassword();
-          	  String input2 = new String(input2C);
-          	//  String get = new String(SqlAccess.query("select username from calendar.friend where username = '" + input +"' and userpassword = '" + input2 +"'"));
-         	  
-          	 // if ((input.toLowerCase()).equals((get.toLowerCase()))){
-          		  //jLabel5.setVisible(false);	
-          		 // SelfClosingMessage.output("Logging in...", "Please Wait", 1000);
-          		  try {
-					Profile.paintFrame();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-          		  one.rootPane.repaint();
-          		  one.setVisible(false);
-          		  
-          	  //}
-            }*/
