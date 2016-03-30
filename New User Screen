@@ -1,15 +1,20 @@
 package lab3;
 
+import java.io.IOException;
+
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.SwingConstants;
 
 public class NewUser extends javax.swing.JFrame {
 	String temp = new String("");
-    public NewUser() {
+    private static NewUser one;
+	
+	public NewUser() {
         initComponents();
     }    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
+    
     private void initComponents() {
 
         titleLabel = new JLabel("<HTML><font face = 'Sitka Heading' size = '10'><I><U>Create User</U></I></font></HTML>", SwingConstants.CENTER);
@@ -23,7 +28,7 @@ public class NewUser extends javax.swing.JFrame {
         noMatchLabel = new javax.swing.JLabel();
         usernameTaken = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);   
+        //setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);   
 
         jp1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -140,17 +145,17 @@ public class NewUser extends javax.swing.JFrame {
         pack();
     }// </editor-fold>                        
 
-    private void enterButtonMouseClicked(java.awt.event.MouseEvent evt) {                                      
+    private static void enterButtonMouseClicked(java.awt.event.MouseEvent evt) {                                      
         
     }                                     
 
-    private void inputNameTextBoxActionPerformed(java.awt.event.ActionEvent evt) {                                            
+    private static void inputNameTextBoxActionPerformed(java.awt.event.ActionEvent evt) {                                            
         // TODO add your handling code here:
     }                                           
 
-    private void inputNameTextBoxKeyReleased(java.awt.event.KeyEvent evt) {                                       
+    private static void inputNameTextBoxKeyReleased(java.awt.event.KeyEvent evt) {                                       
 	   String input = inputNameTextBox.getText();
-	    	String get = new String(SqlAccess.query("select username from calendar.friend where username = '" + input +"'"));
+	    	String get = new String(SqlAccess.query("select username from thecalendar.friend where username = '" + input +"'"));
 	   //System.out.println(get);
 	   
 	    	if((input.toLowerCase()).equals((get).toLowerCase())){
@@ -166,11 +171,11 @@ public class NewUser extends javax.swing.JFrame {
     
     }     
 
-    private void enterButtonMouseReleased(java.awt.event.MouseEvent evt) {                                       
+    private static void enterButtonMouseReleased(java.awt.event.MouseEvent evt) {                                       
    
     }                                      
 
-    private void enterButtonActionPerformed(java.awt.event.ActionEvent evt) {    
+    private static void enterButtonActionPerformed(java.awt.event.ActionEvent evt) {    
     	String usernameInput = inputNameTextBox.getText();
     	char[] passwordInputC = jp1.getPassword(),passwordVerifyC = jp2.getPassword();
 	    String passwordInput = new String(passwordInputC), passwordVerify = new String(passwordVerifyC);
@@ -188,18 +193,39 @@ public class NewUser extends javax.swing.JFrame {
 	    }
 	    
     	if (!noMatchLabel.isVisible() && !usernameTaken.isVisible()){
-    		SelfClosingMessage.output("Creating User...", "", 1000);
     		
-    		String insert = "insert into calendar.friend values ('" + usernameInput +"', '" + passwordInput + "')";
+    		try {
+				Profile.paintFrame();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+      		one.rootPane.repaint();
+      		one.setVisible(false);
+    		
+    		SelfClosingMessage.output("Welcome!", "", 1000);
+    		
+    		String insert = "insert into thecalendar.friend values ('" + usernameInput +"', '" + passwordInput + "', 'URL')";
     		SqlAccess.insert(insert);
     		
     	}
     }                                        
 
-    private void jp1ActionPerformed(java.awt.event.ActionEvent evt) {                                            
+    private static void jp1ActionPerformed(java.awt.event.ActionEvent evt) {                                            
     	
     }                                           
 
+    public static void paintFrame(){
+    	 java.awt.EventQueue.invokeLater(new Runnable() {
+             public void run() {
+                 one = new NewUser();
+                 one.setVisible(true);
+             }
+         });
+    }
+    
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -225,21 +251,22 @@ public class NewUser extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new NewUser().setVisible(true);
+                one = new NewUser();
+                one.setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify                     
-    private javax.swing.JButton enterButton;
-    private javax.swing.JLabel titleLabel;
-    private javax.swing.JLabel usernameLabel;
-    private javax.swing.JLabel passwordLabel;
-    private javax.swing.JLabel passwordLabel2;
-    private javax.swing.JLabel noMatchLabel;
-    private javax.swing.JLabel usernameTaken;
-    private javax.swing.JPasswordField jp1 = new JPasswordField();
-    private javax.swing.JTextField inputNameTextBox;
-    private javax.swing.JPasswordField jp2 = new JPasswordField();
+    private static javax.swing.JButton enterButton;
+    private static javax.swing.JLabel titleLabel;
+    private static javax.swing.JLabel usernameLabel;
+    private static javax.swing.JLabel passwordLabel;
+    private static javax.swing.JLabel passwordLabel2;
+    private static javax.swing.JLabel noMatchLabel;
+    private static javax.swing.JLabel usernameTaken;
+    private static javax.swing.JPasswordField jp1 = new JPasswordField();
+    private static javax.swing.JTextField inputNameTextBox;
+    private static javax.swing.JPasswordField jp2 = new JPasswordField();
     // End of variables declaration                   
 }
