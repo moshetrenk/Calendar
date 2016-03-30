@@ -221,3 +221,24 @@ public class login extends javax.swing.JFrame {
         });
     }
     }
+    
+    /*     public void actionPerformed(java.awt.event.ActionEvent evt) {
+            	String input = jTextField2.getText();
+          	  char[] input2C = jp1.getPassword();
+          	  String input2 = new String(input2C);
+          	//  String get = new String(SqlAccess.query("select username from calendar.friend where username = '" + input +"' and userpassword = '" + input2 +"'"));
+         	  
+          	 // if ((input.toLowerCase()).equals((get.toLowerCase()))){
+          		  //jLabel5.setVisible(false);	
+          		 // SelfClosingMessage.output("Logging in...", "Please Wait", 1000);
+          		  try {
+					Profile.paintFrame();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+          		  one.rootPane.repaint();
+          		  one.setVisible(false);
+          		  
+          	  //}
+            }*/
