@@ -1,0 +1,41 @@
+package lab3;
+/* This class is a combination of several resources I found online 
+ * with the goal being to make a message that closes by itself
+ * after a specified amount of time, it is used in the
+ * PrinterQueue class several times
+ */
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.Timer;
+
+class SelfClosingMessage extends JFrame{
+	static void output(String text, String title, int time){
+
+		JFrame frame = new JFrame();
+	    final JDialog dialog = new JDialog(frame, title, true);
+	    dialog.setLocation(100, 300);
+	   
+	    JLabel label = new JLabel("      " + text);
+	    dialog.setLocationRelativeTo(null);
+	    dialog.setTitle(title);
+	    dialog.add(label);
+	    dialog.pack();
+	    dialog.resize(350, 110);
+	    
+	    Timer timer = new Timer(time, new ActionListener() {
+	        public void actionPerformed(ActionEvent e) {
+	            dialog.setVisible(false);
+	            dialog.dispose();
+	        }
+	    });
+	    timer.setRepeats(false);
+	    timer.start();
+	
+	    dialog.setVisible(true);
+	}
+};
