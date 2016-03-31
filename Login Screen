@@ -180,6 +180,7 @@ public class login extends javax.swing.JFrame {
     	java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
             	one = new login();
+            	one.setLocation(500, 200);
                 one.setVisible(true);
             }
         });
@@ -226,8 +227,7 @@ public class login extends javax.swing.JFrame {
 
          java.awt.EventQueue.invokeLater(new Runnable() {
              public void run() {
-             	 one = new login();
-                 one.setVisible(true);
+             	paintFrame();
              }
          });
     }
