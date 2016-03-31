@@ -8,7 +8,7 @@ imgUrl varchar(100));
 create table theEvent (
 eventNumber int primary key,
 eventId varchar (16),
-dateOfEvent date,
+dateOfEvent varchar(10),
 timeOfEvent time,
 description varchar(200));
 
