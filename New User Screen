@@ -82,6 +82,7 @@ public class NewUser extends javax.swing.JFrame {
         
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
+        
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -213,8 +214,7 @@ public class NewUser extends javax.swing.JFrame {
     public static void paintFrame(){
     	 java.awt.EventQueue.invokeLater(new Runnable() {
              public void run() {
-                 one = new NewUser();
-                 one.setVisible(true);
+                paintFrame();
              }
          });
     }
@@ -247,6 +247,7 @@ public class NewUser extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 one = new NewUser();
+                one.setLocation(550, 250);
                 one.setVisible(true);
             }
         });
