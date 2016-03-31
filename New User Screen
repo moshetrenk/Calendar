@@ -154,10 +154,9 @@ public class NewUser extends javax.swing.JFrame {
     }                                           
 
     private static void inputNameTextBoxKeyReleased(java.awt.event.KeyEvent evt) {                                       
-	   String input = inputNameTextBox.getText();
-	    	String get = new String(SqlAccess.query("select username from thecalendar.friend where username = '" + input +"'"));
-	   //System.out.println(get);
-	   
+    		String input = inputNameTextBox.getText();
+	    	String get = new String(EaseOfSQL.query("select username from thecalendar.friend where username = '" + input +"'"));
+
 	    	if((input.toLowerCase()).equals((get).toLowerCase())){
 	    		usernameTaken.setText("That username is already taken");
 	    		usernameTaken.setVisible(true);
@@ -166,9 +165,6 @@ public class NewUser extends javax.swing.JFrame {
 	    		usernameTaken.setText("That username is already taken");
 	    		usernameTaken.setVisible(false);
 	    	}
-	    	
-	    	
-    
     }     
 
     private static void enterButtonMouseReleased(java.awt.event.MouseEvent evt) {                                       
@@ -205,8 +201,7 @@ public class NewUser extends javax.swing.JFrame {
     		
     		SelfClosingMessage.output("Welcome!", "", 1000);
     		
-    		String insert = "insert into thecalendar.friend values ('" + usernameInput +"', '" + passwordInput + "', 'URL')";
-    		SqlAccess.insert(insert);
+    		EaseOfSQL.insertUsernamePassword(usernameInput, passwordInput);
     		
     	}
     }                                        
