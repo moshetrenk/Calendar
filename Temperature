@@ -4,7 +4,8 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-//returns the temperature if valid zip code is passed in or if not it returns -1
+//returns the temperature as an int if valid zip code is passed in
+//not sure what happens otherwise...
 
 public class getTempByZip {  
 	public static int getTemperature(String zip)  {
@@ -21,17 +22,9 @@ public class getTempByZip {
 		         while ((inputLine = inStream.readLine()) != null && !buffer.toString().contains("on Bing")){
 		        	 buffer.append(inputLine + "\n");
 		         }
-		            	  
-		         for (int i = buffer.indexOf("on Bing"); i < buffer.indexOf("on Bing") + 20; i++){  
-		         /*
-		         To whoever is looking at this, I couldn't decide if this should be another for loop rather than a long if, not sure how it affects efficiency, leaving it like this for now...
-		         */
-		         
-		        	 if (buffer.charAt(i) == '0' || buffer.charAt(i) == '1' ||buffer.charAt(i) == '2' ||buffer.charAt(i) == '3' ||buffer.charAt(i) == '4' ||buffer.charAt(i) == '5' ||buffer.charAt(i) == '6' ||buffer.charAt(i) == '7' ||buffer.charAt(i) == '8' ||buffer.charAt(i) == '9'){
-		        		 return (10 * Character.getNumericValue(buffer.charAt(i)) + Character.getNumericValue(buffer.charAt(i + 1)));
-		        	 }		         
-		         }
-		          
+		            
+		         return (10 * Character.getNumericValue(buffer.charAt(buffer.indexOf("on Bing") + 12)) + Character.getNumericValue(buffer.charAt(buffer.indexOf("on Bing") + 13))); 	  
+
 	    	} catch (IOException e) {
 	    		e.printStackTrace();
 	    	}	
