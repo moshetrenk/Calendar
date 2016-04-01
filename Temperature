@@ -1,18 +1,15 @@
 package lab3;
+//returns the temperature if valid zip code is passed in or if not it returns -1
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
-
-//returns the temperature as an int if valid zip code is passed in
-//not sure what happens otherwise...
 
 public class getTempByZip {  
 	public static int getTemperature(String zip)  {
 			StringBuffer buffer = new StringBuffer();
 			WebPageGetter pageOne = new WebPageGetter();
 			String theUrl = "https://www.bing.com/search?q=" + zip + "+weather&form=EDGEAR&qs=WA&cvid=8921203ba63844f99e376494cc5fe5f6&pq=" + zip + "%20weather";
-	    		
 	    	try {
 		         URL gotoUrl = new URL(theUrl);
 		         InputStreamReader isr = new InputStreamReader(gotoUrl.openStream());
@@ -22,14 +19,10 @@ public class getTempByZip {
 		         while ((inputLine = inStream.readLine()) != null && !buffer.toString().contains("on Bing")){
 		        	 buffer.append(inputLine + "\n");
 		         }
-		            
 		         return (10 * Character.getNumericValue(buffer.charAt(buffer.indexOf("on Bing") + 12)) + Character.getNumericValue(buffer.charAt(buffer.indexOf("on Bing") + 13))); 	  
-
 	    	} catch (IOException e) {
 	    		e.printStackTrace();
 	    	}	
 	    	return -1;
 	    }      
 }
-
-
