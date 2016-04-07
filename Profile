@@ -26,6 +26,26 @@ public class Profile {
 	static private String username;
 	
 	static private void prepareFrame(){
+		
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String lcOSName = System.getProperty("os.name").toLowerCase();
+		boolean IS_MAC = lcOSName.startsWith("mac os x");
+		System.setProperty("apple.laf.useScreenMenuBar", String.valueOf(IS_MAC));
+		
 		//set-up frame
 				frmMain = new JFrame("Group Calendar");
 				frmMain.setSize(550,385);
@@ -73,6 +93,7 @@ public class Profile {
 				pnlProfile.add(profilePic);
 				pnlProfile.add(btnMyCalendar);
 				pnlProfile.add(btnModifyEvents);
+				frmMain.setJMenuBar(MenuExp.PrepareMenuBar());
 	}
 	static private void registerActionListeners(){
 		//add action listeners
@@ -150,8 +171,3 @@ public class Profile {
 	}
 	
 }
-                new DaysEvents().setVisible(true);
-            }
-        });
-    }
-    }
