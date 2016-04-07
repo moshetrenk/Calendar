@@ -1,116 +1,117 @@
-package lab3;
+package CalendarTest;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.SwingUtilities;
  
-/**
- * Written/modified by alvin alexander, devdaily.com.
- * 
- * This class was nspired by a thread in the Mac Java-dev mailing list
- * (<a href="http://lists.apple.com/archives/java-dev/" title="http://lists.apple.com/archives/java-dev/">http://lists.apple.com/archives/java-dev/</a>).
- */
-public class menu implements Runnable, ActionListener
-{
-  private JFrame frame;
-  private JMenuBar menuBar;
-  private JMenu fileMenu;
-  private JMenu editMenu;
-  private JMenu addMenu;
-  private JMenuItem openMenuItem;
-  private JMenuItem cutMenuItem;
-  private JMenuItem copyMenuItem;
-  private JMenuItem pasteMenuItem;
-  private JMenuItem eventMenuItem;
-  private JMenuItem friendMenuItem;
-  private JMenuItem groupMenuItem;
-  
-  public static void main(String[] args)
-  {
-    // needed on mac os x
-    System.setProperty("apple.laf.useScreenMenuBar", "true");
- 
-    // the proper way to show a jframe (invokeLater)
-    SwingUtilities.invokeLater(new menu());
-  }
- 
-  public void run()
-  {
-	frame = new JFrame("Calendar");
-    menuBar = new JMenuBar();
-    // build the Add menu
-    addMenu = new JMenu("Add");
-    eventMenuItem = new JMenuItem("Event");
-    friendMenuItem = new JMenuItem("Friend");
-    groupMenuItem = new JMenuItem("Group");
-    addMenu.add(eventMenuItem);
-    addMenu.add(friendMenuItem);
-    addMenu.add(groupMenuItem);
-    
-    // build the File menu
-    fileMenu = new JMenu("File");
-    openMenuItem = new JMenuItem("Open");
-    openMenuItem.addActionListener(this);
-    fileMenu.add(openMenuItem);
- 
-    // build the Edit menu
-    editMenu = new JMenu("Edit");
-    cutMenuItem = new JMenuItem("Cut");
-    copyMenuItem = new JMenuItem("Copy");
-    pasteMenuItem = new JMenuItem("Paste");
-    editMenu.add(cutMenuItem);
-    editMenu.add(copyMenuItem);
-    editMenu.add(pasteMenuItem);
- 
-    // add menus to menubar
-    menuBar.add(fileMenu);
-    menuBar.add(editMenu);
-    menuBar.add(addMenu);
- 
-    // put the menubar on the frame
-    frame.setJMenuBar(menuBar);
- 
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.setPreferredSize(new Dimension(400, 300));
-    frame.pack();
-    frame.setLocationRelativeTo(null);
-    frame.setVisible(true);
-  }
- 
-  /**
-   * This handles the action for the File/Open event, and demonstrates
-   * the implementation of an ActionListener.
-   * In a real-world program you'd handle this differently.
-   */
-  public void actionPerformed(ActionEvent ev)
-  {
-    SampleDialog dialog = new SampleDialog();
-    dialog.setModal(true);
-    dialog.setVisible(true);
-  }
- 
-  /**
-   * This dialog is displayed when the user selects the File/Open menu item.
-   */
-  private class SampleDialog extends JDialog implements ActionListener
-  {
-    private JButton okButton = new JButton("OK");
- 
-    private SampleDialog()
-    {
-      super(frame, "Sample Dialog", true);
-      JPanel panel = new JPanel(new FlowLayout());
-      panel.add(okButton);
-      getContentPane().add(panel);
-      okButton.addActionListener(this);
-      setPreferredSize(new Dimension(300, 200));
-      pack();
-      setLocationRelativeTo(frame);
+public class MenuExp  {
+	static JMenuBar menuBar = new JMenuBar();
+	static JMenuBar menuBarLogIn = new JMenuBar();
+	static int onlyRunOnce = 0;
+	static int onlyRunOnceLogIn = 0;
+     
+    public MenuExp() {
+         
+        
+        
     }
- 
-    public void actionPerformed(ActionEvent ev)
-    {
-      setVisible(false);
+    public static JMenuBar PrepareMenuBar(){
+    	
+    	if(onlyRunOnce == 0){
+    	
+        // Define and add two drop down menu to the menubar
+        JMenu fileMenu = new JMenu("File");
+        JMenu editMenu = new JMenu("View");
+        menuBar.add(fileMenu);
+        menuBar.add(editMenu);
+         
+        // Create and add simple menu item to one of the drop down menu
+        JMenuItem logOffAction = new JMenuItem("Log Off");
+        JMenuItem exitAction = new JMenuItem("Exit");
+        JMenuItem viewProfileAction = new JMenuItem("Profile");
+        JMenuItem viewCalendarAction = new JMenuItem("Calendar");
+        
+        
+        fileMenu.add(logOffAction);
+        fileMenu.add(exitAction);
+        fileMenu.addSeparator();
+        fileMenu.add(exitAction);
+        editMenu.add(viewProfileAction);
+        editMenu.add(viewCalendarAction);
+       
+        // Add a listener to the New menu item. actionPerformed() method will
+        // invoked, if user triggred this menu item
+        logOffAction.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent arg0) {
+               
+                JFrame frame = (JFrame) SwingUtilities.getRoot(menuBar);
+        		frame.setVisible(false);
+        		 LoginScreen.main(null);
+            }
+        });
+        
+        exitAction.addActionListener(new ActionListener(){
+        	public void actionPerformed(ActionEvent arg0){
+        		System.exit(1);
+        	}
+        });
+        
+        viewProfileAction.addActionListener(new ActionListener(){
+        	public void actionPerformed(ActionEvent arg0){
+        		JFrame frame = (JFrame) SwingUtilities.getRoot(menuBar);
+        		frame.setVisible(false);
+        		
+        		try {
+					Profile.paintFrame();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+        		
+        	}
+        });
+        
+        viewCalendarAction.addActionListener(new ActionListener(){
+        	public void actionPerformed(ActionEvent arg0){
+        		
+        		JFrame frame = (JFrame) SwingUtilities.getRoot(menuBar);
+        		frame.setVisible(false);
+        		CalendarProgram.paintFrame();
+        	}
+        });
+        onlyRunOnce = 1;
+    	}
+        return menuBar;
     }
-  }
+    public static JMenuBar PrepareMenuBar(String logIn){
+    	
+    	if(onlyRunOnceLogIn == 0){
+    		
+    	JMenu fileMenu = new JMenu("File");
+    	menuBarLogIn.add(fileMenu);
+    	JMenuItem exitAction = new JMenuItem("Exit");
+    	fileMenu.add(exitAction);
+    	
+    	 exitAction.addActionListener(new ActionListener(){
+         	public void actionPerformed(ActionEvent arg0){
+         		System.exit(1);
+         	}
+         });
+    	}
+    	 return menuBarLogIn;
+    	
+    }
+    public static void main(String[] args) {
+        MenuExp me = new MenuExp();
+       
+    }
 }
