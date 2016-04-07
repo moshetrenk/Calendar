@@ -174,9 +174,11 @@ public class NewUser extends javax.swing.JFrame {
 
     private static void enterButtonActionPerformed(java.awt.event.ActionEvent evt) {    
     	String usernameInput = inputNameTextBox.getText();
-    	char[] passwordInputC = jp1.getPassword(),passwordVerifyC = jp2.getPassword();
-	    String passwordInput = new String(passwordInputC), passwordVerify = new String(passwordVerifyC);
-	    
+    	char[] passwordInputC = jp1.getPassword(),
+    			passwordVerifyC = jp2.getPassword();
+	    String passwordInput = new String(passwordInputC), 
+	    		passwordVerify = new String(passwordVerifyC);
+	   
 	    if (passwordInput.equals(passwordVerify)){
 	    	noMatchLabel.setVisible(false);
 	    }
@@ -214,7 +216,9 @@ public class NewUser extends javax.swing.JFrame {
     public static void paintFrame(){
     	 java.awt.EventQueue.invokeLater(new Runnable() {
              public void run() {
-                paintFrame();
+            	 one = new NewUser();
+             	 one.setLocation(500, 200);
+                 one.setVisible(true);
              }
          });
     }
