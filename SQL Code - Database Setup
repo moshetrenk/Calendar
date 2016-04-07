@@ -1,6 +1,3 @@
-use theCalendar;
-
-
 create database theCalendar;
 
 create table friend (
