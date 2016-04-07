@@ -1,3 +1,6 @@
+use theCalendar;
+
+
 create database theCalendar;
 
 create table friend (
@@ -47,27 +50,22 @@ insert theEvent values(7, 'Event2', 'Timothy', '08/06/2017', 183000, 200000, '')
 insert theEvent values(8, 'Event3', 'Chris', '08/06/2017', 183000, 200000, '');
 insert theEvent values(9, 'Event4', 'Tom', '08/06/2017', 183000, 200000, '');
 insert theEvent values(10, 'Event5', 'Dick', '08/06/2017', 183000, 200000, '');
-
-insert calGroup values(1, 'Moshe', 'CSC330 Project', 'T');
-insert calGroup values(2, 'Keith', 'CSC330 Project', 'F');
-insert calGroup values(3, 'Omar', 'CSC330 Project', 'F');
-insert calGroup values(4, 'Moshe', 'Drugs bruh', 'T');
-insert calGroup values(5, 'Timothy', 'Drugs bruh', 'F');
-insert calGroup values(6, 'Tom', 'Drugs bruh', 'F');
-insert calGroup values(7, 'Dick', 'Drugs bruh', 'F');
-insert calGroup values(8, 'Harry', 'Drugs bruh', 'F');
-insert calgroup values(9, 'Moshe', 'Wholesale heroin', 'T');
+*/
+insert calGroup values(1, 'Moshe', 'CSC330 Project', 1);
+insert calGroup values(2, 'Keith', 'CSC330 Project', 0);
+insert calGroup values(3, 'Omar', 'CSC330 Project', 0);
+insert calGroup values(4, 'Moshe', 'Drugs bruh', 1);
+insert calGroup values(5, 'Timothy', 'Drugs bruh', 0);
+insert calGroup values(6, 'Tom', 'Drugs bruh', 0);
+insert calGroup values(7, 'Dick', 'Drugs bruh', 0);
+insert calGroup values(8, 'Harry', 'Drugs bruh', 0);
+insert calgroup values(9, 'Moshe', 'Wholesale heroin', 1);
 /*
-For notifications, rather than F for friend request and G for group request,
-I'm using U for user request and G for group request because I don't want
-to have the same possible values for variables of different tables and
-the isAdmin variables from calGroup is either T or F
-
 Also notifications needs a field for the group name that's being requested
 Otherwise, entries 3 and 4 would be identical...
 */
-insert notifications values(1, 'Moshe', 'Tom', null, 'U');
-insert notifications values(2, 'Moshe', 'Harry', null,  'U');
+insert notifications values(1, 'Moshe', 'Tom', '' , 'F');
+insert notifications values(2, 'Moshe', 'Harry', '',  'F');
 insert notifications values(3, 'Moshe', 'Chris', 'Drugs bruh', 'G');
 insert notifications values(4, 'Moshe', 'Chris', 'Wholesale heroin', 'G');
 insert notifications values(5, 'Moshe', 'Dick', 'Wholesale heroin', 'G');
