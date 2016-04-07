@@ -15,8 +15,8 @@ public class login extends javax.swing.JFrame {
     private static javax.swing.JLabel jLabel4;
     private static javax.swing.JLabel jLabel5;
     private static javax.swing.JPanel jPanel1;
-    private static JPasswordField jp1 = new JPasswordField();
     private static javax.swing.JTextField jTextField2;
+    private static JPasswordField jp1 = new JPasswordField();
     private static login one;
     
     public login() {
@@ -42,24 +42,21 @@ public class login extends javax.swing.JFrame {
 
         jTextField2.setText("");
         jTextField2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        jTextField2.setName("user"); // NOI18N
+        jTextField2.setName("user"); 
         jTextField2.setSelectedTextColor(new java.awt.Color(153, 153, 153));
         jTextField2.setVerifyInputWhenFocusTarget(false);
-
-        //jTextField1.setText("jTextField1");
-
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14));
         jLabel1.setText("Username:");
-
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14));
         jLabel2.setText("Password:");
-
-        jLabel4.setFont(new java.awt.Font("Sitka Heading", 2, 36)); // NOI18N
-     //   jLabel4.setText("                The Calendar");
-
+        
+        jLabel4.setFont(new java.awt.Font("Sitka Heading", 2, 36));
+        
         jLabel5.setForeground(new java.awt.Color(204, 0, 0));
         jLabel5.setText("Invalid Username/Password");
-
+        
         jButton1.setFont(new java.awt.Font("Franklin Gothic Heavy", 0, 18)); // NOI18N
         jButton1.setText("Login");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
