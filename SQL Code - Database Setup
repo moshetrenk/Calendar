@@ -12,7 +12,9 @@ user_groupID varchar (16),
 dateOfEvent varchar(10),
 startTimeOfEvent time,
 endTimeofEvent time,
-description varchar(140));
+description varchar(140),
+approvalsNeeded int,
+approved int);
 
 create table calGroup (
 idNum int primary key,
@@ -37,16 +39,16 @@ insert friend values ('Tom', 'password1', 'URL');
 insert friend values ('Dick', 'password1', 'URL');
 insert friend values ('Harry', 'password1', 'URL');
 
-insert theEvent values(1, 'Dr Appointment', 'Moshe', '08/06/2017', 183000, 200000, '');
-insert theEvent values(2, 'CSC 330', 'Omar', '04/07/2016', 183000, 200000, 'Object Oriented Software Design - 1N 005');
-insert theEvent values(3, 'B', 'Moshe', '04/07/2016', 131500, 140000, 'Therapuetic stuff');
-insert theEvent values(4, 'Meeting Prof Jackson', 'Moshe', '04/22/2016', 83000, 84500, 'Meeting to discuss rampant homicides on campus');
-insert theEvent values(5, 'Top Secret Classified', 'Keith', '04/07/2016', 183000, 200000, 'Look away, this shit is private');
-insert theEvent values(6, 'Event1', 'Moshe', '08/06/2017', 183000, 200000, '');
-insert theEvent values(7, 'Event2', 'Timothy', '08/06/2017', 183000, 200000, '');
-insert theEvent values(8, 'Event3', 'Chris', '08/06/2017', 183000, 200000, '');
-insert theEvent values(9, 'Event4', 'Tom', '08/06/2017', 183000, 200000, '');
-insert theEvent values(10, 'Event5', 'Dick', '08/06/2017', 183000, 200000, '');
+insert theEvent values(1, 'Dr Appointment', 'Moshe', '08/06/2017', 183000, 200000, '', 1, 1);
+insert theEvent values(2, 'CSC 330', 'Omar', '04/07/2016', 183000, 200000, 'Object Oriented Software Design - 1N 005', 1, 1);
+insert theEvent values(3, 'B', 'Moshe', '04/07/2016', 131500, 140000, 'Therapuetic stuff', 1, 1);
+insert theEvent values(4, 'Meeting Prof Jackson', 'Moshe', '04/22/2016', 83000, 84500, 'Meeting to discuss rampant homicides on campus', 1, 1);
+insert theEvent values(5, 'Top Secret Classified', 'Keith', '04/07/2016', 183000, 200000, 'Look away, this shit is private', 1, 1);
+insert theEvent values(6, 'Event1', 'CSC330 Project', '08/06/2017', 183000, 200000, '', 1, (select count(*) from calgroup where groupname = 'CSC330 Project'));
+insert theEvent values(7, 'Event2', 'CSC330 Project', '08/06/2017', 183000, 200000, '', 1, (select count(*) from calgroup where groupname = 'CSC330 Project'));
+insert theEvent values(8, 'Event3', 'Things', '08/06/2017', 183000, 200000, '', 1, (select count(*) from calgroup where groupname = 'Things'));
+insert theEvent values(9, 'Event4', 'Other Stuff', '08/06/2017', 183000, 200000, '', 1, (select count(*) from calgroup where groupname = 'Other Stuff'));
+insert theEvent values(10, 'Event5', 'Other Stuff', '08/06/2017', 183000, 200000, '', 1, (select count(*) from calgroup where groupname = 'Other Stuff'));
 
 insert calGroup values(1, 'Moshe', 'CSC330 Project', 1);
 insert calGroup values(2, 'Keith', 'CSC330 Project', 0);
@@ -57,10 +59,7 @@ insert calGroup values(6, 'Tom', 'Things', 0);
 insert calGroup values(7, 'Dick', 'Things', 0);
 insert calGroup values(8, 'Harry', 'Things', 0);
 insert calgroup values(9, 'Moshe', 'Other Stuff', 1);
-/*
-Also notifications needs a field for the group name that's being requested
-Otherwise, entries 3 and 4 would be identical...
-*/
+
 insert notifications values(1, 'Moshe', 'Tom', '' , 'F');
 insert notifications values(2, 'Moshe', 'Harry', '',  'F');
 insert notifications values(3, 'Moshe', 'Chris', 'Things', 'G');
