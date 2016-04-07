@@ -11,13 +11,9 @@ public class EaseOfSQL {
 	private static ResultSet resultSet = null; 
 	private static String queryResult;
 	private static String eventId, eventNumber, eventDate, eventTime, eventDescription;
-	
 	//change this to your localhost's username and password
-	//make sure to change the datatype of "eventDate" from date to varchar(10) in mySQL
-	
 	private static String url = "jdbc:mysql://localhost/thecalendar?user=root&password=6815"; ;
-	
-	
+		
 	public static void main(){
 		getEvent(1);
 	}
@@ -147,6 +143,30 @@ public class EaseOfSQL {
 		strings.add(eventDescription);
 		
 		return strings;
+	}
+	
+	public static List getGroups(String username){
+		List groups = new List();
+		String query = "select * from calGroup where username = '" + username + "'";
+		try {
+			connection = DriverManager.getConnection(url);
+			statement = connection.createStatement() ;
+			resultSet = statement.executeQuery(query);
+			
+			int i = 0;
+			while(resultSet.next()) {
+				groups.add(resultSet.getString(3));
+				i++;
+			}
+		}
+		catch(SQLException ex ) {
+			System.err.println("DB Exception: " + ex); 
+		}
+		finally {
+			closePath();			
+		}
+
+		return groups;
 	}
 	
 	
