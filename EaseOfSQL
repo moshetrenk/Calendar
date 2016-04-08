@@ -1,4 +1,4 @@
-package lab3;
+package cal;
 
 import java.awt.List;
 import java.sql.*;
@@ -170,5 +170,48 @@ public class EaseOfSQL {
 	}
 	
 	
+	public static int getNumberOfGroupMembers(String groupName){
+		String query = "select count(*) from calGroup where groupname = '" + groupName + "'";
+		
+		try {
+			connection = DriverManager.getConnection(url);
+			statement = connection.createStatement() ;
+			resultSet = statement.executeQuery(query);
+			
+			while(resultSet.next()) {
+				return resultSet.getInt(1);
+			}
+		}
+		catch(SQLException ex ) {
+			System.err.println("DB Exception: " + ex); 
+		}
+		finally {
+			closePath();			
+		}
+		
+		return -1;
+	}
+	
+	public static int getNumberOfEvents(){
+		String query = "select count(*) from theevent";
+		
+		try {
+			connection = DriverManager.getConnection(url);
+			statement = connection.createStatement() ;
+			resultSet = statement.executeQuery(query);
+			
+			while(resultSet.next()) {
+				return resultSet.getInt(1);
+			}
+		}
+		catch(SQLException ex ) {
+			System.err.println("DB Exception: " + ex); 
+		}
+		finally {
+			closePath();			
+		}
+		
+		return -1;
+	}
 	
 }
