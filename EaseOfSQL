@@ -5,14 +5,14 @@ import java.sql.*;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class EaseOfSQL {
+public class SQLHelper {
 	private static Connection connection = null;
 	private static Statement statement = null;
 	private static ResultSet resultSet = null; 
 	private static String queryResult;
 	private static String eventId, eventNumber, eventDate, eventTime, eventDescription;
 	//change this to your localhost's username and password
-	private static String url = "jdbc:mysql://localhost/thecalendar?user=root&password=6815"; ;
+	private static String url = "jdbc:mysql://localhost/thecalendar?user=root&password=6815";
 		
 	public static void main(){
 		getEvent(1);
@@ -31,7 +31,7 @@ public class EaseOfSQL {
 	}
 	
 	public static boolean queryUsernamePassword(String username, String password){
-		String query = "select userpassword from theCalendar.friend where username = '" + username + "'";
+		String query = "select userpassword from friend where username = '" + username + "'";
 		try {
 			connection = DriverManager.getConnection(url);
 			statement = connection.createStatement() ;
@@ -48,6 +48,8 @@ public class EaseOfSQL {
 			closePath();			
 		}
 		
+		System.out.println(queryResult);
+		
 		if (password.equals(queryResult))
 			return true;
 		else 
@@ -56,21 +58,15 @@ public class EaseOfSQL {
 	}
 	
 	public static String query(String query){
-		List strings = new List();
 		try {
 			connection = DriverManager.getConnection(url);
 			statement = connection.createStatement() ;
 			resultSet = statement.executeQuery(query);
-			
-			int x = 1;
-			
+
 			while(resultSet.next()) {
-				strings.add(resultSet.getString(x));
 				queryResult = resultSet.getString(1); 
-				x++;
-				if (x == 3)
-					x = 1;
 			}
+
 		}
 		catch(SQLException ex ) {
 			System.err.println("DB Exception: " + ex); 
@@ -78,7 +74,6 @@ public class EaseOfSQL {
 		finally {
 			closePath();			
 		}
-		
 		return queryResult;
 	}
 	
