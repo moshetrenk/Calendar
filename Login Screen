@@ -1,11 +1,15 @@
-package lab3;
+package cal;
 
 import java.io.IOException;
-
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.JDialog;
 import javax.swing.SwingConstants;
-public class login extends javax.swing.JFrame {
+import javax.swing.WindowConstants;
+
+public class Login extends javax.swing.JFrame {
 
     private static javax.swing.JButton jButton1;
     private static javax.swing.JButton jButton2;
@@ -17,14 +21,24 @@ public class login extends javax.swing.JFrame {
     private static javax.swing.JPanel jPanel1;
     private static javax.swing.JTextField jTextField2;
     private static JPasswordField jp1 = new JPasswordField();
-    private static login one;
+    private static Login one;
+    private static SQLHelper help = new SQLHelper();
     
-    public login() {
+    public Login() {
         initComponents();
+        
+        setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                help.closePath();
+                System.exit(1);
+            }
+        });
     }
 
+        
      private void initComponents() {
-
+    	setJMenuBar(MenuExp.PrepareMenuBar(" "));
         jLabel3 = new JLabel("<HTML><font face = 'Sitka Heading' size = '36'><I><U>The Calendar</U></I></font></HTML>", SwingConstants.CENTER);
         jPanel1 = new javax.swing.JPanel();
         jTextField2 = new javax.swing.JTextField();
@@ -35,10 +49,8 @@ public class login extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jLabel5.setVisible(false);
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-       jPanel1.setPreferredSize(new java.awt.Dimension(500, 385));
-        
+                
+        jPanel1.setPreferredSize(new java.awt.Dimension(500, 385));
 
         jTextField2.setText("");
         jTextField2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -78,6 +90,7 @@ public class login extends javax.swing.JFrame {
             }
         });
 
+        //allows user to press enter instead of clicking the "Login" button
         jp1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
             	validateInput();	
@@ -169,6 +182,8 @@ public class login extends javax.swing.JFrame {
         pack();
     }// </editor-fold>                        
 
+     
+     
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {     
     	validateInput();    	  
     }                                        
@@ -176,7 +191,7 @@ public class login extends javax.swing.JFrame {
     public static void paintFrame(){
     	java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-            	one = new login();
+            	one = new Login();
             	one.setLocation(500, 200);
                 one.setVisible(true);
             }
@@ -188,7 +203,7 @@ public class login extends javax.swing.JFrame {
   	  char[] input2C = jp1.getPassword();
   	  String password = new String(input2C);
   	  
-  	  if (EaseOfSQL.queryUsernamePassword(username, password)){
+  	  if (help.queryUsernamePassword(username, password)){
     		  jLabel5.setVisible(false);	
 
     		try {
@@ -213,13 +228,13 @@ public class login extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
          java.awt.EventQueue.invokeLater(new Runnable() {
