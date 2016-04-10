@@ -1,0 +1,83 @@
+package cal;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.awt.List;
+
+public class User {
+	private static SQLHelper help = new SQLHelper();
+	private static String username;
+	private String url;
+	
+	private List iAreAdmin = new List();
+	private List myGroups = new List();
+	private HashMap<String, Event> myEvents = new HashMap<String, Event>();
+	
+	User(String username){
+		this.username = username;
+		myEvents = initEvents();
+		myGroups = initGroups();
+	}
+	
+	public static void main(String[] args){
+		User moshe = new User("Moshe");
+	}
+	
+	private static List initGroups(){
+		return (List) help.getGroups(username);
+	}
+	
+	private static HashMap<String, Event> initEvents(){
+		ArrayList cur = help.getEvents(username), 
+				temp = new ArrayList();	
+		int numEvents = help.getNumberOfEventsByUser(username);
+		HashMap<String, Event> these = new HashMap<String, Event>();
+		Event event;
+
+		for(int i = 0; i < cur.size(); i++){
+			if(!cur.get(i).equals(help.getDelimiter()))
+				temp.add(cur.get(i));
+			else{
+				event = new Event(temp);
+				these.put(event.getDate(), event);
+				}
+		}
+		
+		return these;
+	}
+	
+	public String getUsername(){
+		return username;
+	}
+	
+	void addAdminRights(String groupName){
+		iAreAdmin.add(groupName);
+	}
+	
+	public boolean isAdmin(String groupName){
+		int i = help.isUserAdmin(username);
+		
+		if (i == 1)
+			return true;
+
+		return false;
+	}
+	
+	public void addUserToGroup(String groupName){
+		myGroups.add(groupName);
+		help.insert("insert calgroup values (" + help.getNumberOfElements("calGroup") + ", '" + username + "', '" + groupName + "', 0");
+	}
+	
+	public void addUserToGroup(String groupName, int val){
+		myGroups.add(groupName);
+		help.insert("insert calgroup values (" + help.getNumberOfElements("calGroup") + ", '" + username + "', '" + groupName + "', 1");
+	}
+	
+	public boolean equals(String username){
+		return (username.equals(this.username));
+	}
+			
+	public HashMap<String, Event> getEvents(){
+		return myEvents;
+	}	
+}
