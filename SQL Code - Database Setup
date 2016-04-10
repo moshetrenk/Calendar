@@ -66,7 +66,20 @@ insert notifications values(3, 'Moshe', 'Chris', 'Things', 'G');
 insert notifications values(4, 'Moshe', 'Chris', 'Other Stuff', 'G');
 insert notifications values(5, 'Moshe', 'Dick', 'Other Stuff', 'G');
 
+alter table notifications drop column notificationType;
+alter table notifications drop column groupName;
 
+alter table notifications add column groupName varchar(16) not null;
+
+truncate notifications;
+
+insert notifications values(1, 'Moshe', 'Tom', 'Things');
+insert notifications values(2, 'Moshe', 'Harry', 'Things');
+insert notifications values(3, 'Moshe', 'Chris', 'Things');
+insert notifications values(4, 'Moshe', 'Chris', 'Other Stuff');
+insert notifications values(5, 'Moshe', 'Dick', 'Other Stuff');
+
+select * from notifications;
 
 
 
