@@ -1,5 +1,6 @@
 /*
-Place this in the constructor of any class that uses SQLHelper
+Place this in the constructor of any class that uses SQLHelper 
+"help" is the variable name I used, change it to the name of your instance
 Note: this should also be used to handle memory upon closing
 
      setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
