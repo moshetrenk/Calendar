@@ -29,15 +29,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class SQLHelper {
-	/* massive edit to this class...
-	* no more static methods, when we used them like that before they had to
-	* recreate the connection every time and it costed a lot of time
-	* now the only static method is closePath() and it should be called at 
-	* the end of any class that uses SQLHelper. Any class that wants to use
-	* the methods here will need a local instance of this class and will have
-	* a connection set up for all calls */
-	
-	
 	private static Connection connection;
 	private static Statement statement;
 	private static ResultSet resultSet;
