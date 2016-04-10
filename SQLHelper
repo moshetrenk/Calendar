@@ -13,6 +13,12 @@ Note: this should also be used to handle memory upon closing
                 System.exit(1);
             }
         });
+to use above the code, these imports are needed:
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.JDialog;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 
 */
 
