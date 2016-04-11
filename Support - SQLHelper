@@ -23,17 +23,25 @@ public class SQLHelper {
 	private static String url = " ";
 	private static String delimiter = "THIS STRING IS THE BETWEEN EVENTS DELIMITER";
 	
+	public static void main(String[] args){
+		SQLHelper help = new SQLHelper();
+		help.deleteEvent("groupname", "01/01/2107", 183000);
+		help.deleteNotification(new String[] {"Moshe", "Tim", "Work"});
+	}
+	
 	SQLHelper(){
 		//change this to your localhost's username and password
 		url = "jdbc:mysql://localhost/thecalendar?useSSL=false&user=root&password=6815";
-
+		
 		try {
 			connection = DriverManager.getConnection(url);
-			statement = connection.createStatement() ;
+			statement = connection.createStatement();
+			turnOffSafeUpdates();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
 	
 	public static void closePath(){
@@ -46,6 +54,16 @@ public class SQLHelper {
 				resultSet.close(); 
 		}
 		catch(SQLException ex ) {} 
+	}
+	
+	private void turnOffSafeUpdates(){
+		String go = "SET SQL_SAFE_UPDATES = 0";
+		try {
+			statement.execute(go);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public boolean queryUsernamePassword(String username, String password){
@@ -234,6 +252,22 @@ public class SQLHelper {
 		return -1;
 	}
 	
+	public int getNumberOfEvents(){
+		String query = "select count(*) from theevent";
+		
+		try {
+			resultSet = statement.executeQuery(query);
+			while(resultSet.next()) {
+				return resultSet.getInt(1);
+			}
+		}
+		catch(SQLException ex ) {
+			System.err.println("DB Exception: " + ex); 
+		}
+		
+		return -1;
+	}
+	
 	public int isUserAdmin(String username){
 		String query = "select * from calgroup where username = '" + username + "'";
 		
@@ -248,6 +282,28 @@ public class SQLHelper {
 		}
 		
 		return -1;
+	}
+	
+	public void deleteEvent(String groupName, String date, int time){
+		String query = "delete from theEvent where user_groupID = '" + groupName + "' and dateOfEvent =  '" + date + "' and startTimeOfEvent = " + time;
+		System.out.println(query);
+		try {			
+			statement.execute(query);
+		}
+		catch(SQLException ex ) {
+			System.err.println("DB Exception: " + ex); 
+		}
+	}
+	
+	public void deleteNotification(String strings[]){
+		String query = "delete from notifications where sender = '" + strings[0] + "' and recipient = '" + strings[1] + "' and groupName = '" + strings[2] + "'";
+		System.out.println(query);
+		try {			
+			statement.execute(query);
+		}
+		catch(SQLException ex ) {
+			System.err.println("DB Exception: " + ex); 
+		}
 	}
 	
 	public static String getDelimiter(){
