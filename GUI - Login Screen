@@ -87,6 +87,40 @@ public class Login extends javax.swing.JFrame {
         jButton2.setText("<HTML><U>Create New User</U><HTML>");
         jButton2.setBorderPainted(false);
         jButton2.setContentAreaFilled(false);
+        jButton2.addMouseListener(new java.awt.event.MouseListener(){
+        	public void actionPerformed(java.awt.event.MouseListener evt){
+        		
+        	}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				jButton2.setCursor(new Cursor(Cursor.HAND_CURSOR));
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				jButton2.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+				
+			}
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
             	  NewUser.paintFrame();
