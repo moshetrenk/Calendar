@@ -39,7 +39,7 @@ public class User {
 				temp.add(cur.get(i));
 			else{
 				event = new Event(temp);
-				these.put(event.getDate(), event);
+				these.put(event.getEventDate(), event);
 				}
 		}
 		
