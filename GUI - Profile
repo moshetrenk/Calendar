@@ -79,7 +79,7 @@ public class Profile {
 	}
 	static private void setBorder(){
 		//set border
-				pnlProfile.setBorder(BorderFactory.createTitledBorder("Profile"));
+				pnlProfile.setBorder(BorderFactory.createTitledBorder("Profile" + "                                                                                                                         " + "Current Temperature: " + getTempByZip.getTemperature("10314") + "\u00B0 F"));
 				
 				//set color
 				frmMain.getContentPane().setBackground(Color.BLUE);
