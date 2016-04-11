@@ -16,14 +16,14 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-public class NewJFrame extends javax.swing.JFrame {
+public class AddEvent extends javax.swing.JFrame {
     /**
      * Creates new form NewJFrame
      */
     
   
         
-    public NewJFrame() {
+    public AddEvent() {
         initComponents();
         setTitle("Add Event");
         addWindowListener(new WindowAdapter() {
@@ -353,12 +353,23 @@ public class NewJFrame extends javax.swing.JFrame {
 	            	Color c = new Color(255, 0, 51);
                         charactersRemainingLabel.setForeground(c);
             	}
-            	 else {
-            		 Color c = new Color(0, 0, 0);
-                         charactersRemainingLabel.setForeground(c);
-            	 }
-            	 int rem = 140 - eventDescriptionTextBox.getText().length();
-             	 charactersRemainingLabel.setText("Characters Remaining: " + rem);
+            	else {
+            		Color c = new Color(0, 0, 0);
+                        charactersRemainingLabel.setForeground(c);
+            	}
+        int rem = 140 - eventDescriptionTextBox.getText().length();
+        charactersRemainingLabel.setText("Characters Remaining: " + rem);
+             	 
+     	if(eventNameTextBox.getText().contains("'")){
+        	invalidTimeLabel.setText("Must Use Letters/Numbers");
+        	invalidTimeLabel.setVisible(true);
+        	
+        	 try{
+                 eventNameTextBox.setText(eventNameTextBox.getText(0, eventNameTextBox.getText().length() - 1));
+             }catch (BadLocationException e) {
+                 e.printStackTrace();
+             }
+        }     	 
     }                                                   
 
     private void buttonAmPmMouseReleased(java.awt.event.MouseEvent evt) {                                         
@@ -427,10 +438,7 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void groupComboBoxActionPerformed(java.awt.event.ActionEvent evt) {                                              
         System.out.println(groupComboBox.getSelectedIndex() + 1);
-    	
-        whichGroupToAddTo = groups[groupComboBox.getSelectedIndex()];
-    	//get which group this is going to or set it to personal
-    	
+        whichGroupToAddTo = groups[groupComboBox.getSelectedIndex()];    	
     }                                             
 
     private void buttonAmPm2MouseReleased(java.awt.event.MouseEvent evt) {                                          
@@ -525,22 +533,34 @@ public class NewJFrame extends javax.swing.JFrame {
 
     private void eventNameTextBoxKeyReleased(java.awt.event.KeyEvent evt) {                                             
         if(eventNameTextBox.getText().length() >= 16){
-            try{
-            eventNameTextBox.setText(eventNameTextBox.getText(0, 16));
-            }catch (BadLocationException e) {
-                e.printStackTrace();
-            }
+           
+        }
+        if(eventNameTextBox.getText().contains("'")){
+        	invalidTimeLabel.setText("Must Use Letters/Numbers");
+        	invalidTimeLabel.setVisible(true);
+        	
+        	 try{
+                 eventNameTextBox.setText(eventNameTextBox.getText(0, eventNameTextBox.getText().length() - 1));
+             }catch (BadLocationException e) {
+                 e.printStackTrace();
+             }
         }
     }                                            
     
     private void addEventToDataBase(){
-       int a = -1;
+    	if(groupComboBox.isEnabled())
+    		whichGroupToAddTo = groups[0];
+    	
+       int a = -1, numMem = help.getNumberOfGroupMembers(whichGroupToAddTo);
+       if(numMem == 0)
+    	   numMem++;       
+       
         a = help.getNumberOfEvents() + 1;
         insertion = "insert theEvent values (" + a + ", '" + eventNameTextBox.getText()
                 + "', '" + username + "', '" + month + "/" + date + "/" + year + "', "
                 + startTime + ", " + endTime + ", '" 
                 + eventDescriptionTextBox.getText()  + "', 1, " 
-                + help.getNumberOfGroupMembers(whichGroupToAddTo) + ")";
+                + numMem + ")";
         
         help.insert(insertion);
         System.out.println(insertion);
@@ -564,7 +584,7 @@ public class NewJFrame extends javax.swing.JFrame {
      public static void paintFrame(){
     	 java.awt.EventQueue.invokeLater(new Runnable() {
              public void run() {
-            	 one = new NewJFrame();
+            	 one = new AddEvent();
              	 JFrame frame = (JFrame) SwingUtilities.getRoot(groupComboBox);
             	 one.centerWindow(frame);
                  one.setVisible(true);
@@ -589,26 +609,24 @@ public class NewJFrame extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AddEvent.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AddEvent.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AddEvent.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AddEvent.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
       
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-            	 one = new NewJFrame();
+            	 one = new AddEvent();
              	 JFrame frame = (JFrame) SwingUtilities.getRoot(groupComboBox);
             	 one.centerWindow(frame);
                  one.setVisible(true);
             }
         });
     }
-    
-    
     
     LocalDateTime today;
     private List listOfGroups;
@@ -617,7 +635,7 @@ public class NewJFrame extends javax.swing.JFrame {
     private int startTimeHour, startTimeMinute, endTimeHour, endTimeMinute,
             month, date, year, startTime, endTime;
     private static SQLHelper help = new SQLHelper();
-    private static NewJFrame one;
+    private static AddEvent one;
     private javax.swing.JButton buttonAmPm;
     private javax.swing.JButton buttonAmPm2;
     private javax.swing.JLabel charactersRemainingLabel;
