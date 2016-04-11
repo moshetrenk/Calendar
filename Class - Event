@@ -1,0 +1,84 @@
+package calendarTest;
+
+import java.util.ArrayList;
+
+public class Events {
+	
+	protected int eventNumber;
+	protected String eventName;
+	protected String eventDate;
+	protected String startTime;
+	protected String endTime;
+	protected String id;
+	protected String description;
+	protected int numberOfAccepted;
+	protected int numberOfTotal;
+
+	public Events(ArrayList eventList){
+		
+		eventNumber = (int) eventList.get(0);
+		eventName = (String) eventList.get(1);
+		id = (String) eventList.get(2);
+		eventDate = (String) eventList.get(3);
+		startTime = (String) eventList.get(4);
+		endTime = (String) eventList.get(5);
+		description = (String) eventList.get(6);
+		numberOfAccepted = (int) eventList.get(7);
+		numberOfTotal = (int) eventList.get(8);
+		
+	}
+	public ArrayList getEventDetails(){
+		
+		ArrayList eventDetails = new ArrayList();
+		
+		eventDetails.set(0, eventNumber);
+		eventDetails.set(1, eventName);
+		eventDetails.set(2,id);
+		eventDetails.set(3,eventDate);
+		eventDetails.set(4,startTime);
+		eventDetails.set(5, endTime);
+		eventDetails.set(6, description);
+		eventDetails.set(7, numberOfAccepted);
+		eventDetails.set(8,numberOfTotal);
+		
+		return eventDetails;
+		
+	}
+	public String getDateTime(){
+		
+		return eventDate + startTime;
+	}
+	
+	
+	public int getEventNumber() {
+		return eventNumber;
+	}
+	public String getEventName() {
+		return eventName;
+	}
+	public String getEventDate() {
+		return eventDate;
+	}
+	public String getStartTime() {
+		return startTime;
+	}
+	public String getEndTime() {
+		return endTime;
+	}
+	public String getId() {
+		return id;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public int getNumberOfAccepted() {
+		return numberOfAccepted;
+	}
+	public int getNumberOfTotal() {
+		return numberOfTotal;
+	}
+	
+	
+	
+	
+}
