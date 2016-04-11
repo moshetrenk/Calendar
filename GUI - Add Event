@@ -1,0 +1,645 @@
+package cal;
+
+import java.awt.Color;
+import java.awt.Dimension;
+
+import javax.swing.text.BadLocationException;
+import java.awt.List;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.time.LocalDateTime;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
+
+public class NewJFrame extends javax.swing.JFrame {
+    /**
+     * Creates new form NewJFrame
+     */
+    
+  
+        
+    public NewJFrame() {
+        initComponents();
+        setTitle("Add Event");
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                help.closePath();
+                System.exit(1);
+            }
+        });
+    }
+
+    private void initComponents() {
+    	setJMenuBar(MenuExp.PrepareMenuBar());
+        
+        jButton1 = new javax.swing.JButton();
+        titleLabel = new javax.swing.JLabel();
+        eventNameLabel = new javax.swing.JLabel();
+        eventDateLabel = new javax.swing.JLabel();
+        eventTimeLabel = new javax.swing.JLabel();
+        eventNameTextBox = new javax.swing.JTextField();
+        eventDetailsLabel = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        eventDescriptionTextBox = new javax.swing.JTextPane();
+        buttonAmPm = new javax.swing.JButton();
+        charactersRemainingLabel = new javax.swing.JLabel();
+        completeButton = new javax.swing.JButton();
+        isGroupEventCheckBox = new javax.swing.JCheckBox();
+        groupComboBox = new javax.swing.JComboBox<>();
+        eventTimeLabel1 = new javax.swing.JLabel();
+        startHourDropDown = new javax.swing.JComboBox<>();
+        startMinDropDown = new javax.swing.JComboBox<>();
+        endHourDropDown = new javax.swing.JComboBox<>();
+        endMinDropDown = new javax.swing.JComboBox<>();
+        buttonAmPm2 = new javax.swing.JButton();
+        monthDropDown = new javax.swing.JComboBox<>();
+        dayDropDown = new javax.swing.JComboBox<>();
+        yearDropDown = new javax.swing.JComboBox<>();
+        invalidTimeLabel = new javax.swing.JLabel();
+
+        jButton1.setText("jButton1");
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        titleLabel.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        titleLabel.setText("Add Event");
+
+        eventNameLabel.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        eventNameLabel.setText("Event Name");
+
+        eventDateLabel.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        eventDateLabel.setText("Event Date");
+
+        eventTimeLabel.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        eventTimeLabel.setText("Event Start");
+
+        eventNameTextBox.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                eventNameTextBoxKeyReleased(evt);
+            }
+        });
+
+        eventDetailsLabel.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        eventDetailsLabel.setText("Event Details");
+
+        eventDescriptionTextBox.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                eventDescriptionTextBoxKeyReleased(evt);
+            }
+        });
+        jScrollPane2.setViewportView(eventDescriptionTextBox);
+
+        buttonAmPm.setText("AM");
+        buttonAmPm.setMaximumSize(new java.awt.Dimension(49, 23));
+        buttonAmPm.setMinimumSize(new java.awt.Dimension(49, 23));
+        buttonAmPm.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                buttonAmPmMouseReleased(evt);
+            }
+        });
+        buttonAmPm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonAmPmActionPerformed(evt);
+            }
+        });
+
+        charactersRemainingLabel.setText("Characters remaining: 140");
+
+        completeButton.setText("Ok");
+        completeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                completeButtonActionPerformed(evt);
+            }
+        });
+
+        isGroupEventCheckBox.setText("Group Event");
+        isGroupEventCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                isGroupEventCheckBoxActionPerformed(evt);
+            }
+        });
+
+        groupComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        groupComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Work", "School", "Bros", "Ladies" }));
+        getGroups();
+        groupComboBox.setEnabled(false);
+        groupComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                groupComboBoxActionPerformed(evt);
+            }
+        });
+
+        eventTimeLabel1.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        eventTimeLabel1.setText("Event End");
+
+        startHourDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        String[] startHours = new String[12];
+        for(int i = 0; i < 12; i++){
+            startHours[i] = Integer.toString(i + 1);
+        }
+        startHourDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(startHours));
+        startHourDropDown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startHourDropDownActionPerformed(evt);
+            }
+        });
+
+        startMinDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        startMinDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "00", "15", "30", "45" }));
+        startMinDropDown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startMinDropDownActionPerformed(evt);
+            }
+        });
+
+        endHourDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        String[] hours = new String[12];
+        for(int i = 0; i < 12; i++){
+            hours[i] = Integer.toString(i + 1);
+        }
+        endHourDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(hours));
+        endHourDropDown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                endHourDropDownActionPerformed(evt);
+            }
+        });
+
+        endMinDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        endMinDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "00", "15", "30", "45" }));
+        endMinDropDown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                endMinDropDownActionPerformed(evt);
+            }
+        });
+
+        buttonAmPm2.setText("AM");
+        buttonAmPm2.setMaximumSize(new java.awt.Dimension(49, 23));
+        buttonAmPm2.setMinimumSize(new java.awt.Dimension(49, 23));
+        buttonAmPm2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                buttonAmPm2MouseReleased(evt);
+            }
+        });
+        buttonAmPm2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonAmPm2ActionPerformed(evt);
+            }
+        });
+
+        monthDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        monthDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}));
+        monthDropDown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                monthDropDownActionPerformed(evt);
+            }
+        });
+
+        dayDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        String[] days = new String[31];
+        for(int i = 0; i < 31; i++){
+            days[i] = Integer.toString(i + 1);
+        }
+        dayDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(days));
+        dayDropDown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                dayDropDownActionPerformed(evt);
+            }
+        });
+
+        yearDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        String[] years = new String[50];
+        for(int i = 0; i < 50; i++){
+            years[i] = Integer.toString(2016 + i);
+        }
+        yearDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(years));
+        yearDropDown.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                yearDropDownActionPerformed(evt);
+            }
+        });
+
+        invalidTimeLabel.setVisible(false);
+        invalidTimeLabel.setText("End Time Should Be After Start Time");
+        today = LocalDateTime.now();
+        //change these and the drop downs to update to today
+        month = 1;
+        date = 1;
+        year = 2016;
+        startTime = 10000;
+        endTime = 10000;
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(eventDetailsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(charactersRemainingLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(eventNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(eventTimeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(eventTimeLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(eventDateLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(40, 40, 40)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(startHourDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(startMinDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(endHourDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(endMinDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(buttonAmPm2, javax.swing.GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE)
+                                    .addComponent(buttonAmPm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(10, 10, 10)
+                                .addComponent(invalidTimeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(isGroupEventCheckBox))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(monthDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(dayDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(eventNameTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(groupComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(yearDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE)))))))
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(completeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(106, 106, 106))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(6, 6, 6)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(isGroupEventCheckBox))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(eventNameLabel)
+                    .addComponent(eventNameTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(groupComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(eventDateLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+                    .addComponent(monthDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dayDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(yearDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(buttonAmPm, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(eventTimeLabel)
+                        .addComponent(startHourDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(startMinDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(buttonAmPm2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(eventTimeLabel1)
+                        .addComponent(endHourDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(endMinDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(invalidTimeLabel)
+                .addGap(1, 1, 1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(eventDetailsLabel)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(charactersRemainingLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(completeButton)
+                .addGap(33, 33, 33))
+        );
+
+        pack();
+    }
+
+    private void eventDescriptionTextBoxKeyReleased(java.awt.event.KeyEvent evt) {                                                    
+        if (eventDescriptionTextBox.getText().length() >= 140){
+	        try {
+                    eventDescriptionTextBox.setText(eventDescriptionTextBox.getText(0, 140));
+                    } catch (BadLocationException e) {
+                        e.printStackTrace();
+                    }
+	            	Color c = new Color(255, 0, 51);
+                        charactersRemainingLabel.setForeground(c);
+            	}
+            	 else {
+            		 Color c = new Color(0, 0, 0);
+                         charactersRemainingLabel.setForeground(c);
+            	 }
+            	 int rem = 140 - eventDescriptionTextBox.getText().length();
+             	 charactersRemainingLabel.setText("Characters Remaining: " + rem);
+    }                                                   
+
+    private void buttonAmPmMouseReleased(java.awt.event.MouseEvent evt) {                                         
+        if(buttonAmPm.getText().equals("AM"))
+    	   buttonAmPm.setText("PM");
+       else
+    	   buttonAmPm.setText("AM");
+    }                                        
+
+    private void completeButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
+        username = whichGroupToAddTo;
+        startTime=(startTimeHour * 10000) + (startTimeMinute * 100);
+        endTime=(endTimeHour * 10000) + (endTimeMinute * 100);
+        
+        System.out.println("month = " + month);
+        System.out.println("day = " + date);
+        System.out.println("year = " + year);
+        System.out.println(today.getHour()*10000);
+        System.out.println(startTime);
+        
+        if (buttonAmPm.getText().equals("PM")){
+                startTime += 120000;
+            } 
+        if (buttonAmPm2.getText().equals("PM")){
+                endTime += 120000;
+        }
+        
+        if((buttonAmPm.getText().equals("PM") 
+                && buttonAmPm2.getText().equals("AM")) 
+                || (startTime >= endTime) 
+                || (month < today.getMonthValue() && year == today.getYear()) 
+                || (month == today.getMonthValue() && year == today.getYear() && date < today.getDayOfMonth())
+                || eventNameTextBox.getText().length() == 0
+                || startTime < (today.getHour() * 10000) && month == today.getMonthValue() && year == today.getYear() && date < today.getDayOfMonth()   )
+        {
+            invalidTimeLabel.setVisible(true);
+            if (month < today.getMonthValue() && year == today.getYear())
+                invalidTimeLabel.setText("Events Cannot Be In The Past");
+
+            if((buttonAmPm.getText().equals("PM") && buttonAmPm2.getText().equals("AM")) || (startTime >= endTime))
+                invalidTimeLabel.setText("End Time Should Be After Start Time");
+        
+            if(month == today.getMonthValue() && year == today.getYear() && date < today.getDayOfMonth())
+                invalidTimeLabel.setText("Events Cannot Be In The Past");
+            
+            if (eventNameTextBox.getText().length() == 0)
+                invalidTimeLabel.setText("Please Enter An Event Name");
+            
+            if (startTime < (today.getHour() * 10000) && month == today.getMonthValue() && year == today.getYear() && date < today.getDayOfMonth())
+                invalidTimeLabel.setText("Events Cannot Be In The Past");
+        }
+        else{
+            invalidTimeLabel.setVisible(false);
+            
+            
+            addEventToDataBase();
+        }
+    }                                              
+
+    private void isGroupEventCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {                                                     
+       if (groupComboBox.isEnabled())
+           groupComboBox.setEnabled(false);
+       else
+           groupComboBox.setEnabled(true);
+    }                                                    
+
+    private void groupComboBoxActionPerformed(java.awt.event.ActionEvent evt) {                                              
+        System.out.println(groupComboBox.getSelectedIndex() + 1);
+    	
+        whichGroupToAddTo = groups[groupComboBox.getSelectedIndex()];
+    	//get which group this is going to or set it to personal
+    	
+    }                                             
+
+    private void buttonAmPm2MouseReleased(java.awt.event.MouseEvent evt) {                                          
+        // TODO add your handling code here:
+    }                                         
+
+    private void buttonAmPmActionPerformed(java.awt.event.ActionEvent evt) {                                           
+        // TODO add your handling code here:
+    }                                          
+
+    private void buttonAmPm2ActionPerformed(java.awt.event.ActionEvent evt) {                                            
+       if(buttonAmPm2.getText().equals("AM"))
+    	   buttonAmPm2.setText("PM");
+       else
+    	   buttonAmPm2.setText("AM");
+    }                                           
+
+    private void monthDropDownActionPerformed(java.awt.event.ActionEvent evt) {                                              
+        month = monthDropDown.getSelectedIndex() + 1;
+        correctTheDaysDropDown();
+        System.out.println("month = " + month);
+    }                                             
+
+    private void dayDropDownActionPerformed(java.awt.event.ActionEvent evt) {                                            
+        date = dayDropDown.getSelectedIndex() + 1;
+        System.out.println("date = " + date);
+    }                                           
+
+    private void yearDropDownActionPerformed(java.awt.event.ActionEvent evt) {                                             
+        year = yearDropDown.getSelectedIndex() + 1;
+        year += 2015;
+        System.out.println("year = " + year);
+        
+        correctTheDaysDropDown();
+    }                                            
+    
+    private void correctTheDaysDropDown(){
+        String[] days  = {};
+        if(month == 2 && isLeapYear(year)){
+            days = new String[29];
+            for(int i = 0; i < 29; i++){
+                days[i] = Integer.toString(i + 1);
+            }
+        }
+        else if (month == 2 && !isLeapYear(year)){
+            days = new String[28];
+            for(int i = 0; i < 28; i++){
+                days[i] = Integer.toString(i + 1);
+            }
+        }
+        else if (month == 4 || month == 6 || month == 9 || month == 11){
+            days = new String[30];
+            for(int i = 0; i < 30; i++){
+                days[i] = Integer.toString(i + 1);
+            }
+        }
+        else if (month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12){
+            days = new String[31];
+            for(int i = 0; i < 31; i++){
+                days[i] = Integer.toString(i + 1);
+            }
+        }
+        
+        dayDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(days));
+    }
+    
+    private boolean isLeapYear(int leap){
+        return ((leap % 400 == 0) || ((leap % 4 == 0) && (leap % 100 != 0)));
+    }
+    
+    private void startHourDropDownActionPerformed(java.awt.event.ActionEvent evt) {                                                  
+        startTimeHour = startHourDropDown.getSelectedIndex() + 1;
+        System.out.println("startTimeHour = " + startTimeHour);
+    }                                                 
+
+    private void startMinDropDownActionPerformed(java.awt.event.ActionEvent evt) {                                                 
+        startTimeMinute = startMinDropDown.getSelectedIndex();
+        startTimeMinute *= 15;
+        System.out.println("startTimeMinute = " + startTimeMinute);
+    }                                                
+
+    private void endHourDropDownActionPerformed(java.awt.event.ActionEvent evt) {                                                
+        endTimeHour = endHourDropDown.getSelectedIndex() + 1;
+        System.out.println("endTimeHour = " + endTimeHour);
+    }                                               
+
+    private void endMinDropDownActionPerformed(java.awt.event.ActionEvent evt) {                                               
+        endTimeMinute = endMinDropDown.getSelectedIndex();
+        endTimeMinute *= 15;
+        System.out.println("endTimeMinute = " + endTimeMinute);
+    }                                              
+
+    private void eventNameTextBoxKeyReleased(java.awt.event.KeyEvent evt) {                                             
+        if(eventNameTextBox.getText().length() >= 16){
+            try{
+            eventNameTextBox.setText(eventNameTextBox.getText(0, 16));
+            }catch (BadLocationException e) {
+                e.printStackTrace();
+            }
+        }
+    }                                            
+    
+    private void addEventToDataBase(){
+       int a = -1;
+        a = help.getNumberOfEvents() + 1;
+        insertion = "insert theEvent values (" + a + ", '" + eventNameTextBox.getText()
+                + "', '" + username + "', '" + month + "/" + date + "/" + year + "', "
+                + startTime + ", " + endTime + ", '" 
+                + eventDescriptionTextBox.getText()  + "', 1, " 
+                + help.getNumberOfGroupMembers(whichGroupToAddTo) + ")";
+        
+        help.insert(insertion);
+        System.out.println(insertion);
+        
+        //insert theEvent values(2, 'CSC 330', 'Moshe', '04/07/2016', 183000, 200000, 'Object Oriented Software Design - 1N 005', 1, 1);
+
+    }   
+    
+    
+    private void getGroups(){
+        listOfGroups = (List)help.getGroups(username);
+        groups = new String [listOfGroups.getItemCount()];
+    	
+    	for(int i = 0; i < listOfGroups.getItemCount(); i++){
+    		groups[i] = listOfGroups.getItem(i);
+    	}
+    	
+    	groupComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(groups));
+    }
+    
+     public static void paintFrame(){
+    	 java.awt.EventQueue.invokeLater(new Runnable() {
+             public void run() {
+            	 one = new NewJFrame();
+             	 JFrame frame = (JFrame) SwingUtilities.getRoot(groupComboBox);
+            	 one.centerWindow(frame);
+                 one.setVisible(true);
+             }
+         });
+    }
+    
+     public static void centerWindow(Window frame){
+    	 Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+    	 int x = (int) ((dimension.getWidth() - frame.getWidth())/2);
+    	 int y = (int) ((dimension.getHeight() - frame.getHeight())/2);
+    	 
+    	 frame.setLocation(x, y);
+     }
+     
+    public static void main(String args[]) {
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(NewJFrame.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+      
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+            	 one = new NewJFrame();
+             	 JFrame frame = (JFrame) SwingUtilities.getRoot(groupComboBox);
+            	 one.centerWindow(frame);
+                 one.setVisible(true);
+            }
+        });
+    }
+    
+    
+    
+    LocalDateTime today;
+    private List listOfGroups;
+    public static String whichGroupToAddTo, username = "Moshe", insertion;
+    private String[] groups;
+    private int startTimeHour, startTimeMinute, endTimeHour, endTimeMinute,
+            month, date, year, startTime, endTime;
+    private static SQLHelper help = new SQLHelper();
+    private static NewJFrame one;
+    private javax.swing.JButton buttonAmPm;
+    private javax.swing.JButton buttonAmPm2;
+    private javax.swing.JLabel charactersRemainingLabel;
+    private javax.swing.JButton completeButton;
+    private javax.swing.JComboBox<String> dayDropDown;
+    private javax.swing.JComboBox<String> endHourDropDown;
+    private javax.swing.JComboBox<String> endMinDropDown;
+    private javax.swing.JLabel eventDateLabel;
+    private javax.swing.JTextPane eventDescriptionTextBox;
+    private javax.swing.JLabel eventDetailsLabel;
+    private javax.swing.JLabel eventNameLabel;
+    private javax.swing.JTextField eventNameTextBox;
+    private javax.swing.JLabel eventTimeLabel;
+    private javax.swing.JLabel eventTimeLabel1;
+    private static javax.swing.JComboBox<String> groupComboBox;
+    private javax.swing.JLabel invalidTimeLabel;
+    private javax.swing.JCheckBox isGroupEventCheckBox;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JComboBox<String> monthDropDown;
+    private javax.swing.JComboBox<String> startHourDropDown;
+    private javax.swing.JComboBox<String> startMinDropDown;
+    private javax.swing.JLabel titleLabel;
+    private javax.swing.JComboBox<String> yearDropDown;
+}
