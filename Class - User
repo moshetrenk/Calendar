@@ -65,12 +65,12 @@ public class User {
 	
 	public void addUserToGroup(String groupName){
 		myGroups.add(groupName);
-		help.insert("insert calgroup values (" + help.getNumberOfElements("calGroup") + ", '" + username + "', '" + groupName + "', 0");
+		help.insert("insert calgroup values (" + (help.getNumberOfElements("calGroup") + 1) + ", '" + username + "', '" + groupName + "', 0");
 	}
 	
 	public void addUserToGroup(String groupName, int val){
 		myGroups.add(groupName);
-		help.insert("insert calgroup values (" + help.getNumberOfElements("calGroup") + ", '" + username + "', '" + groupName + "', 1");
+		help.insert("insert calgroup values (" + (help.getNumberOfElements("calGroup") + 1) + ", '" + username + "', '" + groupName + "', 1");
 	}
 	
 	public boolean equals(String username){
