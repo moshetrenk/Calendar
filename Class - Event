@@ -1,27 +1,28 @@
 package calendarTest;
 
+
 import java.util.ArrayList;
 
-public class Events {
+public class Event {
 	
 	protected int eventNumber;
 	protected String eventName;
 	protected String eventDate;
-	protected String startTime;
-	protected String endTime;
+	protected Object startTime;
+	protected Object endTime;
 	protected String id;
 	protected String description;
 	protected int numberOfAccepted;
 	protected int numberOfTotal;
 
-	public Events(ArrayList eventList){
+	public Event(ArrayList eventList){
 		
 		eventNumber = (int) eventList.get(0);
 		eventName = (String) eventList.get(1);
 		id = (String) eventList.get(2);
 		eventDate = (String) eventList.get(3);
-		startTime = (String) eventList.get(4);
-		endTime = (String) eventList.get(5);
+		startTime =  eventList.get(4);
+		endTime =   eventList.get(5);
 		description = (String) eventList.get(6);
 		numberOfAccepted = (int) eventList.get(7);
 		numberOfTotal = (int) eventList.get(8);
@@ -46,7 +47,7 @@ public class Events {
 	}
 	public String getDateTime(){
 		
-		return eventDate + startTime;
+		return eventDate + startTime.toString();
 	}
 	
 	
@@ -60,10 +61,10 @@ public class Events {
 		return eventDate;
 	}
 	public String getStartTime() {
-		return startTime;
+		return startTime.toString();
 	}
 	public String getEndTime() {
-		return endTime;
+		return endTime.toString();
 	}
 	public String getId() {
 		return id;
