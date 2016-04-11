@@ -7,8 +7,6 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class SQLHelper {
-	
-	
 	private static Connection connection;
 	private static Statement statement;
 	private static ResultSet resultSet;
@@ -18,8 +16,10 @@ public class SQLHelper {
 	
 	public static void main(String[] args){
 		SQLHelper help = new SQLHelper();
-		help.deleteEvent("groupname", "01/01/2107", 183000);
-		help.deleteNotification(new String[] {"Moshe", "Tim", "Work"});
+		//help.deleteEvent("groupname", "01/01/2107", 183000);
+		//help.deleteNotification(new String[] {"Moshe", "Tim", "Work"});
+		//help.getHighestPrimaryKey("theEvent", "eventNumber");
+		help.getHighestPrimaryKey("theevent");
 	}
 	
 	SQLHelper(){
@@ -110,7 +110,7 @@ public class SQLHelper {
 	//overloaded insert, pass a table and the values to give it
 	public void insert(String table, ArrayList values){
 		String query = "insert into " + table + " values (";
-		
+		System.out.println(query);
 		for(int i = 0; i < values.size(); i++){
 			if (values.get(i).getClass().getSimpleName().equals("String")){
 				if(i == values.size() - 1)
@@ -245,22 +245,6 @@ public class SQLHelper {
 		return -1;
 	}
 	
-	public int getNumberOfEvents(){
-		String query = "select count(*) from theevent";
-		
-		try {
-			resultSet = statement.executeQuery(query);
-			while(resultSet.next()) {
-				return resultSet.getInt(1);
-			}
-		}
-		catch(SQLException ex ) {
-			System.err.println("DB Exception: " + ex); 
-		}
-		
-		return -1;
-	}
-	
 	public int isUserAdmin(String username){
 		String query = "select * from calgroup where username = '" + username + "'";
 		
@@ -297,6 +281,43 @@ public class SQLHelper {
 		catch(SQLException ex ) {
 			System.err.println("DB Exception: " + ex); 
 		}
+	}
+	
+	public int getHighestPrimaryKey(String tableName){
+		String primaryKey = getPrimaryKeyForAnyTable(tableName);
+		String query = "select " + primaryKey + " from " + tableName + " order by " + primaryKey + " desc";
+		
+		try {
+			resultSet = statement.executeQuery(query);
+			while(resultSet.next()) {
+				System.out.println(resultSet.getInt(1));
+				return resultSet.getInt(1);
+			}
+		}
+		catch(SQLException ex ) {
+			System.err.println("DB Exception: " + ex); 
+		}
+		
+		return -1;
+	}
+	
+	
+	
+	private String getPrimaryKeyForAnyTable(String tableName){
+		String query = "desc " + tableName;
+
+		try {
+			resultSet = statement.executeQuery(query);
+			while(resultSet.next()) {
+				System.out.println(resultSet.getString(1));
+				return resultSet.getString(1);
+			}
+		}
+		catch(SQLException ex ) {
+			System.err.println("DB Exception: " + ex); 
+		}
+		
+		return " ";
 	}
 	
 	public static String getDelimiter(){
