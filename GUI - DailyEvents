@@ -1,0 +1,386 @@
+package calendarTest;
+
+import javax.swing.*;
+
+import javax.swing.event.*;
+import javax.swing.table.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+
+
+public class DailyEvents {
+	
+	static JFrame frmMain;
+	static Container dayPane;
+	static DefaultTableModel mtblChooseDays, mtblDailyEvents;
+	static JTable tblChooseDays,tblDailyEvents;
+	static JScrollPane stblChooseDays, stblDailyEvents;
+	static JPanel pnlDailyEvents;
+	static JButton [] dayBtns;
+	static JList listOfDays, listOfHours;
+	static Action viewEventDetails;
+	static private int rowClicked;
+	
+	static private void prepareFrame(){
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String lcOSName = System.getProperty("os.name").toLowerCase();
+		boolean IS_MAC = lcOSName.startsWith("mac os x");
+		System.setProperty("apple.laf.useScreenMenuBar", String.valueOf(IS_MAC));
+		
+		frmMain = new JFrame("Group Calendar");
+		frmMain.setSize(550, 385);
+		dayPane = frmMain.getContentPane();
+		dayPane.setLayout(null);
+		frmMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Close when X is clicked
+		mtblChooseDays = new DefaultTableModel(1,CalendarProgram.getDaysInMonth()){public boolean isCellEditable(int rowIndex, int mColIndex){return false;}};
+		mtblDailyEvents = new DefaultTableModel(){public boolean isCellEditable(int rowIndex, int mColIndex){return false;}};
+	}
+	public static void centerWindow(Window frame) {
+	    Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+	    int x = (int) ((dimension.getWidth() - frame.getWidth()) / 2);
+	    int y = (int) ((dimension.getHeight() - frame.getHeight()) / 2);
+	    frame.setLocation(x, y);
+	}
+	static private void createControls(){
+		
+		tblChooseDays = new JTable(mtblChooseDays);
+		tblDailyEvents = new JTable(mtblDailyEvents);
+		
+		pnlDailyEvents = new JPanel(null);
+		
+		tblChooseDays.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tblChooseDays.setRowSelectionAllowed(false);
+		tblChooseDays.setRowHeight(35);
+		tblChooseDays.setShowGrid(true);
+		tblChooseDays.setSize(750, 50);
+		tblChooseDays.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		
+		tblChooseDays.setTableHeader(null);
+		mtblChooseDays.setRowCount(1);
+		
+		//tblDailyEvents.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tblDailyEvents.setShowGrid(true);
+		tblDailyEvents.setRowSelectionAllowed(true);
+		
+		
+		stblChooseDays = new JScrollPane(tblChooseDays);
+		stblDailyEvents = new JScrollPane(tblDailyEvents);
+		
+		
+		
+		String[] dayBtns = new String[31];
+		for(int i = 0; i < CalendarProgram.getDaysInMonth(); i++){
+			if(i < 9)
+				dayBtns[i] = ("0"+String.valueOf(i+1));
+			else
+				dayBtns[i]=( String.valueOf(i+1));
+			mtblChooseDays.setValueAt(dayBtns[i], 0, i);
+			tblChooseDays.setDefaultRenderer(tblChooseDays.getColumnClass(0), new tblChooseDaysRenderer());
+		}
+		
+		
+		tblDailyEvents.setRowHeight(38);
+		mtblDailyEvents.setRowCount(53);
+		mtblDailyEvents.addColumn("Time");
+		mtblDailyEvents.addColumn("Event Name");
+		mtblDailyEvents.addColumn("");
+		TableColumn column = null;
+	    for (int i = 0; i < 2; i++) {
+	        column = tblDailyEvents.getColumnModel().getColumn(i);
+	        if (i == 1) {
+	            column.setPreferredWidth(250); //sport column is bigger
+	        } else {
+	            column.setPreferredWidth(50);
+	        }
+	    }
+	
+		String [] hours = new String[53];
+		int k=12;
+		String amOrPm = "PM";
+		for(int j =0; j<53; j++){
+		
+		if( k % 12==0 && amOrPm == "PM" && j %2 == 0)
+				amOrPm = "AM";
+		else if(k %12 ==0 && amOrPm == "AM" && j %2 == 0)
+				amOrPm = "PM";
+			
+			if(j%2 == 0 && k %12 == 0){
+				hours[j] = Integer.toString(12)+":00 " + amOrPm;	
+				
+			}
+			else if(j%2 == 1 && k %12 == 0){
+				hours[j] = Integer.toString(12)+ ":30 "+amOrPm;
+				k++;
+			}
+			else if(j%2 ==0)
+				hours[j] = Integer.toString(k%12)+":00 "+ amOrPm;
+			
+			else if(j%2 == 1){
+				hours[j] = Integer.toString(k%12)+":30 " + amOrPm;
+			k++;
+			}
+			
+			mtblDailyEvents.setValueAt(hours[j],j,0);
+			
+			//if(mtblDailyEvents.getValueAt(j,1) != null)
+				mtblDailyEvents.setValueAt("<HTML><font color = blue><U>View Event Details</U></font><HTML>" ,j, 2);
+			tblDailyEvents.setDefaultRenderer(tblDailyEvents.getColumnClass(0), new tblDailyEventsRenderer());
+			
+			//ButtonColumn buttonColumn = new ButtonColumn(tblDailyEvents,viewEventDetails , 2);
+		}
+		
+		stblChooseDays.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+		
+}
+
+	static class tblDaySelectedRenderer extends DefaultTableCellRenderer{
+		public Component getTableCellRendererComponent (JTable table, Object value, boolean selected, boolean focused, int row, int column){
+			super.getTableCellRendererComponent(table, value, selected, focused, row, column);
+			int columnSelected = table.getSelectedColumn();
+			int rowSelected = table.getSelectedRow();
+			
+			
+			if(column == columnSelected && row == rowSelected)
+				setBackground(new Color(0,191,255));
+			
+			else if (column % 2 == 0){ 
+				setBackground(new Color(235,235,235));
+			}
+			else setBackground(new Color(255,255,255));
+			
+			
+			setHorizontalAlignment(SwingConstants.CENTER);
+			setBorder(null);
+			setForeground(Color.black);
+			return this;  
+		}
+		
+	}
+	
+	
+	static class tblChooseDaysRenderer extends DefaultTableCellRenderer{
+		public Component getTableCellRendererComponent (JTable table, Object value, boolean selected, boolean focused, int row, int column){
+			super.getTableCellRendererComponent(table, value, selected, focused, row, column);
+		
+			Locale locale = new Locale("true");
+			GregorianCalendar calendar = new GregorianCalendar(locale);
+			
+			if(column +1  == calendar.get(GregorianCalendar.DAY_OF_MONTH))
+				setBackground(new Color(0,191,255));
+			
+			else if (column % 2 == 0){ 
+				setBackground(new Color(235,235,235));
+			}
+			else setBackground(new Color(255,255,255));
+			setHorizontalAlignment(SwingConstants.CENTER);
+			setBorder(null);
+			setForeground(Color.black);
+			tblChooseDays.setCursor(new Cursor(Cursor.HAND_CURSOR));
+			return this;  
+		}
+		
+	}
+	
+	
+	static class tblDailyEventsRenderer extends DefaultTableCellRenderer{
+		public Component getTableCellRendererComponent (JTable table, Object value, boolean selected, boolean focused, int row, int column){
+			super.getTableCellRendererComponent(table, value, selected, focused, row, column);
+			
+			if(tblDailyEvents.isRowSelected(row) && tblDailyEvents.isColumnSelected(2) && tblDailyEvents.getValueAt(row, 1) != null){
+				
+				/*String timeDate = user.getEvent(tblDailyEvents.getValueAt(row, 0));
+				eventDetails.paintFrame(timeDate);
+				*/
+				
+			}
+			
+			else if (tblDailyEvents.isRowSelected(row)){
+				setBackground(new Color(0,191,255));
+			}
+			else if (row % 2 == 0){ 
+				setBackground(new Color(215,215,215));
+			}
+			else setBackground(new Color(255,255,255));
+			setBorder(null);
+			setForeground(Color.black);
+			setHorizontalAlignment(SwingConstants.CENTER);
+			
+			/*if(tblDailyEvents.isRowSelected(row)){
+			rowClicked = tblDailyEvents.getSelectedRow();
+			
+			}
+			*/
+			
+			return this;  
+			
+			
+		}
+	}
+	
+	static private void setBorder(){
+		stblChooseDays.setFont(new Font("Courier New", Font.ITALIC, 18));
+		stblChooseDays.setForeground(Color.BLUE);
+	}
+	
+	static private void registerActionListeners(){
+		
+	
+		tblChooseDays.addMouseListener( new java.awt.event.MouseListener() {
+			public void actionPerformed(java.awt.event.MouseListener evt) {
+             
+			
+		}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				tblChooseDays.setDefaultRenderer(tblChooseDays.getColumnClass(0), new tblDaySelectedRenderer());
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				tblChooseDays.setDefaultRenderer(tblChooseDays.getColumnClass(0), new tblDaySelectedRenderer());
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+			tblChooseDays.setDefaultRenderer(tblChooseDays.getColumnClass(0), new tblDaySelectedRenderer());
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				//tblChooseDays.setDefaultRenderer(tblChooseDays.getColumnClass(0), new tblDaySelectedRenderer());
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				//tblChooseDays.setDefaultRenderer(tblChooseDays.getColumnClass(0), new tblDaySelectedRenderer());
+				
+			}
+			
+	});
+		
+		tblDailyEvents.addMouseListener(new java.awt.event.MouseListener() {
+			public void actionPerformed(java.awt.event.MouseListener evt){
+				
+				
+			}
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				tblDailyEvents.setDefaultRenderer(tblChooseDays.getColumnClass(0), new tblDailyEventsRenderer());
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				//tblDailyEvents.setDefaultRenderer(tblChooseDays.getColumnClass(0), new tblDailyEventsRenderer());
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				//tblDailyEvents.setDefaultRenderer(tblChooseDays.getColumnClass(0), new tblDailyEventsRenderer());
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+			
+			//tblDailyEvents.setDefaultRenderer(tblChooseDays.getColumnClass(0), new tblDailyEventsRenderer()); 
+				//if(e.getX()>410 && e.getX() < 530)
+				//tblDailyEvents.setCursor(new Cursor(Cursor.HAND_CURSOR));
+			}
+			@Override
+			public void mouseExited(MouseEvent e) {
+				//tblDailyEvents.setDefaultRenderer(tblChooseDays.getColumnClass(0), new tblDailyEventsRenderer());
+				//if(e.getX()<410 || e.getX() > 530)
+				//tblDailyEvents.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			}
+			
+		});
+		
+		
+		viewEventDetails = new AbstractAction()
+		{
+		    public void actionPerformed(ActionEvent e)
+		    {
+		        JTable table = (JTable)e.getSource();
+		        int modelRow = Integer.valueOf( e.getActionCommand() );
+		       String dateTime = (String) (((DefaultTableModel)table.getModel()).getValueAt(modelRow, 0));
+		       //eventDetails.paintFrame(dateTime);
+		       frmMain.setVisible(false);
+		        
+		    }
+		};
+		
+	}
+	
+	static private void addControls(){
+		dayPane.add(pnlDailyEvents);
+		pnlDailyEvents.add(stblChooseDays);
+		pnlDailyEvents.add(stblDailyEvents);
+		frmMain.setJMenuBar(MenuExp.PrepareMenuBar());
+		
+		
+		
+	}
+	static private void setBounds(){
+		pnlDailyEvents.setBounds(0,0,550,550);
+		stblChooseDays.setBounds(0,0,550,65);
+		stblChooseDays.setAlignmentX(Frame.LEFT_ALIGNMENT);
+		stblDailyEvents.setBounds(0,65,550,550-65);
+		stblDailyEvents.setAlignmentX(Frame.LEFT_ALIGNMENT);
+		
+		
+	}
+	
+	static private void makeFrameVisible(boolean decision){
+		//Make frame visible
+				frmMain.setResizable(false);
+				frmMain.setVisible(decision);
+	}
+	
+	public static void paintFrame(){
+		prepareFrame();
+		centerWindow(frmMain);
+		createControls();
+		setBorder();
+		registerActionListeners();
+		addControls();
+		setBounds();
+		makeFrameVisible(true);
+	}
+	
+	public static void main (String args[]){
+		//Look and feel
+		try {UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());}
+		catch (ClassNotFoundException e) {}
+		catch (InstantiationException e) {}
+		catch (IllegalAccessException e) {}
+		catch (UnsupportedLookAndFeelException e) {}
+
+		paintFrame();
+		
+		
+	}
+
+}
