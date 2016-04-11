@@ -16,13 +16,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-public class AddEvent extends javax.swing.JFrame {
-    /**
-     * Creates new form NewJFrame
-     */
-    
-  
-        
+public class AddEvent extends javax.swing.JFrame {      
     public AddEvent() {
         initComponents();
         setTitle("Add Event");
@@ -343,10 +337,16 @@ public class AddEvent extends javax.swing.JFrame {
         pack();
     }
 
-    private void eventDescriptionTextBoxKeyReleased(java.awt.event.KeyEvent evt) {                                                    
-        if (eventDescriptionTextBox.getText().length() >= 140){
+    private void eventDescriptionTextBoxKeyReleased(java.awt.event.KeyEvent evt) {    
+    	int maxSize = 140;
+    	
+    	if(eventDescriptionTextBox.getText().contains("'")){
+        	maxSize--;
+        }
+    	
+        if (eventDescriptionTextBox.getText().length() >= maxSize){
 	        try {
-                    eventDescriptionTextBox.setText(eventDescriptionTextBox.getText(0, 140));
+                    eventDescriptionTextBox.setText(eventDescriptionTextBox.getText(0, maxSize));
                     } catch (BadLocationException e) {
                         e.printStackTrace();
                     }
@@ -357,19 +357,8 @@ public class AddEvent extends javax.swing.JFrame {
             		Color c = new Color(0, 0, 0);
                         charactersRemainingLabel.setForeground(c);
             	}
-        int rem = 140 - eventDescriptionTextBox.getText().length();
-        charactersRemainingLabel.setText("Characters Remaining: " + rem);
-             	 
-     	if(eventNameTextBox.getText().contains("'")){
-        	invalidTimeLabel.setText("Must Use Letters/Numbers");
-        	invalidTimeLabel.setVisible(true);
-        	
-        	 try{
-                 eventNameTextBox.setText(eventNameTextBox.getText(0, eventNameTextBox.getText().length() - 1));
-             }catch (BadLocationException e) {
-                 e.printStackTrace();
-             }
-        }     	 
+        int rem = maxSize - eventDescriptionTextBox.getText().length();
+        charactersRemainingLabel.setText("Characters Remaining: " + rem);  	 
     }                                                   
 
     private void buttonAmPmMouseReleased(java.awt.event.MouseEvent evt) {                                         
@@ -531,35 +520,59 @@ public class AddEvent extends javax.swing.JFrame {
         System.out.println("endTimeMinute = " + endTimeMinute);
     }                                              
 
-    private void eventNameTextBoxKeyReleased(java.awt.event.KeyEvent evt) {                                             
-        if(eventNameTextBox.getText().length() >= 16){
-           
+    private void eventNameTextBoxKeyReleased(java.awt.event.KeyEvent evt) { 
+    	int maxSize = 16;
+    	
+    	if(eventNameTextBox.getText().contains("'")){
+        	maxSize--;
         }
-        if(eventNameTextBox.getText().contains("'")){
-        	invalidTimeLabel.setText("Must Use Letters/Numbers");
-        	invalidTimeLabel.setVisible(true);
-        	
-        	 try{
-                 eventNameTextBox.setText(eventNameTextBox.getText(0, eventNameTextBox.getText().length() - 1));
-             }catch (BadLocationException e) {
-                 e.printStackTrace();
-             }
+        if(eventNameTextBox.getText().length() >= 16){
+        	try{
+                eventNameTextBox.setText(eventNameTextBox.getText(0, maxSize));
+            }catch (BadLocationException e) {
+                e.printStackTrace();
+            }
         }
     }                                            
     
+    //note: if event name contains two apostrophes, a SQL exception will be thrown
+    //ie if the user enter's Dad's son's then the first apostrophe will be escape
+    //sequenced but the second is going to be interpreted by SQL as the end of the 
+    //event name and whatever comes after will be seen as a syntax error
+    //This same issue applies to event description
     private void addEventToDataBase(){
     	if(groupComboBox.isEnabled())
     		whichGroupToAddTo = groups[0];
     	
-       int a = -1, numMem = help.getNumberOfGroupMembers(whichGroupToAddTo);
-       if(numMem == 0)
+    	String eventName = eventNameTextBox.getText();
+    	if (eventName.contains("'")){
+    		int f = eventName.indexOf('\'');
+    		eventName = eventName.substring(0, f) + "\\'" + eventName.substring(f + 1, eventName.length());
+    		System.out.println(eventName);
+    	}
+    	
+    	String eventDescription = eventDescriptionTextBox.getText();
+    	if (eventDescription .contains("'")){
+    		int f = eventDescription .indexOf('\'');
+    		eventDescription = eventDescription.substring(0, f) + "\\'" + eventDescription.substring(f + 1, eventDescription.length());
+    		System.out.println(eventDescription);
+    	}
+    	
+        int a = -1, numMem = help.getNumberOfGroupMembers(whichGroupToAddTo);
+        if(numMem == 0)
     	   numMem++;       
        
-        a = help.getNumberOfEvents() + 1;
-        insertion = "insert theEvent values (" + a + ", '" + eventNameTextBox.getText()
+        a = help.getHighestPrimaryKey("theEvent", "eventNumber") + 1;
+        
+        /////////////////////////////////////////////////////////////////
+        //get username from user right here
+        username = "moshe";
+        ///////////////////////////////////////////////////////////////
+        
+        insertion = "insert theEvent values (" + a + ", '" + eventName
                 + "', '" + username + "', '" + month + "/" + date + "/" + year + "', "
                 + startTime + ", " + endTime + ", '" 
-                + eventDescriptionTextBox.getText()  + "', 1, " 
+                + eventDescription  + "', 1, " 
                 + numMem + ")";
         
         help.insert(insertion);
