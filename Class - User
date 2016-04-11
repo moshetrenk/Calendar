@@ -21,6 +21,7 @@ public class User {
 	
 	public static void main(String[] args){
 		User moshe = new User("Moshe");
+		moshe.addUserToGroup("calGroup");
 	}
 	
 	private static List initGroups(){
@@ -28,18 +29,22 @@ public class User {
 	}
 	
 	private static HashMap<String, Event> initEvents(){
-		ArrayList cur = help.getEvents(username), 
-				temp = new ArrayList();	
+		ArrayList cur = help.getEvents(username),
+				 temp = new ArrayList();	
+		
 		int numEvents = help.getNumberOfEventsByUser(username);
 		HashMap<String, Event> these = new HashMap<String, Event>();
 		Event event;
-
+		String delimiter = help.getDelimiter();
+		
 		for(int i = 0; i < cur.size(); i++){
-			if(!cur.get(i).equals(help.getDelimiter()))
+			if(!cur.get(i).equals(delimiter))
 				temp.add(cur.get(i));
 			else{
 				event = new Event(temp);
-				these.put(event.getEventDate(), event);
+				temp = new ArrayList();
+				
+				these.put(event.getDateTime(), event);
 				}
 		}
 		
@@ -65,9 +70,17 @@ public class User {
 	
 	public void addUserToGroup(String groupName){
 		myGroups.add(groupName);
-		help.insert("insert calgroup values (" + (help.getNumberOfElements("calGroup") + 1) + ", '" + username + "', '" + groupName + "', 0");
+		ArrayList list = new ArrayList();
+		list.add(help.getNumberOfElements("calGroup") + 1);
+		list.add(username);
+		list.add(groupName);
+		list.add(0);
+		
+		help.insert("calgroup", list);
 	}
+	//^^add as regular user
 	
+	//vs add as admin:
 	public void addUserToGroup(String groupName, int val){
 		myGroups.add(groupName);
 		help.insert("insert calgroup values (" + (help.getNumberOfElements("calGroup") + 1) + ", '" + username + "', '" + groupName + "', 1");
@@ -76,8 +89,23 @@ public class User {
 	public boolean equals(String username){
 		return (username.equals(this.username));
 	}
-			
-	public HashMap<String, Event> getEvents(){
-		return myEvents;
-	}	
+		
+	public Event getEvent(String dateTime){
+		return myEvents.get(dateTime);
+	}
+	
+	public void deleteEvent(String dateTime){
+		
+		//help.deleteEvent(username, date, time);
+	}
 }
+
+
+
+
+
+
+
+
+
+
