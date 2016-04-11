@@ -1,23 +1,39 @@
-package lab3;
+package cal;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
-
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
 
 public class NewUser extends javax.swing.JFrame {
 	String temp = new String("");
     private static NewUser one;
+    private static SQLHelper help = new SQLHelper();
 	
 	public NewUser() {
         initComponents();
-    }    @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
-    
-    private void initComponents() {
+        setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                help.closePath();
+                System.exit(1);
+            }
+        });
+    }    
+	
+	private void initComponents() {
 
-        titleLabel = new JLabel("<HTML><font face = 'Sitka Heading' size = '10'><I><U>Create User</U></I></font></HTML>", SwingConstants.CENTER);
+    	setTitle("New User");
+        titleLabel = new JLabel("<HTML><font face = 'Sitka Heading' size = '8'><I><U>Create User</U></I></font></HTML>", SwingConstants.CENTER);
        // jp1 = new javax.swing.JTextField();
         inputNameTextBox = new javax.swing.JTextField();
         //jp2 = new javax.swing.JTextField();
@@ -46,7 +62,25 @@ public class NewUser extends javax.swing.JFrame {
                 inputNameTextBoxKeyReleased(evt);
             }
         });
-
+        
+        jp1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jp1KeyReleased(evt);
+            }
+        });
+        
+        jp2.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jp2KeyReleased(evt);
+            }
+        });
+        
+        //allows user to press enter instead of clicking the "Create Account" button
+        jp2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            	enterButtonActionPerformed(evt);
+            }
+        });
 
         usernameLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); 
         usernameLabel.setText("Username:");
@@ -58,7 +92,7 @@ public class NewUser extends javax.swing.JFrame {
         passwordLabel2.setText("Verify Password:");
 
         enterButton.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
-        enterButton.setText("Enter");
+        enterButton.setText("Create Account");
         enterButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 enterButtonMouseClicked(evt);
@@ -146,6 +180,29 @@ public class NewUser extends javax.swing.JFrame {
         pack();
     }// </editor-fold>                        
 
+	
+	//must use deprecated function getText() to ensure max size of 16
+	private static void jp1KeyReleased(java.awt.event.KeyEvent evt) {
+		if(jp1.getText().length() >= 16){
+            try{
+            jp1.setText(jp1.getText(0, 16));
+            }catch (BadLocationException e) {
+                e.printStackTrace();
+            }
+        }
+	}   
+	
+	//must use deprecated function getText() to ensure max size of 16
+	private static void jp2KeyReleased(java.awt.event.KeyEvent evt) {
+		if(jp2.getText().length() >= 16){
+            try{
+            jp2.setText(jp2.getText(0, 16));
+            }catch (BadLocationException e) {
+                e.printStackTrace();
+            }
+        }
+	}   
+	
     private static void enterButtonMouseClicked(java.awt.event.MouseEvent evt) {                                      
         
     }                                     
@@ -154,9 +211,16 @@ public class NewUser extends javax.swing.JFrame {
         // TODO add your handling code here:
     }                                           
 
-    private static void inputNameTextBoxKeyReleased(java.awt.event.KeyEvent evt) {                                       
+    private static void inputNameTextBoxKeyReleased(java.awt.event.KeyEvent evt) {
+	    	if(inputNameTextBox.getText().length() >= 16){
+	            try{
+	            inputNameTextBox.setText(inputNameTextBox.getText(0, 16));
+	            }catch (BadLocationException e) {
+	                e.printStackTrace();
+	            }
+	        }
     		String input = inputNameTextBox.getText();
-	    	String get = new String(EaseOfSQL.query("select username from thecalendar.friend where username = '" + input +"'"));
+	    	String get = new String(help.query("select username from thecalendar.friend where username = '" + input +"'"));
 
 	    	if((input.toLowerCase()).equals((get).toLowerCase())){
 	    		usernameTaken.setText("That username is already taken");
@@ -204,7 +268,7 @@ public class NewUser extends javax.swing.JFrame {
     		
     		SelfClosingMessage.output("Welcome!", "", 1000);
     		
-    		EaseOfSQL.insertUsernamePassword(usernameInput, passwordInput);
+    		help.insertUsernamePassword(usernameInput, passwordInput);
     		
     	}
     }                                        
@@ -217,17 +281,21 @@ public class NewUser extends javax.swing.JFrame {
     	 java.awt.EventQueue.invokeLater(new Runnable() {
              public void run() {
             	 one = new NewUser();
-             	 one.setLocation(500, 200);
+            	 JFrame frame = (JFrame) SwingUtilities.getRoot(jp1);
+               	 one.centerWindow(frame);
                  one.setVisible(true);
              }
          });
     }
+
+    public static void centerWindow(Window frame){
+   	 Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+   	 int x = (int) ((dimension.getWidth() - frame.getWidth())/2);
+   	 int y = (int) ((dimension.getHeight() - frame.getHeight())/2);
+   	 
+   	 frame.setLocation(x, y);
+    }
     
-    
-    
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
           try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -250,9 +318,7 @@ public class NewUser extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                one = new NewUser();
-                one.setLocation(550, 250);
-                one.setVisible(true);
+                paintFrame();
             }
         });
     }
