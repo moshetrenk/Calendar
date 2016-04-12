@@ -313,7 +313,7 @@ public class SQLHelper {
 			
 			int i = 0;
 			while(resultSet.next()) {
-				groups.add(resultSet.getString(3));
+				groups.add(resultSet.getString(4));
 				i++;
 			}
 		}
