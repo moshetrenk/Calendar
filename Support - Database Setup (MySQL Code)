@@ -41,9 +41,9 @@ insert friend values ('Harry', 'password1', 'URL');
 
 insert theEvent values(1, 'Dr Appointment', 'Moshe', '08/06/2017', 183000, 200000, '', 1, 1);
 insert theEvent values(2, 'CSC 330', 'Omar', '04/07/2016', 183000, 200000, 'Object Oriented Software Design - 1N 005', 1, 1);
-insert theEvent values(3, 'B', 'Moshe', '04/07/2016', 131500, 140000, 'Therapuetic stuff', 1, 1);
-insert theEvent values(4, 'Meeting Prof Jackson', 'Moshe', '04/22/2016', 83000, 84500, 'Meeting to discuss rampant homicides on campus', 1, 1);
-insert theEvent values(5, 'Top Secret Classified', 'Keith', '04/07/2016', 183000, 200000, 'Look away, this shit is private', 1, 1);
+insert theEvent values(3, 'Bridging the gap', 'Moshe', '04/07/2016', 131500, 140000, 'Therapuetic stuff', 1, 1);
+insert theEvent values(4, 'Meeting Prof Jackson', 'Moshe', '04/22/2016', 83000, 84500, 'Meeting to discuss rampant extraterrestrial assaults on campus', 1, 1);
+insert theEvent values(5, 'Top Secret Classified', 'Keith', '04/07/2016', 183000, 200000, 'Look away, this is super private', 1, 1);
 insert theEvent values(6, 'Event1', 'CSC330 Project', '08/06/2017', 183000, 200000, '', 1, (select count(*) from calgroup where groupname = 'CSC330 Project'));
 insert theEvent values(7, 'Event2', 'CSC330 Project', '08/06/2017', 183000, 200000, '', 1, (select count(*) from calgroup where groupname = 'CSC330 Project'));
 insert theEvent values(8, 'Event3', 'Things', '08/06/2017', 183000, 200000, '', 1, (select count(*) from calgroup where groupname = 'Things'));
