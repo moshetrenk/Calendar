@@ -1,7 +1,7 @@
 # Calendar
 
 By Keith Thompson:
-Class - Event \n
+Class - Event    
 GUI - Daily Events
 GUI - My Calendar Main Screen
 GUI - Profile
