@@ -21,7 +21,8 @@ public class User {
 	
 	public static void main(String[] args){
 		User moshe = new User("Moshe");
-		moshe.addUserToGroup("calGroup");
+		moshe.deleteEvent("04/07/201613:15:00");
+
 	}
 	
 	private static List initGroups(){
@@ -95,8 +96,10 @@ public class User {
 	}
 	
 	public void deleteEvent(String dateTime){
+		String date = dateTime.substring(0, 10),
+				time = dateTime.substring(10, 12) + dateTime.substring(13, 15) + "00";
 		
-		//help.deleteEvent(username, date, time);
+		help.deleteEvent(username, date, Integer.parseInt(time));
 	}
 }
 
