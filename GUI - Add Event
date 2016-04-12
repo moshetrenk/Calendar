@@ -325,7 +325,7 @@ public class AddEvent extends javax.swing.JFrame {
                 .addComponent(completeButton)
                 .addGap(33, 33, 33))
         );
-
+        setResizable(false);
         pack();
     }
 
