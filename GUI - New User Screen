@@ -173,7 +173,7 @@ public class NewUser extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGap(30, 30, 30))
         );
-
+        setResizable(false);
         pack();
     }                     
 
