@@ -3,7 +3,6 @@ package cal;
 import java.io.IOException;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
-
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -16,7 +15,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 public class Login extends javax.swing.JFrame {
-
+	
     private static javax.swing.JButton jButton1;
     private static javax.swing.JButton jButton2;
     private static javax.swing.JLabel jLabel1;
@@ -41,9 +40,8 @@ public class Login extends javax.swing.JFrame {
             }
         });
     }
-
-        
-     private void initComponents() {
+    
+    private void initComponents() {
     	setJMenuBar(MenuExp.PrepareMenuBar(" "));
         jLabel3 = new JLabel("<HTML><font face = 'Sitka Heading' size = '36'><I><U>The Calendar</U></I></font></HTML>", SwingConstants.CENTER);
         jPanel1 = new javax.swing.JPanel();
@@ -55,28 +53,22 @@ public class Login extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jLabel5.setVisible(false);
-                
         jPanel1.setPreferredSize(new java.awt.Dimension(500, 385));
-
         jTextField2.setText("");
         jTextField2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         jTextField2.setName("user"); 
         jTextField2.setSelectedTextColor(new java.awt.Color(153, 153, 153));
         jTextField2.setVerifyInputWhenFocusTarget(false);
-        
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14));
         jLabel1.setText("Username:");
-        
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14));
-        jLabel2.setText("Password:");
-        
+        jLabel2.setText("Password:"); 
         jLabel4.setFont(new java.awt.Font("Sitka Heading", 2, 36));
-        
         jLabel5.setForeground(new java.awt.Color(204, 0, 0));
         jLabel5.setText("Invalid Username/Password");
-        
         jButton1.setFont(new java.awt.Font("Franklin Gothic Heavy", 0, 18)); // NOI18N
         jButton1.setText("Login");
+        
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -87,40 +79,6 @@ public class Login extends javax.swing.JFrame {
         jButton2.setText("<HTML><U>Create New User</U><HTML>");
         jButton2.setBorderPainted(false);
         jButton2.setContentAreaFilled(false);
-        jButton2.addMouseListener(new java.awt.event.MouseListener(){
-        	public void actionPerformed(java.awt.event.MouseListener evt){
-        		
-        	}
-
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void mouseEntered(MouseEvent e) {
-				jButton2.setCursor(new Cursor(Cursor.HAND_CURSOR));
-				
-			}
-
-			@Override
-			public void mouseExited(MouseEvent e) {
-				jButton2.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-				
-			}
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
             	  NewUser.paintFrame();
@@ -218,9 +176,9 @@ public class Login extends javax.swing.JFrame {
                     .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGap(0, 0, Short.MAX_VALUE)))
         );
-
+        setResizable(false);
         pack();
-    }                       
+    }                     
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {     
     	validateInput();    	  
@@ -259,11 +217,11 @@ public class Login extends javax.swing.JFrame {
     }
     
     public static void centerWindow(Window frame){
-   	 Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-   	 int x = (int) ((dimension.getWidth() - frame.getWidth())/2);
-   	 int y = (int) ((dimension.getHeight() - frame.getHeight())/2);
-   	 
-   	 frame.setLocation(x, y);
+    	Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+    	int x = (int) ((dimension.getWidth() - frame.getWidth())/2);
+    	int y = (int) ((dimension.getHeight() - frame.getHeight())/2);
+    
+    	frame.setLocation(x, y);
     }
     
     public static void main(String args[]) {
