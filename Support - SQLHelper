@@ -307,7 +307,7 @@ public class SQLHelper {
 	
 	public List getGroupsThatHaveAskedForYourPresence(String username){
 		List groups = new List();
-		String query = "select * from notifications where groupname = '" + username + "'";
+		String query = "select * from notifications where recipient = '" + username + "'";
 		try {
 			resultSet = statement.executeQuery(query);
 			
