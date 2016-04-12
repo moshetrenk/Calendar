@@ -34,9 +34,7 @@ public class NewUser extends javax.swing.JFrame {
 
     	setTitle("New User");
         titleLabel = new JLabel("<HTML><font face = 'Sitka Heading' size = '8'><I><U>Create User</U></I></font></HTML>", SwingConstants.CENTER);
-       // jp1 = new javax.swing.JTextField();
         inputNameTextBox = new javax.swing.JTextField();
-        //jp2 = new javax.swing.JTextField();
         usernameLabel = new javax.swing.JLabel();
         passwordLabel = new javax.swing.JLabel();
         passwordLabel2 = new javax.swing.JLabel();
@@ -44,8 +42,7 @@ public class NewUser extends javax.swing.JFrame {
         noMatchLabel = new javax.swing.JLabel();
         usernameTaken = new javax.swing.JLabel();
 
-        //setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);   
-
+      
         jp1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jp1ActionPerformed(evt);
@@ -88,10 +85,10 @@ public class NewUser extends javax.swing.JFrame {
         passwordLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); 
         passwordLabel.setText("Password:");
 
-        passwordLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        passwordLabel2.setFont(new java.awt.Font("Tahoma", 0, 14));
         passwordLabel2.setText("Verify Password:");
 
-        enterButton.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        enterButton.setFont(new java.awt.Font("Tahoma", 0, 16)); 
         enterButton.setText("Create Account");
         enterButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -178,7 +175,7 @@ public class NewUser extends javax.swing.JFrame {
         );
 
         pack();
-    }// </editor-fold>                        
+    }                     
 
 	
 	//must use deprecated function getText() to ensure max size of 16
@@ -208,7 +205,7 @@ public class NewUser extends javax.swing.JFrame {
     }                                     
 
     private static void inputNameTextBoxActionPerformed(java.awt.event.ActionEvent evt) {                                            
-        // TODO add your handling code here:
+      
     }                                           
 
     private static void inputNameTextBoxKeyReleased(java.awt.event.KeyEvent evt) {
@@ -313,9 +310,7 @@ public class NewUser extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(NewUser.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-
-        /* Create and display the form */
+        
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 paintFrame();
@@ -323,7 +318,6 @@ public class NewUser extends javax.swing.JFrame {
         });
     }
 
-    // Variables declaration - do not modify                     
     private static javax.swing.JButton enterButton;
     private static javax.swing.JLabel titleLabel;
     private static javax.swing.JLabel usernameLabel;
@@ -334,5 +328,4 @@ public class NewUser extends javax.swing.JFrame {
     private static javax.swing.JPasswordField jp1 = new JPasswordField();
     private static javax.swing.JTextField inputNameTextBox;
     private static javax.swing.JPasswordField jp2 = new JPasswordField();
-    // End of variables declaration                   
 }
