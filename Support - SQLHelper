@@ -289,7 +289,7 @@ public class SQLHelper {
 		}
 	}
 	
-	public void deleteNotification(Notifications n){
+	public void deleteNotification(Notification n){
 		String query = "delete from notifications where sender = '" + n.getSender()
 			+ "' and recipient = '" + n.getRecipient() 
 			+ "' and groupName = '" + n.getGroupName() + "'";
