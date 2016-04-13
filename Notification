@@ -1,0 +1,25 @@
+package cal;
+
+public class Notification{
+	private String sender, recipient, groupName;
+	
+	Notification(String[] strings){
+		sender = strings[0];
+		recipient = strings[1];
+		groupName = strings[2];
+	}
+
+	public String getSender() {
+		return sender;
+	}
+
+	public String getRecipient() {
+		return recipient;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+	
+	
+}
