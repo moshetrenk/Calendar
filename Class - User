@@ -21,7 +21,10 @@ public class User {
 	
 	public static void main(String[] args){
 		User moshe = new User("Moshe");
-		moshe.deleteEvent("04/07/201613:15:00");
+		String date = "08/06/2017";
+		
+		System.out.println(date + " has event = " + moshe.isThereAnEventToday(date));
+		
 
 	}
 	
@@ -87,6 +90,20 @@ public class User {
 		help.insert("insert calgroup values (" + (help.getNumberOfElements("calGroup") + 1) + ", '" + username + "', '" + groupName + "', 1");
 	}
 	
+	public boolean isThereAnEventToday(String date){
+		String query = "select * from theEvent where user_groupID = '"  
+					+ username + "' and dateOfEvent = '" + date + "'";
+		
+		String result = help.query(query);
+		
+		for(int i = 0; i < result.length(); i++){
+			if (result.charAt(i) != ' ')
+				return true;	
+		}
+		
+		return false;
+	}
+	
 	public boolean equals(String username){
 		return (username.equals(this.username));
 	}
@@ -100,6 +117,10 @@ public class User {
 				time = dateTime.substring(10, 12) + dateTime.substring(13, 15) + "00";
 		
 		help.deleteEvent(username, date, Integer.parseInt(time));
+	}
+	
+	public void deleteNotification(Notification n){
+		help.deleteNotification(n);
 	}
 }
 
