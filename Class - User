@@ -11,24 +11,30 @@ public class User {
 	
 	private List iAreAdmin = new List();
 	private List myGroups = new List();
+	
+	private ArrayList<Event> notifications_ev = new ArrayList<Event>();
+	private ArrayList<String[]> notifications_gr = new ArrayList<String[]>();
 	private HashMap<String, Event> myEvents = new HashMap<String, Event>();
 	private static HashMap<String, Integer> copyOfMyEventsForFindingIfThereIsAnEvent = new HashMap<String, Integer>();
 
 	public static void main(String[] args){
 		User moshe = new User("Moshe");
-		System.out.println(moshe.isThereAnEventToday("08/06/2017"));
-		System.out.println(moshe.isThereAnEventToday("08/06/2051"));
+		System.out.println(help.getEventNotifications("keith"));
+		
 	}
 	
 	User(String username){
 		this.username = username;
 		myEvents = initEvents();
-		myGroups = initGroups();
+		myGroups = (List) help.getGroups(username);;
+		notifications_ev = help.getEventNotifications(username);
+		notifications_gr = help.getGroupNotifications(username);
 	}
-		
-	private static List initGroups(){
-		return (List) help.getGroups(username);
-	}
+	
+	/*
+	private static List initNotifications(){
+		return (ArrayList) help.getNotif(username);
+	}*/
 	
 	private static void putEventDatesIntoCopyOfMyEvents(String date){
 		if(copyOfMyEventsForFindingIfThereIsAnEvent.containsKey(date)){
@@ -37,7 +43,6 @@ public class User {
 		}
 		else
 			copyOfMyEventsForFindingIfThereIsAnEvent.put(date, 1);
-		
 	}
 	
 	private static HashMap<String, Event> initEvents(){
@@ -135,18 +140,8 @@ public class User {
 		
 		help.deleteEvent(username, date, Integer.parseInt(time));
 	}
-	
+	/*
 	public void deleteNotification(Notification n){
 		help.deleteNotification(n);
-	}
+	}*/
 }
-
-
-
-
-
-
-
-
-
-
