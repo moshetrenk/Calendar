@@ -8,8 +8,11 @@ import java.awt.List;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
+import javax.swing.*;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
@@ -358,12 +361,15 @@ public class AddEvent extends javax.swing.JFrame {
     	   buttonAmPm.setText("PM");
        else
     	   buttonAmPm.setText("AM");
+        
     }                                        
 
     private void completeButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
-        username = whichGroupToAddTo;
-        startTime=(startTimeHour * 10000) + (startTimeMinute * 100);
-        endTime=(endTimeHour * 10000) + (endTimeMinute * 100);
+        if(!groupComboBox.isEnabled())
+        	username = whichGroupToAddTo;
+        
+        startTime = (startTimeHour * 10000) + (startTimeMinute * 100);
+        endTime = (endTimeHour * 10000) + (endTimeMinute * 100);
         
         System.out.println("month = " + month);
         System.out.println("day = " + date);
@@ -408,22 +414,31 @@ public class AddEvent extends javax.swing.JFrame {
             
             addEventToDataBase();
             
-            EventDetails.paintFrame(new User("moshe"), "04/07/201613:15:00");
+           /* try {
+				Profile.paintFrame();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+      		one.rootPane.repaint();
+      		one.setVisible(false);*/
+            
         }
     }                                              
 
-    private void isGroupEventCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {                                                     
+    private void isGroupEventCheckBoxActionPerformed(java.awt.event.ActionEvent evt) { 
        if (groupComboBox.isEnabled())
            groupComboBox.setEnabled(false);
        else
            groupComboBox.setEnabled(true);
     }                                                    
 
-    private void groupComboBoxActionPerformed(java.awt.event.ActionEvent evt) {                                              
+    private void groupComboBoxActionPerformed(java.awt.event.ActionEvent evt) {     
+    	groupPicked = true;
         System.out.println(groupComboBox.getSelectedIndex() + 1);
         whichGroupToAddTo = groups[groupComboBox.getSelectedIndex()];    	
     }                                             
-
+    
     private void buttonAmPm2MouseReleased(java.awt.event.MouseEvent evt) {                                          
     
     }                                         
@@ -537,8 +552,61 @@ public class AddEvent extends javax.swing.JFrame {
     //sequenced but the second is going to be interpreted by SQL as the end of the 
     //event name and whatever comes after will be seen as a syntax error
     //This same issue applies to event description
+    
+    private boolean isEventTimeAvailable(){
+    	ArrayList times;
+    	if (groupComboBox.isEnabled())
+    		times = help.isTimeAvailableForEvent(whichGroupToAddTo, "", true);
+    	else
+    		times = help.isTimeAvailableForEvent("", username, false);
+    	
+       String timeS, timeE;
+       boolean dateHasEvent = false;
+       
+       if(String.valueOf(month).length() == 1)
+    	   fullDate = "0" + String.valueOf(month);
+       
+       fullDate += "/";
+       
+       if(String.valueOf(date).length() == 1)
+    	   fullDate += "0" + String.valueOf(date);
+       else
+    	   fullDate += String.valueOf(date);
+       
+       fullDate += "/";
+       
+       fullDate += String.valueOf(year);
+       
+       System.out.println("Times = " + times);
+       
+       Integer startTimeEvent = null, endTimeEvent = null;
+         for(int i = 0; i < times.size()/4; i++){
+			if(fullDate.equals(times.get(i * 4 + 2))){
+				dateHasEvent = true;
+				startTimeEvent = Integer.valueOf(times.get(i * 4).toString().substring(0, 2) + times.get(i * 4).toString().substring(3, 5) + "00");
+				endTimeEvent = Integer.valueOf(times.get(i * 4 + 1).toString().substring(0, 2) + times.get(i * 4 + 1).toString().substring(3, 5) + "00");
+				
+				//if starting time is between start and finish of another event...
+				if(startTime >= startTimeEvent 
+						&& Integer.valueOf(startTime) < endTimeEvent){
+					eventNameAtChosenTime = times.get(i * 4 + 3).toString();
+					return false;
+					
+				}
+				//if the end time cuts into the start time of another event...
+				if(Integer.valueOf(endTime) > startTimeEvent)
+				{
+					eventNameAtChosenTime = times.get(i * 4 + 3).toString();
+					return false;
+				}
+			}
+		}
+    		
+    	return true;
+    }
+    
     private void addEventToDataBase(){
-    	if(groupComboBox.isEnabled())
+    	if(groupComboBox.isEnabled() && !groupPicked)
     		whichGroupToAddTo = groups[0];
     	
     	if(!startHourPicked)
@@ -566,21 +634,36 @@ public class AddEvent extends javax.swing.JFrame {
        
         a = help.getHighestPrimaryKey("theEvent") + 1;
         
-        /////////////////////////////////////////////////////////////////
-        //get username from user right here
-        username = "moshe";
-        ///////////////////////////////////////////////////////////////
+        username = user.getUsername();
         
-        insertion = "insert theEvent values (" + a + ", '" + eventName
-                + "', '" + whichGroupToAddTo + "', '" + month + "/" + date + "/" 
-                + year + "', " + startTime + ", " + endTime + ", '" 
-                + eventDescription  + "', 1, " + numMem + ")";
+        if(!groupComboBox.isEnabled())
+        	whichGroupToAddTo = username;
         
-        help.insert(insertion);
-        System.out.println(insertion);
+        ArrayList insert = new ArrayList();
         
-        //insert theEvent values(2, 'CSC 330', 'Moshe', '04/07/2016', 183000, 200000, 'Object Oriented Software Design - 1N 005', 1, 1);
-
+        insert.add(a);
+        insert.add(eventName);
+        insert.add(whichGroupToAddTo);
+        insert.add(month + "/" + date + "/" + year);
+        insert.add(startTime);
+        insert.add(endTime);
+        insert.add(eventDescription);
+        insert.add(1);
+        insert.add(numMem);
+          
+       Boolean one = isEventTimeAvailable();
+        System.out.println(insert);
+        
+       if(one.equals(true)){
+        	help.insertEvent(insert);
+       }
+       else{
+    	   if(groupComboBox.isEnabled())
+    		   invalidTimeLabel.setText("That time is unavailable for " + whichGroupToAddTo);
+    	   else
+    		   invalidTimeLabel.setText("You have \"" + eventNameAtChosenTime + "\" at that time");
+    	   invalidTimeLabel.setVisible(true);
+       }
     }   
     
     
@@ -595,7 +678,9 @@ public class AddEvent extends javax.swing.JFrame {
     	groupComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(groups));
     }
     
-     public static void paintFrame(){
+     public static void paintFrame(User locUser){
+    	 user = locUser;
+    	 username = user.getUsername();
     	 java.awt.EventQueue.invokeLater(new Runnable() {
              public void run() {
             	 one = new AddEvent();
@@ -642,38 +727,33 @@ public class AddEvent extends javax.swing.JFrame {
         });
     }
     
-    boolean startHourPicked = false, endHourPicked = false;
-    
     LocalDateTime today;
+    boolean startHourPicked = false, endHourPicked = false, 
+    			groupPicked = false, isGroupEvent = false;
+    static User user;
     private List listOfGroups;
-    public static String whichGroupToAddTo, username = "Moshe", insertion;
+    private static String whichGroupToAddTo, insertion, username, fullDate, eventNameAtChosenTime;
     private String[] groups;
+    
     private int startTimeHour, startTimeMinute, endTimeHour, endTimeMinute,
             month, date, year, startTime, endTime;
+    
     private static SQLHelper help = new SQLHelper();
     private static AddEvent one;
-    private javax.swing.JButton buttonAmPm;
-    private javax.swing.JButton buttonAmPm2;
-    private javax.swing.JLabel charactersRemainingLabel;
-    private javax.swing.JButton completeButton;
-    private javax.swing.JComboBox<String> dayDropDown;
-    private javax.swing.JComboBox<String> endHourDropDown;
-    private javax.swing.JComboBox<String> endMinDropDown;
-    private javax.swing.JLabel eventDateLabel;
-    private javax.swing.JTextPane eventDescriptionTextBox;
-    private javax.swing.JLabel eventDetailsLabel;
-    private javax.swing.JLabel eventNameLabel;
-    private javax.swing.JTextField eventNameTextBox;
-    private javax.swing.JLabel eventTimeLabel;
-    private javax.swing.JLabel eventTimeLabel1;
+    
+    private javax.swing.JLabel charactersRemainingLabel, eventDateLabel,
+    			eventDetailsLabel, eventNameLabel, eventTimeLabel, eventTimeLabel1,
+    			invalidTimeLabel, titleLabel;
+    
+    private javax.swing.JButton jButton1, buttonAmPm, buttonAmPm2, completeButton;
+    
+    private javax.swing.JComboBox<String> monthDropDown, startHourDropDown, startMinDropDown,
+    			yearDropDown, dayDropDown, endHourDropDown, endMinDropDown;
+    
     private static javax.swing.JComboBox<String> groupComboBox;
-    private javax.swing.JLabel invalidTimeLabel;
     private javax.swing.JCheckBox isGroupEventCheckBox;
-    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JComboBox<String> monthDropDown;
-    private javax.swing.JComboBox<String> startHourDropDown;
-    private javax.swing.JComboBox<String> startMinDropDown;
-    private javax.swing.JLabel titleLabel;
-    private javax.swing.JComboBox<String> yearDropDown;
+    private javax.swing.JTextField eventNameTextBox;
+    private javax.swing.JTextPane eventDescriptionTextBox;
 }
+
