@@ -12,11 +12,9 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
-public class LoginScreen extends javax.swing.JFrame {
+public class Login extends javax.swing.JFrame {
 	
     private static javax.swing.JButton jButton1;
     private static javax.swing.JButton jButton2;
@@ -28,10 +26,11 @@ public class LoginScreen extends javax.swing.JFrame {
     private static javax.swing.JPanel jPanel1;
     private static javax.swing.JTextField jTextField2;
     private static JPasswordField jp1 = new JPasswordField();
-    private static LoginScreen one;
+    private static Login one;
     private static SQLHelper help = new SQLHelper();
+    private static User user;
     
-    public LoginScreen() {
+    public Login() {
         initComponents();
         
         setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
@@ -44,26 +43,7 @@ public class LoginScreen extends javax.swing.JFrame {
     }
     
     private void initComponents() {
-    try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (UnsupportedLookAndFeelException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		String lcOSName = System.getProperty("os.name").toLowerCase();
-		boolean IS_MAC = lcOSName.startsWith("mac os x");
-		System.setProperty("apple.laf.useScreenMenuBar", String.valueOf(IS_MAC));
-		
-		
+    	setTitle("Login");
     	setJMenuBar(MenuExp.PrepareMenuBar(" "));
         jLabel3 = new JLabel("<HTML><font face = 'Sitka Heading' size = '36'><I><U>The Calendar</U></I></font></HTML>", SwingConstants.CENTER);
         jPanel1 = new javax.swing.JPanel();
@@ -203,13 +183,14 @@ public class LoginScreen extends javax.swing.JFrame {
     }                     
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {     
-    	validateInput();    	  
+    	validateInput();    
+    	
     }                                        
     
     public static void paintFrame(){
     	java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-            	one = new LoginScreen();
+            	one = new Login();
             	 JFrame frame = (JFrame) SwingUtilities.getRoot(jButton1);
                	 one.centerWindow(frame);
                     one.setVisible(true);
@@ -218,6 +199,7 @@ public class LoginScreen extends javax.swing.JFrame {
     }
     
     public static void validateInput(){
+      user = new User(jTextField2.getText());
       String username = jTextField2.getText();
   	  char[] input2C = jp1.getPassword();
   	  String password = new String(input2C);
@@ -227,6 +209,22 @@ public class LoginScreen extends javax.swing.JFrame {
 
     		try {
 				Profile.paintFrame();
+				
+				//remove this line:
+				//AddEvent.paintFrame(new User("moshe"));
+				///////////////////////////////////////////////////////////////////////////////////////
+				///////////////////////////////////////////////////////////////////////////////////////
+				///////////////////////////////////////////////////////////////////////////////////////
+				///////////////////////////////////////////////////////////////////////////////////////
+				///////////////////////////////////////////////////////////////////////////////////////
+				///////////////////////////////////////////////////////////////////////////////////////
+				///////////////////////////////////////////////////////////////////////////////////////
+				///////////////////////////////////////////////////////////////////////////////////////
+				///////////////////////////////////////////////////////////////////////////////////////
+				///////////////////////////////////////////////////////////////////////////////////////
+				///////////////////////////////////////////////////////////////////////////////////////
+				///////////////////////////////////////////////////////////////////////////////////////
+				///////////////////////////////////////////////////////////////////////////////////////
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -255,13 +253,13 @@ public class LoginScreen extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(LoginScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(LoginScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(LoginScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(LoginScreen.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
          java.awt.EventQueue.invokeLater(new Runnable() {
@@ -271,3 +269,4 @@ public class LoginScreen extends javax.swing.JFrame {
          });
     }
 }
+    
