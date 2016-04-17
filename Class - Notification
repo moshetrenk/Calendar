@@ -1,16 +1,13 @@
 package cal;
 
-public class Notification{
-	private String sender, recipient, groupName;
-	
-	Notification(String[] strings){
-		sender = strings[0];
-		recipient = strings[1];
-		groupName = strings[2];
-	}
+import java.util.ArrayList;
 
-	public String getSender() {
-		return sender;
+public abstract class Notification{
+	private String recipient, groupName;
+	
+	Notification(ArrayList one){
+		recipient = (String) one.get(0);
+		groupName = (String) one.get(1);
 	}
 
 	public String getRecipient() {
