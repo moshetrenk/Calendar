@@ -366,11 +366,21 @@ public class SQLHelper {
 		}
 	}
 	
-	public void deleteNotification(Notification n){
+	public void deleteNotificationGroup(Notification_Group n){
 		try {			
-			statement.execute("delete from notifications where sender = '" + n.getSender()
+			statement.execute("delete from notificationsGroup where sender = '" + n.getSender()
 				+ "' and recipient = '" + n.getRecipient() 
 				+ "' and groupName = '" + n.getGroupName() + "'");
+		}
+		catch(SQLException ex ) {
+			System.err.println("DB Exception: " + ex); 
+		}
+	}
+	
+	public void deleteNotificationEvent(Notification_Event n){
+		try {			
+			//delete events from here
+			statement.execute(null);
 		}
 		catch(SQLException ex ) {
 			System.err.println("DB Exception: " + ex); 
@@ -395,11 +405,88 @@ public class SQLHelper {
 		return -1;
 	}
 	
+	public ArrayList getEventNotifications(String username){
+		ArrayList<Event> notifs = new ArrayList<Event>();
+		ArrayList temp = new ArrayList();
+		
+		try {
+			resultSet = statement.executeQuery("select * from notificationsEvent where recipient = '" + username + "'");
+		
+			while(resultSet.next()) {
+				temp.add(resultSet.getString(1+1));
+				temp.add(resultSet.getString(3+1));
+				temp.add(resultSet.getString(4+1));
+			}
+		}
+		catch(SQLException ex ) {
+			System.err.println("DB Exception: " + ex); 
+		}
+		
+		String[] queries = new String[temp.size() / 3];
+		
+		for(int a = 0; a < temp.size() / 3; a++){
+			queries[a] = "select * from theevent where user_groupID = '" 
+					+ temp.get(a * 3) + "' and dateOfEvent = '" + temp.get(a * 3 + 1) 
+					+ "' and startTimeOfEvent = " 
+					+ temp.get(a * 3 + 2).toString().substring(0, 2) 
+					+ temp.get(a * 3 + 2).toString().substring(3, 5) + "00";		
+		}
+		
+		for(int b = 0; b < queries.length; b++){
+			ArrayList list = new ArrayList();
+			
+			try {
+				resultSet = statement.executeQuery(queries[b]);
+				ResultSetMetaData wayTooMeta = resultSet.getMetaData();
+				
+				while(resultSet.next()) {
+					for(int i = 1; i < wayTooMeta.getColumnCount() + 1; i++){
+						if (resultSet.getObject(i).getClass().getSimpleName().equals("String"))
+							list.add(resultSet.getString(i));
+						else if (resultSet.getObject(i).getClass().getSimpleName().equals("Integer"))
+							list.add(resultSet.getInt(i));
+						else if (resultSet.getObject(i).getClass().getSimpleName().equals("Time"))
+							list.add(resultSet.getTime(i));
+					}
+					
+					Event tempEvent = new Event(list);
+					notifs.add(tempEvent);
+				}
+				
+			}
+			catch(SQLException ex ) {
+				System.err.println("DB Exception: " + ex); 
+			}	
+		}
+		
+		return notifs;
+	}
+	
+	public ArrayList<String[]> getGroupNotifications(String username){
+		ArrayList<String[]> sender_and_group = new ArrayList<String[]>();
+  		
+		try {
+			resultSet = statement.executeQuery("select * from notificationsGroup where recipient = '" + username + "'");
+			while(resultSet.next()) {
+				String[] temp = new String[2];
+				
+				temp[0] = resultSet.getString(2);
+				temp[1] = resultSet.getString(4);
+				sender_and_group.add(temp);
+			}
+		}
+		catch(SQLException ex ) {
+			System.err.println("DB Exception: " + ex); 
+		}
+		
+		return sender_and_group;
+	}
+	
 	public ArrayList getGroupsThatHaveAskedForYourPresence(String username){
 		ArrayList groups = new ArrayList();
 
 		try {
-			resultSet = statement.executeQuery("select * from notifications where recipient = '" + username + "'");
+			resultSet = statement.executeQuery("select * from notificationsGroup where recipient = '" + username + "'");
 			
 			int i = 0;
 			while(resultSet.next()) {
