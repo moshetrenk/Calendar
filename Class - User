@@ -12,24 +12,32 @@ public class User {
 	private List iAreAdmin = new List();
 	private List myGroups = new List();
 	private HashMap<String, Event> myEvents = new HashMap<String, Event>();
+	private static HashMap<String, Integer> copyOfMyEventsForFindingIfThereIsAnEvent = new HashMap<String, Integer>();
+
+	public static void main(String[] args){
+		User moshe = new User("Moshe");
+		System.out.println(moshe.isThereAnEventToday("08/06/2017"));
+		System.out.println(moshe.isThereAnEventToday("08/06/2051"));
+	}
 	
 	User(String username){
 		this.username = username;
 		myEvents = initEvents();
 		myGroups = initGroups();
 	}
-	
-	public static void main(String[] args){
-		User moshe = new User("Moshe");
-		String date = "08/06/2017";
 		
-		System.out.println(date + " has event = " + moshe.isThereAnEventToday(date));
-		
-
-	}
-	
 	private static List initGroups(){
 		return (List) help.getGroups(username);
+	}
+	
+	private static void putEventDatesIntoCopyOfMyEvents(String date){
+		if(copyOfMyEventsForFindingIfThereIsAnEvent.containsKey(date)){
+			int a = copyOfMyEventsForFindingIfThereIsAnEvent.get(date);
+			copyOfMyEventsForFindingIfThereIsAnEvent.replace(date, a, a++);
+		}
+		else
+			copyOfMyEventsForFindingIfThereIsAnEvent.put(date, 1);
+		
 	}
 	
 	private static HashMap<String, Event> initEvents(){
@@ -42,8 +50,11 @@ public class User {
 		String delimiter = help.getDelimiter();
 		
 		for(int i = 0; i < cur.size(); i++){
-			if(!cur.get(i).equals(delimiter))
-				temp.add(cur.get(i));
+			if(!cur.get(i).equals(delimiter)){
+				temp.add(cur.get(i));	
+				if(i % 10 == 3)
+					putEventDatesIntoCopyOfMyEvents((String) cur.get(i));
+			}
 			else{
 				event = new Event(temp);
 				temp = new ArrayList();
@@ -54,6 +65,8 @@ public class User {
 		
 		return these;
 	}
+	
+	
 	
 	public String getUsername(){
 		return username;
@@ -72,24 +85,28 @@ public class User {
 		return false;
 	}
 	
-	public void addUserToGroup(String groupName){
+	public void addUserToGroup(String groupName, int isAdmin){
+		if(isAdmin != 0){
+			SelfClosingMessage.output("You must enter a value of either 1 or 0 for \"isAdmin\"", "Warning!", 10000);
+		}
+		else{
 		myGroups.add(groupName);
-		ArrayList list = new ArrayList();
-		list.add(help.getNumberOfElements("calGroup") + 1);
-		list.add(username);
-		list.add(groupName);
-		list.add(0);
+		help.addUserToGroup(username, groupName, isAdmin);
+		}
+	}
+	
+	public boolean isThereAnEventToday(String date){
+		if (copyOfMyEventsForFindingIfThereIsAnEvent.containsKey(date))
+			return true;
 		
-		help.insert("calgroup", list);
-	}
-	//^^add as regular user
-	
-	//vs add as admin:
-	public void addUserToGroup(String groupName, int val){
-		myGroups.add(groupName);
-		help.insert("insert calgroup values (" + (help.getNumberOfElements("calGroup") + 1) + ", '" + username + "', '" + groupName + "', 1");
+		return false;
 	}
 	
+	/*
+	 This method was taken out back and shot in the face. 
+	 It's too much more efficient to get the date from
+	 memory, rather than query to SQL that many times
+	  
 	public boolean isThereAnEventToday(String date){
 		String query = "select * from theEvent where user_groupID = '"  
 					+ username + "' and dateOfEvent = '" + date + "'";
@@ -102,7 +119,7 @@ public class User {
 		}
 		
 		return false;
-	}
+	}*/
 	
 	public boolean equals(String username){
 		return (username.equals(this.username));
