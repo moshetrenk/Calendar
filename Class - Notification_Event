@@ -1,0 +1,28 @@
+package cal;
+
+import java.util.ArrayList;
+
+public class Notification_Event extends Notification{
+	
+	Notification_Event(ArrayList one) {
+		super(one);
+		date = (String) one.get(2);
+		startTime = (int) one.get(3);
+		endTime = (int) one.get(4);
+	}
+	
+	private String date;
+	private int startTime, endTime;
+	
+	public String getDate() {
+		return date;
+	}
+	
+	public int getStartTime() {
+		return startTime;
+	}
+	
+	public int getEndTime() {
+		return endTime;
+	}
+}
