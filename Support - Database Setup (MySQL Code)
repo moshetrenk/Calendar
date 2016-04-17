@@ -95,7 +95,7 @@ endTimeofEvent time);
  insert notificationsEvent values(1, 'CSC330 Project', 'Keith', '04/31/2016', 000000, 003000);
  insert notificationsEvent values(2, 'CSC330 Project', 'Omar', '04/31/2016', 000000, 003000);
 
-
+alter table notifications rename notificationsGroup;
 
 
 
