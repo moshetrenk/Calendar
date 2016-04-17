@@ -107,6 +107,8 @@ public class MenuExp  {
          	}
          });
     	}
+    	
+    	 onlyRunOnceLogIn = 1;
     	 return menuBarLogIn;
     	
     }
