@@ -31,7 +31,6 @@ public class SQLHelper {
 	
 	SQLHelper(){
 		//change this to your localhost's username and password
-
 		url = "jdbc:mysql://localhost/thecalendar?useSSL=false&user=root&password=6815";
 		
 		try {
@@ -190,9 +189,11 @@ public class SQLHelper {
 		String query;
 		
 		if(isGroupEvent)
-			query = "select distinct startTimeOfEvent, endTimeofEvent, dateOfEvent, eventName "
-					+ "from theevent where user_groupID in (select username from calgroup "
-					+ "where groupname = '"+ groupName + "')";
+			query = "select distinct startTimeOfEvent, endTimeofEvent, dateOfEvent, eventNumber "
+						+ "from theevent where user_groupID in (select username from calgroup where " 
+						+ "groupname = '" + groupName + "') or user_groupID in "  
+						+ "(select groupName from calgroup where username in "
+						+ "(select username from calgroup where groupname = '" + groupName + "'))";
 		else 
 			query ="select distinct startTimeOfEvent, endTimeofEvent, dateOfEvent, eventName "
 					+ "from theevent where user_groupID = '" + username + "'";
@@ -203,11 +204,8 @@ public class SQLHelper {
 			
 			int i = 0;
 			while(resultSet.next()) {
-				times.add(resultSet.getString(1));
-				times.add(resultSet.getString(2));
-				times.add(resultSet.getString(3));
-				times.add(resultSet.getString(4));
-				i++;
+				for(i = 1; i <=4; i++)
+					times.add(resultSet.getString(i));
 			}
 		}
 		catch(SQLException ex ) {
@@ -387,6 +385,8 @@ public class SQLHelper {
 		}
 	}
 	
+	
+	
 	public int getHighestPrimaryKey(String tableName){
 		String primaryKey = getPrimaryKeyForAnyTable(tableName);
 		
@@ -413,9 +413,9 @@ public class SQLHelper {
 			resultSet = statement.executeQuery("select * from notificationsEvent where recipient = '" + username + "'");
 		
 			while(resultSet.next()) {
-				temp.add(resultSet.getString(1+1));
-				temp.add(resultSet.getString(3+1));
-				temp.add(resultSet.getString(4+1));
+				temp.add(resultSet.getString(2));
+				temp.add(resultSet.getString(4));
+				temp.add(resultSet.getString(5));
 			}
 		}
 		catch(SQLException ex ) {
@@ -480,6 +480,16 @@ public class SQLHelper {
 		}
 		
 		return sender_and_group;
+	}
+	
+	public void giveYourApproval(Event evt){
+		try{
+			statement.executeQuery(null);
+		}
+		catch (SQLException ex){
+			System.err.println("DB Exception: " + ex);
+		}
+		
 	}
 	
 	public ArrayList getGroupsThatHaveAskedForYourPresence(String username){
