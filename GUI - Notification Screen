@@ -1,0 +1,351 @@
+import javax.swing.*;
+import javax.swing.event.*;
+import javax.swing.table.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.Vector;
+
+public class NotificationScreen {
+	
+	static JFrame frmMain;
+	static Container notifPane;
+	//static DefaultTableModel mtblNotifications;
+	static JTable tblGroupNotifications, tblEventNotifications, tblEventWasRejected;
+	static JScrollPane stblGroupNotifications, stblEventNotifications, stblEventWasRejected;
+	static JPanel pnlNotifications;
+	static JLabel lblGroupNotifications, lblEventNotifications, lblEventWasRejected;
+	static MyGroupNotificationTableModel mtblGroupNotifications;
+	static MyEventRejectedTableModel mtblEventWasRejected;
+	static MyEventNotificationTableModel mtblEventNotifications;
+	static JButton submitBtn;
+	private static SQLHelper sqlHelper = new SQLHelper();
+	
+	
+	static private void prepareFrame(){
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String lcOSName = System.getProperty("os.name").toLowerCase();
+		boolean IS_MAC = lcOSName.startsWith("mac os x");
+		System.setProperty("apple.laf.useScreenMenuBar", String.valueOf(IS_MAC));
+		
+		frmMain = new JFrame("Group Calendar");
+		frmMain.setSize(550, 385);
+		notifPane = frmMain.getContentPane();
+		notifPane.setLayout(null);
+		frmMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Close when X is clicked
+		
+	}
+	private static void setUpTables(User user){
+
+		mtblGroupNotifications = new MyGroupNotificationTableModel();
+		
+		ArrayList groups = (sqlHelper.getGroupsThatHaveAskedForYourPresence(user.getUsername()));
+		System.out.print(user.getUsername());
+		System.out.println(groups);
+		
+		for(int i = 0; i < groups.size(); i++){
+			mtblGroupNotifications.addRow(new Object[]{groups.get(i),false, false});
+		}
+		
+		/*
+		for(int i = 0; i < 30; i++){
+		mtblGroupNotifications.addRow(new Object[]{"1234567891234567 has inivited you to join 1234567891CSC330" + String.valueOf(i), false, false});
+		}
+		*/
+		tblGroupNotifications = new JTable(mtblGroupNotifications);
+		tblGroupNotifications.getColumnModel().getColumn(0).setPreferredWidth(450);
+		tblGroupNotifications.getColumnModel().getColumn(1).setPreferredWidth(50);
+		tblGroupNotifications.getColumnModel().getColumn(2).setPreferredWidth(50);
+		
+		
+		
+	//Now set up event notifications
+		
+		mtblEventNotifications = new MyEventNotificationTableModel();
+		
+		//ArrayList events = (sqlHelper.getEventNotifications);
+		
+		/*for(int i = 0; i < events.size(); i++){
+			mtblEventNotifications.addRow(new Object[]{events.get(0).);
+		}
+		*/
+		for(int i = 0; i < 30; i++){
+			mtblEventNotifications.addRow(new Object[]{"04/15/2016", "12:00 PM", "1:00 PM", "Finish Project" + String.valueOf(i),false, false});
+		}
+		
+		tblEventNotifications = new JTable(mtblEventNotifications);
+		tblEventNotifications.getColumnModel().getColumn(0).setPreferredWidth(95);
+		tblEventNotifications.getColumnModel().getColumn(1).setPreferredWidth(85);
+		tblEventNotifications.getColumnModel().getColumn(2).setPreferredWidth(85);
+		tblEventNotifications.getColumnModel().getColumn(3).setPreferredWidth(185);
+		tblEventNotifications.getColumnModel().getColumn(4).setPreferredWidth(50);
+		tblEventNotifications.getColumnModel().getColumn(5).setPreferredWidth(50);
+		
+		
+		tblEventNotifications.addMouseListener(new MouseAdapter() {
+		    public void mousePressed(MouseEvent me) {
+		        JTable table =(JTable) me.getSource();
+		        Point p = me.getPoint();
+		        int row = table.rowAtPoint(p);
+		        if (me.getClickCount() == 2) {
+		           EventDetails.paintFrame((Event)table.getValueAt(row, 0), user);
+		        }
+		    }
+		});
+		
+		//Now set up rejection notifications
+		
+		mtblEventWasRejected = new MyEventRejectedTableModel();
+		
+		tblEventWasRejected = new JTable(mtblEventWasRejected);
+		tblEventWasRejected.getColumnModel().getColumn(0).setPreferredWidth(95);
+		tblEventWasRejected.getColumnModel().getColumn(1).setPreferredWidth(85);
+		tblEventWasRejected.getColumnModel().getColumn(2).setPreferredWidth(85);
+		tblEventWasRejected.getColumnModel().getColumn(3).setPreferredWidth(195);
+		tblEventWasRejected.getColumnModel().getColumn(4).setPreferredWidth(90);
+		
+		mtblEventWasRejected.addRow(new Object[]{"04/25/2016", "5:00 PM", "9:00 PM", "Finish Project",false});
+	}
+	private static void centerWindow(Window frame) {
+	    Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+	    int x = (int) ((dimension.getWidth() - frame.getWidth()) / 2);
+	    int y = (int) ((dimension.getHeight() - frame.getHeight()) / 2);
+	    frame.setLocation(x, y);
+	}
+	
+	private static void createControls(){
+		
+		
+		pnlNotifications = new JPanel(null);
+		
+		stblGroupNotifications = new JScrollPane(tblGroupNotifications);
+		
+		stblEventNotifications = new JScrollPane(tblEventNotifications);
+		
+		stblEventWasRejected = new JScrollPane(tblEventWasRejected);
+		
+		lblGroupNotifications = new JLabel("You have " + String.valueOf(2)+/*get size of notification list +*/ " group invitations!", SwingConstants.CENTER );
+	
+		lblEventNotifications = new JLabel("You have " + String.valueOf(4)+/*get size of events list+*/ " events awaiting your answer.", SwingConstants.CENTER);
+		
+		lblEventWasRejected = new JLabel(String.valueOf(5)+ /*get number of events that were rejected*/" events have been rejected.", SwingConstants.CENTER);
+		
+		submitBtn = new JButton("Submit");
+		
+	}
+	
+	
+	static private void addControls(){
+		notifPane.add(pnlNotifications);
+		pnlNotifications.add(stblGroupNotifications);
+		pnlNotifications.add(lblGroupNotifications);
+		pnlNotifications.add(stblEventNotifications);
+		pnlNotifications.add(lblEventNotifications);
+		pnlNotifications.add(stblEventWasRejected);
+		pnlNotifications.add(lblEventWasRejected);
+		pnlNotifications.add(submitBtn);
+		frmMain.setJMenuBar(MenuExp.PrepareMenuBar(new User("Moshe")));
+	}
+	
+	static private void setBounds(){
+		
+		pnlNotifications.setBounds(0,0,550,550);
+		
+		lblGroupNotifications.setBounds(0, 7, 550, 20);
+		stblGroupNotifications.setBounds(0,30,550,98);
+		stblGroupNotifications.setAlignmentX(Frame.LEFT_ALIGNMENT);
+		
+		lblEventNotifications.setBounds(0, 131, 550, 20);
+		stblEventNotifications.setBounds(0,158,550,98);
+		stblEventNotifications.setAlignmentX(Frame.LEFT_ALIGNMENT);
+		
+		lblEventWasRejected.setBounds(0,259,550,20);
+		stblEventWasRejected.setBounds(0,286,550,385-286);
+		stblEventWasRejected.setAlignmentX(Frame.LEFT_ALIGNMENT);
+		
+		submitBtn.setBounds(450,7,75,20);
+		
+		
+		
+	}
+	
+	static private void makeFrameVisible(boolean decision){
+		//Make frame visible
+				frmMain.setResizable(false);
+				frmMain.setVisible(decision);
+	}
+	
+	public static void paintFrame(User user){
+		prepareFrame();
+		setUpTables(user);
+		centerWindow(frmMain);
+		createControls();
+		addControls();
+		setBounds();
+		makeFrameVisible(true);
+	}
+	
+	 public static class MyEventRejectedTableModel extends DefaultTableModel {
+
+		    public MyEventRejectedTableModel() {
+		      super(new String[]{"Date", "Start Time", "End Time","Event Name","Mark as Read" }, 0);
+		      
+		    }
+			@Override
+		    public Class<?> getColumnClass(int columnIndex) {
+		      Class clazz = String.class;
+		      switch (columnIndex) {
+		      	case 4:
+		          clazz = Boolean.class;
+		          break;
+		      }
+		      return clazz;
+		    }
+
+		    @Override
+		    public boolean isCellEditable(int row, int column) {
+		      return (column == 4);
+		    }
+		    
+		    
+
+		    @Override
+		    public void setValueAt(Object aValue, int row, int column) {
+		    	if (aValue instanceof Boolean && column == 4) {
+			        Vector rowData = (Vector)getDataVector().get(row);
+			        rowData.set(4, (boolean)aValue);
+			        fireTableCellUpdated(row, column);
+			        
+		    	}
+	}
+	 }
+	
+
+	 public static class MyEventNotificationTableModel extends DefaultTableModel {
+
+		    public MyEventNotificationTableModel() {
+		      super(new String[]{"Date", "Start Time", "End Time","Event Name","Accept", "Reject" }, 0);
+		      
+		    }
+			@Override
+		    public Class<?> getColumnClass(int columnIndex) {
+		      Class clazz = String.class;
+		      switch (columnIndex) {
+		      	case 4:
+		        case 5:
+		          clazz = Boolean.class;
+		          break;
+		      }
+		      return clazz;
+		    }
+
+		    @Override
+		    public boolean isCellEditable(int row, int column) {
+		      return (column == 4 || column == 5);
+		    }
+		    
+		    
+
+		    @Override
+		    public void setValueAt(Object aValue, int row, int column) {
+		      if (aValue instanceof Boolean && column == 5) {
+		        Vector rowData = (Vector)getDataVector().get(row);
+		        rowData.set(5, (boolean)aValue);
+		        if (((boolean)rowData.get(4)) == true && ((boolean)aValue) == true)
+		        	rowData.set(4,false);
+		        	
+		        fireTableCellUpdated(row, column);
+		        fireTableCellUpdated(row,column-1);
+		      }
+		      else if (aValue instanceof Boolean && column == 4) {
+			        Vector rowData = (Vector)getDataVector().get(row);
+			        rowData.set(4, (boolean)aValue);
+			        if (((boolean)rowData.get(5)) == true && ((boolean)aValue) == true)
+			        	rowData.set(5,false);
+			        fireTableCellUpdated(row, column);
+			        fireTableCellUpdated(row,column+1);
+		    }
+
+	}
+	 }
+	 
+	
+	 public static class MyGroupNotificationTableModel extends DefaultTableModel {
+
+		    public MyGroupNotificationTableModel() {
+		      super(new String[]{"Group Name", "Accept", "Reject"}, 0);
+		      
+		    }
+
+		   
+
+			@Override
+		    public Class<?> getColumnClass(int columnIndex) {
+		      Class clazz = String.class;
+		      switch (columnIndex) {
+		      	case 1:
+		        case 2:
+		          clazz = Boolean.class;
+		          break;
+		      }
+		      return clazz;
+		    }
+
+		    @Override
+		    public boolean isCellEditable(int row, int column) {
+		      return (column == 1 || column == 2);
+		    }
+		    
+		    
+
+		    @Override
+		    public void setValueAt(Object aValue, int row, int column) {
+		      if (aValue instanceof Boolean && column == 2) {
+		        Vector rowData = (Vector)getDataVector().get(row);
+		        rowData.set(2, (boolean)aValue);
+		        if (((boolean)rowData.get(1)) == true && ((boolean)aValue) == true)
+		        	rowData.set(1,false);
+		        	
+		        fireTableCellUpdated(row, column);
+		        fireTableCellUpdated(row,column-1);
+		      }
+		      else if (aValue instanceof Boolean && column == 1) {
+			        Vector rowData = (Vector)getDataVector().get(row);
+			        rowData.set(1, (boolean)aValue);
+			        if (((boolean)rowData.get(2)) == true && ((boolean)aValue) == true)
+			        	rowData.set(2,false);
+			        fireTableCellUpdated(row, column);
+			        fireTableCellUpdated(row,column+1);
+		    }
+
+	}
+	 } 
+	 
+	
+	public static void main (String args[]){
+		//Look and feel
+		try {UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());}
+		catch (ClassNotFoundException e) {}
+		catch (InstantiationException e) {}
+		catch (IllegalAccessException e) {}
+		catch (UnsupportedLookAndFeelException e) {}
+
+		paintFrame(new User("Moshe"));
+	}
+
+	
+	 }
