@@ -1,25 +1,14 @@
 package cal;
 
-import java.awt.Color;
-import java.awt.Dimension;
-
-import javax.swing.text.BadLocationException;
-import java.awt.List;
-import java.awt.Toolkit;
-import java.awt.Window;
+import  javax.swing.text.BadLocationException;
+import java.awt.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.IOException;
-import javax.swing.*;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
+import javax.swing.*; 
 
-public class AddEvent extends javax.swing.JFrame {      
+public class AddEvent extends  JFrame {      
     public AddEvent() {
         initComponents();
         setTitle("Add Event");
@@ -33,35 +22,10 @@ public class AddEvent extends javax.swing.JFrame {
 
     private void initComponents() {
     	setJMenuBar(MenuExp.PrepareMenuBar());
-        
-        jButton1 = new javax.swing.JButton();
-        titleLabel = new javax.swing.JLabel();
-        eventNameLabel = new javax.swing.JLabel();
-        eventDateLabel = new javax.swing.JLabel();
-        eventTimeLabel = new javax.swing.JLabel();
-        eventNameTextBox = new javax.swing.JTextField();
-        eventDetailsLabel = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        eventDescriptionTextBox = new javax.swing.JTextPane();
-        buttonAmPm = new javax.swing.JButton();
-        charactersRemainingLabel = new javax.swing.JLabel();
-        completeButton = new javax.swing.JButton();
-        isGroupEventCheckBox = new javax.swing.JCheckBox();
-        groupComboBox = new javax.swing.JComboBox<>();
-        eventTimeLabel1 = new javax.swing.JLabel();
-        startHourDropDown = new javax.swing.JComboBox<>();
-        startMinDropDown = new javax.swing.JComboBox<>();
-        endHourDropDown = new javax.swing.JComboBox<>();
-        endMinDropDown = new javax.swing.JComboBox<>();
-        buttonAmPm2 = new javax.swing.JButton();
-        monthDropDown = new javax.swing.JComboBox<>();
-        dayDropDown = new javax.swing.JComboBox<>();
-        yearDropDown = new javax.swing.JComboBox<>();
-        invalidTimeLabel = new javax.swing.JLabel();
-
+    	
         jButton1.setText("jButton1");
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation( WindowConstants.EXIT_ON_CLOSE);
 
         titleLabel.setFont(new java.awt.Font("Tahoma", 1, 18));
         titleLabel.setText("Add Event");
@@ -136,14 +100,14 @@ public class AddEvent extends javax.swing.JFrame {
         for(int i = 0; i < 12; i++){
             startHours[i] = Integer.toString(i + 1);
         }
-        startHourDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(startHours));
+        startHourDropDown.setModel(new  DefaultComboBoxModel<>(startHours));
         startHourDropDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 startHourDropDownActionPerformed(evt);
             }
         });
 
-        startMinDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "00", "30" }));
+        startMinDropDown.setModel(new  DefaultComboBoxModel<>(new String[] { "00", "30" }));
         startMinDropDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 startMinDropDownActionPerformed(evt);
@@ -154,14 +118,14 @@ public class AddEvent extends javax.swing.JFrame {
         for(int i = 0; i < 12; i++){
             hours[i] = Integer.toString(i + 1);
         }
-        endHourDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(hours));
+        endHourDropDown.setModel(new  DefaultComboBoxModel<>(hours));
         endHourDropDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 endHourDropDownActionPerformed(evt);
             }
         });
 
-        endMinDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "00", "30"}));
+        endMinDropDown.setModel(new  DefaultComboBoxModel<>(new String[] { "00", "30"}));
         endMinDropDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 endMinDropDownActionPerformed(evt);
@@ -182,7 +146,7 @@ public class AddEvent extends javax.swing.JFrame {
             }
         });
 
-        monthDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}));
+        monthDropDown.setModel(new  DefaultComboBoxModel<>(new String[] {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}));
         monthDropDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 monthDropDownActionPerformed(evt);
@@ -193,7 +157,7 @@ public class AddEvent extends javax.swing.JFrame {
         for(int i = 0; i < 31; i++){
             days[i] = Integer.toString(i + 1);
         }
-        dayDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(days));
+        dayDropDown.setModel(new  DefaultComboBoxModel<>(days));
         dayDropDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dayDropDownActionPerformed(evt);
@@ -204,7 +168,7 @@ public class AddEvent extends javax.swing.JFrame {
         for(int i = 0; i < 50; i++){
             years[i] = Integer.toString(2016 + i);
         }
-        yearDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(years));
+        yearDropDown.setModel(new  DefaultComboBoxModel<>(years));
         yearDropDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 yearDropDownActionPerformed(evt);
@@ -222,109 +186,109 @@ public class AddEvent extends javax.swing.JFrame {
         startTime = 10000;
         endTime = 10000;
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+         GroupLayout layout = new  GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup( GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(30, 30, 30)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup( GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(eventDetailsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(charactersRemainingLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(eventDetailsLabel,  GroupLayout.PREFERRED_SIZE, 120,  GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap( LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup( GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane2,  GroupLayout.PREFERRED_SIZE, 209,  GroupLayout.PREFERRED_SIZE)
+                            .addComponent(charactersRemainingLabel,  GroupLayout.PREFERRED_SIZE, 182,  GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(eventNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(eventTimeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(eventTimeLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(eventDateLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup( GroupLayout.Alignment.LEADING)
+                            .addComponent(eventNameLabel,  GroupLayout.PREFERRED_SIZE, 86,  GroupLayout.PREFERRED_SIZE)
+                            .addComponent(eventTimeLabel,  GroupLayout.PREFERRED_SIZE, 86,  GroupLayout.PREFERRED_SIZE)
+                            .addComponent(eventTimeLabel1,  GroupLayout.PREFERRED_SIZE, 86,  GroupLayout.PREFERRED_SIZE)
+                            .addComponent(eventDateLabel,  GroupLayout.PREFERRED_SIZE, 86,  GroupLayout.PREFERRED_SIZE))
                         .addGap(40, 40, 40)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup( GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createParallelGroup( GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(startHourDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(startHourDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
-                                        .addComponent(startMinDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(startMinDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE))
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(endHourDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(endHourDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
-                                        .addComponent(endMinDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(endMinDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)))
                                 .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(buttonAmPm2, javax.swing.GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE)
-                                    .addComponent(buttonAmPm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addGroup(layout.createParallelGroup( GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(buttonAmPm2,  GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE)
+                                    .addComponent(buttonAmPm,  GroupLayout.DEFAULT_SIZE,  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(10, 10, 10)
-                                .addComponent(invalidTimeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(invalidTimeLabel,  GroupLayout.PREFERRED_SIZE, 212,  GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(titleLabel,  GroupLayout.PREFERRED_SIZE, 128,  GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap( LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(isGroupEventCheckBox))
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createParallelGroup( GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(monthDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(monthDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
-                                        .addComponent(dayDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(eventNameTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(groupComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(dayDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(eventNameTextBox,  GroupLayout.PREFERRED_SIZE, 144,  GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap( LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup( GroupLayout.Alignment.LEADING)
+                                    .addComponent(groupComboBox, 0,  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(yearDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(yearDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)
                                         .addGap(0, 0, Short.MAX_VALUE)))))))
                 .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(completeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup( GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap( GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(completeButton,  GroupLayout.PREFERRED_SIZE, 202,  GroupLayout.PREFERRED_SIZE)
                 .addGap(106, 106, 106))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            layout.createParallelGroup( GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(6, 6, 6)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(titleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup( GroupLayout.Alignment.BASELINE)
+                    .addComponent(titleLabel,  GroupLayout.PREFERRED_SIZE, 27,  GroupLayout.PREFERRED_SIZE)
                     .addComponent(isGroupEventCheckBox))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addPreferredGap( LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup( GroupLayout.Alignment.BASELINE)
                     .addComponent(eventNameLabel)
-                    .addComponent(eventNameTextBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(groupComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(eventDateLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
-                    .addComponent(monthDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dayDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(yearDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(eventNameTextBox,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)
+                    .addComponent(groupComboBox,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap( LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup( GroupLayout.Alignment.BASELINE)
+                    .addComponent(eventDateLabel,  GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+                    .addComponent(monthDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dayDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)
+                    .addComponent(yearDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(buttonAmPm, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(layout.createParallelGroup( GroupLayout.Alignment.LEADING, false)
+                    .addComponent(buttonAmPm,  GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup( GroupLayout.Alignment.BASELINE)
                         .addComponent(eventTimeLabel)
-                        .addComponent(startHourDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(startMinDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(startHourDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)
+                        .addComponent(startMinDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(buttonAmPm2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(layout.createParallelGroup( GroupLayout.Alignment.LEADING, false)
+                    .addComponent(buttonAmPm2,  GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addGroup(layout.createParallelGroup( GroupLayout.Alignment.BASELINE)
                         .addComponent(eventTimeLabel1)
-                        .addComponent(endHourDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(endMinDropDown, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(endHourDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)
+                        .addComponent(endMinDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap( LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(invalidTimeLabel)
                 .addGap(1, 1, 1)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup( GroupLayout.Alignment.TRAILING)
                     .addComponent(eventDetailsLabel)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jScrollPane2,  GroupLayout.PREFERRED_SIZE, 54,  GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap( LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(charactersRemainingLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap( LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(completeButton)
                 .addGap(33, 33, 33))
         );
@@ -365,9 +329,9 @@ public class AddEvent extends javax.swing.JFrame {
     }                                        
 
     private void completeButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
-        if(!groupComboBox.isEnabled())
+        if(!groupComboBox.isEnabled()){
         	username = whichGroupToAddTo;
-        
+        }
         startTime = (startTimeHour * 10000) + (startTimeMinute * 100);
         endTime = (endTimeHour * 10000) + (endTimeMinute * 100);
         
@@ -436,7 +400,7 @@ public class AddEvent extends javax.swing.JFrame {
     private void groupComboBoxActionPerformed(java.awt.event.ActionEvent evt) {     
     	groupPicked = true;
         System.out.println(groupComboBox.getSelectedIndex() + 1);
-        whichGroupToAddTo = groups[groupComboBox.getSelectedIndex()];    	
+        whichGroupToAddTo = groups[groupComboBox.getSelectedIndex()];    
     }                                             
     
     private void buttonAmPm2MouseReleased(java.awt.event.MouseEvent evt) {                                          
@@ -501,7 +465,7 @@ public class AddEvent extends javax.swing.JFrame {
             }
         }
         
-        dayDropDown.setModel(new javax.swing.DefaultComboBoxModel<>(days));
+        dayDropDown.setModel(new  DefaultComboBoxModel<>(days));
     }
     
     private boolean isLeapYear(int leap){
@@ -523,7 +487,7 @@ public class AddEvent extends javax.swing.JFrame {
     private void endHourDropDownActionPerformed(java.awt.event.ActionEvent evt) {  
     	endHourPicked = true;
         endTimeHour = endHourDropDown.getSelectedIndex() + 1;
-        System.out.println("endTimeHour = " + endTimeHour);
+        System.out.println("1. endTimeHour = " + endTimeHour);
     }                                               
 
     private void endMinDropDownActionPerformed(java.awt.event.ActionEvent evt) {                                               
@@ -553,10 +517,11 @@ public class AddEvent extends javax.swing.JFrame {
     //event name and whatever comes after will be seen as a syntax error
     //This same issue applies to event description
     
-    private boolean isEventTimeAvailable(){
+    private static boolean isEventTimeAvailable(){
     	ArrayList times;
-    	if (groupComboBox.isEnabled())
+    	if (groupComboBox.isEnabled()){
     		times = help.isTimeAvailableForEvent(whichGroupToAddTo, "", true);
+    	}
     	else
     		times = help.isTimeAvailableForEvent("", username, false);
     	
@@ -586,6 +551,10 @@ public class AddEvent extends javax.swing.JFrame {
 				startTimeEvent = Integer.valueOf(times.get(i * 4).toString().substring(0, 2) + times.get(i * 4).toString().substring(3, 5) + "00");
 				endTimeEvent = Integer.valueOf(times.get(i * 4 + 1).toString().substring(0, 2) + times.get(i * 4 + 1).toString().substring(3, 5) + "00");
 				
+				System.out.println("startTimeEvent = " + startTimeEvent);
+				System.out.println("endTimeEvent = " + endTimeEvent);
+				
+				
 				//if starting time is between start and finish of another event...
 				if(startTime >= startTimeEvent 
 						&& Integer.valueOf(startTime) < endTimeEvent){
@@ -606,9 +575,9 @@ public class AddEvent extends javax.swing.JFrame {
     }
     
     private void addEventToDataBase(){
-    	if(groupComboBox.isEnabled() && !groupPicked)
+    	if(groupComboBox.isEnabled() && !groupPicked){
     		whichGroupToAddTo = groups[0];
-    	
+    	}
     	if(!startHourPicked)
     		startTimeHour = 1;
     	if (!endHourPicked)
@@ -636,23 +605,33 @@ public class AddEvent extends javax.swing.JFrame {
         
         username = user.getUsername();
         
-        if(!groupComboBox.isEnabled())
+        if(!groupComboBox.isEnabled()){
         	whichGroupToAddTo = username;
-        
+        }
         ArrayList insert = new ArrayList();
+
         
+        	
         insert.add(a);
         insert.add(eventName);
         insert.add(whichGroupToAddTo);
-        insert.add(month + "/" + date + "/" + year);
+        
+        if(month < 10 || date < 10){
+        	if (month < 10 && date >= 10)
+        		insert.add("0" + month + "/" + date + "/" + year);
+        	else if (month >= 10 && date < 10)
+        		insert.add(month + "/" + "0" + date + "/" + year);
+        	else
+        	       insert.add("0" + month + "/" + "0" + date + "/" + year);
+        }       
+        
         insert.add(startTime);
         insert.add(endTime);
         insert.add(eventDescription);
         insert.add(1);
         insert.add(numMem);
-          
-       Boolean one = isEventTimeAvailable();
-        System.out.println(insert);
+        
+       Boolean one = AddEvent.isEventTimeAvailable();
         
        if(one.equals(true)){
         	help.insertEvent(insert);
@@ -675,7 +654,7 @@ public class AddEvent extends javax.swing.JFrame {
     		groups[i] = listOfGroups.getItem(i);
     	}
     	
-    	groupComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(groups));
+    	groupComboBox.setModel(new  DefaultComboBoxModel<>(groups));
     }
     
      public static void paintFrame(User locUser){
@@ -701,9 +680,9 @@ public class AddEvent extends javax.swing.JFrame {
      
     public static void main(String args[]) {
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            for ( UIManager.LookAndFeelInfo info :  UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                     UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
@@ -713,7 +692,7 @@ public class AddEvent extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(AddEvent.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
             java.util.logging.Logger.getLogger(AddEvent.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch ( UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(AddEvent.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
       
@@ -735,25 +714,32 @@ public class AddEvent extends javax.swing.JFrame {
     private static String whichGroupToAddTo, insertion, username, fullDate, eventNameAtChosenTime;
     private String[] groups;
     
-    private int startTimeHour, startTimeMinute, endTimeHour, endTimeMinute,
-            month, date, year, startTime, endTime;
+    private int startTimeHour, startTimeMinute, endTimeHour, endTimeMinute;
+	private static int month;
+	private static int date;
+	private static int year;
+	private static int startTime, endTime;
     
     private static SQLHelper help = new SQLHelper();
     private static AddEvent one;
     
-    private javax.swing.JLabel charactersRemainingLabel, eventDateLabel,
-    			eventDetailsLabel, eventNameLabel, eventTimeLabel, eventTimeLabel1,
-    			invalidTimeLabel, titleLabel;
+    private JLabel charactersRemainingLabel = new JLabel(), eventDateLabel = new JLabel(),
+    			eventDetailsLabel = new JLabel(), eventNameLabel = new JLabel(), 
+    			eventTimeLabel = new JLabel(), eventTimeLabel1 = new JLabel(),
+    			invalidTimeLabel = new JLabel(), titleLabel = new JLabel();
     
-    private javax.swing.JButton jButton1, buttonAmPm, buttonAmPm2, completeButton;
+    private JButton jButton1 = new JButton(), buttonAmPm = new JButton(), 
+    			buttonAmPm2 = new JButton(), completeButton = new JButton();
     
-    private javax.swing.JComboBox<String> monthDropDown, startHourDropDown, startMinDropDown,
-    			yearDropDown, dayDropDown, endHourDropDown, endMinDropDown;
+    private JComboBox<String> monthDropDown = new JComboBox<String>(), 
+    		startHourDropDown = new JComboBox<String>(), startMinDropDown = new JComboBox<String>(),
+    			yearDropDown = new JComboBox<String>(), dayDropDown = new JComboBox<String>(), 
+    			endHourDropDown = new JComboBox<String>(), endMinDropDown = new JComboBox<String>();
     
-    private static javax.swing.JComboBox<String> groupComboBox;
-    private javax.swing.JCheckBox isGroupEventCheckBox;
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextField eventNameTextBox;
-    private javax.swing.JTextPane eventDescriptionTextBox;
+    private static JComboBox<String> groupComboBox = new JComboBox<String>();
+    private JCheckBox isGroupEventCheckBox = new JCheckBox();
+    private JScrollPane jScrollPane2 = new JScrollPane();
+    private JTextField eventNameTextBox = new JTextField();
+    private JTextPane eventDescriptionTextBox = new JTextPane();
 }
 
