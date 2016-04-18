@@ -3,6 +3,8 @@ package CalendarTest;
 
 /*Contents of CalendarProgram.class */
 
+/*Contents of CalendarProgram.class */
+
 //Import packages
 import javax.swing.*;
 import javax.swing.event.*;
@@ -21,7 +23,8 @@ public class CalendarProgram extends JFrame{
 	static DefaultTableModel mtblCalendar; //Table model
 	static JScrollPane stblCalendar; //The scrollpane
 	static JPanel pnlCalendar;
-	static int realYear, realMonth, realDay, currentYear, currentMonth, monthBefore;
+	static int realYear, realMonth, realDay, currentYear, currentMonth, monthBefore, cmbDay_clicked;
+	static User userForCalendarProgram;
 	
 	
 	static private void prepareFrame(){
@@ -83,7 +86,7 @@ public class CalendarProgram extends JFrame{
 		pnlCalendar.add(btnPrev);
 		pnlCalendar.add(btnNext);
 		pnlCalendar.add(stblCalendar);
-		frmMain.setJMenuBar(MenuExp.PrepareMenuBar());
+		frmMain.setJMenuBar(MenuExp.PrepareMenuBar(new User("Moshe")));
 		
 	}
 	static private void registerActionListeners(){
@@ -91,6 +94,39 @@ public class CalendarProgram extends JFrame{
 			btnPrev.addActionListener(new btnPrev_Action());
 			btnNext.addActionListener(new btnNext_Action());
 			cmbYear.addActionListener(new cmbYear_Action());
+			cmbDay.addActionListener(new cmbDay_Action());
+			
+			tblCalendar.addMouseListener(new MouseAdapter() {
+			    public void mousePressed(MouseEvent me) {
+			        JTable table =(JTable) me.getSource();
+			        Point p = me.getPoint();
+			        int columnClicked = table.columnAtPoint(p);
+			        int rowClicked = table.rowAtPoint(p);
+			        String dateToView;
+			        String day, month, year;
+			        JFrame frame = (JFrame) SwingUtilities.getRoot(tblCalendar);
+			        if (me.getClickCount() == 2) {
+			        
+			           day = String.valueOf(mtblCalendar.getValueAt(rowClicked, columnClicked));
+			           if(day !="null"){
+			           if(Integer.valueOf(day) < 10)
+			        	   day = "0" + day;
+			           if(Integer.valueOf(currentMonth)<10)
+			        	  month = "0" + (currentMonth+1);
+			           else
+			        	  month = String.valueOf(currentMonth+1);
+			           
+			           year = String.valueOf(currentYear);
+			           
+			           dateToView = month+day+year;
+			         
+			        DailyEvents.paintFrame(dateToView, userForCalendarProgram);
+			        frame.setVisible(false);
+			        	}
+			        }
+			    }
+			});
+			        
 	}
 	
 	static private void setBounds(){
@@ -155,7 +191,8 @@ public class CalendarProgram extends JFrame{
 			}
 	}
 	
-	public static void paintFrame(){
+	public static void paintFrame(User user){
+		userForCalendarProgram = user;
 		prepareFrame();
 		createControls();
 		centerWindow(frmMain);
@@ -191,8 +228,8 @@ public class CalendarProgram extends JFrame{
 		catch (InstantiationException e) {}
 		catch (IllegalAccessException e) {}
 		catch (UnsupportedLookAndFeelException e) {}
-
-		paintFrame();
+		
+		paintFrame(new User("Moshe"));
 		
 		
 	}
@@ -229,7 +266,6 @@ public class CalendarProgram extends JFrame{
 			int column  =  (i+som-2)%7;
 			mtblCalendar.setValueAt(i, row, column);
 		}
-		
 	if(month != monthBefore){
 		cmbDay.removeAllItems();
 		for( int i = 1; i <=nod ;i++){
@@ -245,21 +281,52 @@ public class CalendarProgram extends JFrame{
 	static class tblCalendarRenderer extends DefaultTableCellRenderer{
 		public Component getTableCellRendererComponent (JTable table, Object value, boolean selected, boolean focused, int row, int column){
 			super.getTableCellRendererComponent(table, value, selected, focused, row, column);
-			if (column == 0 || column == 6){ //Week-end
-				setBackground(new Color(255, 220, 220));
+			String month = " ";
+			String day = " ";
+			
+			
+			if(currentMonth < 9){
+				 month = "0"+ String.valueOf(currentMonth+1);
+			}
+			else
+			month = String.valueOf(currentMonth+1);
+			/*
+			if(table.getValueAt(row, column) instanceof String){
+				table.setValueAt((Integer.valueOf(((String)table.getValueAt(row, column)).substring(0,1))), row, column);
+			}
+			*/
+			/*if(row != 0 && column != 0)
+			 * */
+			 
+			if(table.getValueAt(row, column) != null &&(int)table.getValueAt(row, column) < 10){
+				 day = "0" + String.valueOf((int)table.getValueAt(row, column));
+			}
+			else if(table.getValueAt(row, column) != null){
+				day = String.valueOf((int)table.getValueAt(row, column));
+			}
+			
+			
+			if (userForCalendarProgram.isThereAnEventToday(month+"/"+day+"/"+String.valueOf(currentYear))){ //Week-end
+				setBackground(new Color(0, 250, 0));
+				//table.setValueAt(table.getValueAt(row, column)+" "+"\u00B7",row,column);
 			}
 			else{ //Week
 				setBackground(new Color(255, 255, 255));
 			}
+			
+		
 			if (value != null){
 				if (Integer.parseInt(value.toString()) == realDay && currentMonth == realMonth && currentYear == realYear){ //Today
-					setBackground(new Color(220, 220, 255));
+					setBackground(new Color(150, 150, 255));
 				}
 			}
 			setBorder(null);
 			setForeground(Color.black);
+			
 			return this;  
+			
 		}
+		
 	}
 
 	static class btnPrev_Action implements ActionListener{
@@ -293,6 +360,29 @@ public class CalendarProgram extends JFrame{
 				currentYear = Integer.parseInt(b);
 				refreshCalendar(currentMonth, currentYear);
 			}
+		}
+	}
+	static class cmbDay_Action implements ActionListener{
+		public void actionPerformed (ActionEvent e){
+			String day, month;
+			if( cmbDay.getSelectedItem() != null && cmbDay_clicked >0){
+				if(Integer.parseInt(cmbDay.getSelectedItem().toString()) < 10){
+					day = "0" +cmbDay.getSelectedItem().toString();
+				}
+				else{
+					day =cmbDay.getSelectedItem().toString();
+				}
+				if(currentMonth < 9){
+					month = "0" + (currentMonth+1);
+				}
+				else{
+					month = String.valueOf(currentMonth+1);
+				}
+				DailyEvents.paintFrame(month + day + currentYear, userForCalendarProgram);
+				frmMain.setVisible(false);
+			}
+			cmbDay_clicked++;
+				
 		}
 	}
 }
