@@ -19,7 +19,7 @@ public class User {
 
 	public static void main(String[] args){
 		User moshe = new User("Moshe");
-		System.out.println(help.getEventNotifications("keith"));
+		
 		
 	}
 	
@@ -30,11 +30,6 @@ public class User {
 		notifications_ev = help.getEventNotifications(username);
 		notifications_gr = help.getGroupNotifications(username);
 	}
-	
-	/*
-	private static List initNotifications(){
-		return (ArrayList) help.getNotif(username);
-	}*/
 	
 	private static void putEventDatesIntoCopyOfMyEvents(String date){
 		if(copyOfMyEventsForFindingIfThereIsAnEvent.containsKey(date)){
@@ -145,3 +140,13 @@ public class User {
 		help.deleteNotification(n);
 	}*/
 }
+
+
+
+
+
+
+
+
+
+
