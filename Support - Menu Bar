@@ -3,6 +3,9 @@ package CalendarTest;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
@@ -24,29 +27,32 @@ public class MenuExp  {
         
         
     }
-    public static JMenuBar PrepareMenuBar(){
+    public static JMenuBar PrepareMenuBar(User user){
     	
     	if(onlyRunOnce == 0){
     	
         // Define and add two drop down menu to the menubar
         JMenu fileMenu = new JMenu("File");
-        JMenu editMenu = new JMenu("View");
+        JMenu viewMenu = new JMenu("View");
         menuBar.add(fileMenu);
-        menuBar.add(editMenu);
+        menuBar.add(viewMenu);
          
         // Create and add simple menu item to one of the drop down menu
         JMenuItem logOffAction = new JMenuItem("Log Off");
         JMenuItem exitAction = new JMenuItem("Exit");
         JMenuItem viewProfileAction = new JMenuItem("Profile");
         JMenuItem viewCalendarAction = new JMenuItem("Calendar");
-        
+        JMenuItem viewDailyAction = new JMenuItem("Daily Events");
+        JMenuItem viewNotificationAction = new JMenuItem("Notifications");
         
         fileMenu.add(logOffAction);
         fileMenu.add(exitAction);
         fileMenu.addSeparator();
         fileMenu.add(exitAction);
-        editMenu.add(viewProfileAction);
-        editMenu.add(viewCalendarAction);
+        viewMenu.add(viewProfileAction);
+        viewMenu.add(viewCalendarAction);
+        viewMenu.add(viewDailyAction);
+        viewMenu.add(viewNotificationAction);
        
         // Add a listener to the New menu item. actionPerformed() method will
         // invoked, if user triggred this menu item
@@ -55,7 +61,7 @@ public class MenuExp  {
                
                 JFrame frame = (JFrame) SwingUtilities.getRoot(menuBar);
         		frame.setVisible(false);
-        		 LoginScreen.main(null);
+        		 Login.main(null);
             }
         });
         
@@ -71,7 +77,7 @@ public class MenuExp  {
         		frame.setVisible(false);
         		
         		try {
-					Profile.paintFrame();
+					Profile.paintFrame(user);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -85,13 +91,46 @@ public class MenuExp  {
         		
         		JFrame frame = (JFrame) SwingUtilities.getRoot(menuBar);
         		frame.setVisible(false);
-        		CalendarProgram.paintFrame();
+        		CalendarProgram.paintFrame(user);
         	}
         });
+        
+        
+        viewDailyAction.addActionListener(new ActionListener(){
+	    	public void actionPerformed(ActionEvent arg0){
+	    		JFrame frame = (JFrame) SwingUtilities.getRoot(menuBar);
+	    		frame.setVisible(false);
+	    		
+	    		String timeStamp = new SimpleDateFormat("MMddyyy").format(Calendar.getInstance().getTime());
+	    		
+	    		DailyEvents.paintFrame(timeStamp, user);
+	    		
+	    	}
+	    	
+	    });
+        viewNotificationAction.addActionListener(new ActionListener(){
+        	public void actionPerformed(ActionEvent arg0){
+        		JFrame frame = (JFrame) SwingUtilities.getRoot(menuBar);
+        		frame.setVisible(false);
+        		
+        		NotificationScreen.paintFrame(user);
+        	}
+        });
+        
+        
         onlyRunOnce = 1;
     	}
+    	
+    	
+    	
+    	
         return menuBar;
+        
+        
+        
+        
     }
+   
     public static JMenuBar PrepareMenuBar(String logIn){
     	
     	if(onlyRunOnceLogIn == 0){
@@ -108,7 +147,7 @@ public class MenuExp  {
          });
     	}
     	
-    	 onlyRunOnceLogIn = 1;
+    	onlyRunOnceLogIn = 1;
     	 return menuBarLogIn;
     	
     }
