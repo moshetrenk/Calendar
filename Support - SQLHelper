@@ -26,7 +26,8 @@ public class SQLHelper {
 	
 	public static void main(String[] args){	
 		SQLHelper help = new SQLHelper();
-		
+
+
 	}
 	
 	SQLHelper(){
@@ -62,6 +63,18 @@ public class SQLHelper {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+	}
+	
+	public void newGroup(String groupCreator, String groupName){
+		String query = "insert calGroup values(" + (getHighestPrimaryKey("calGroup") + 1) + ", '" 
+				+ groupCreator + "', '" + groupName + "', 1)";
+		System.out.println(query);
+		try{
+			statement.execute(query);
+		}
+		catch (SQLException ex){
+			System.err.println("DB Exception: " + ex); 
 		}
 	}
 	
@@ -195,7 +208,7 @@ public class SQLHelper {
 						+ "(select groupName from calgroup where username in "
 						+ "(select username from calgroup where groupname = '" + groupName + "'))";
 		else 
-			query ="select distinct startTimeOfEvent, endTimeofEvent, dateOfEvent, eventName "
+			query = "select distinct startTimeOfEvent, endTimeofEvent, dateOfEvent, eventName "
 					+ "from theevent where user_groupID = '" + username + "'";
 		
 		
@@ -406,6 +419,10 @@ public class SQLHelper {
 	}
 	
 	public ArrayList getEventNotifications(String username){
+	//this method is unecessarily complicated because the notifications table
+	//doesn't store event data so a separate query needs to be made, using the
+	//date from the notifications 
+		
 		ArrayList<Event> notifs = new ArrayList<Event>();
 		ArrayList temp = new ArrayList();
 		
@@ -483,8 +500,9 @@ public class SQLHelper {
 	}
 	
 	public void giveYourApproval(Event evt){
+	//this needs to be tested	
 		try{
-			statement.executeQuery(null);
+			statement.executeQuery("update theevent set approvalsNeeded =" + (evt.getNumberOfAccepted() + 1) + "where eventNumber =" + evt.getEventNumber());
 		}
 		catch (SQLException ex){
 			System.err.println("DB Exception: " + ex);
@@ -510,6 +528,7 @@ public class SQLHelper {
 
 		return groups;
 	}
+
 	
 	private String getPrimaryKeyForAnyTable(String tableName){
 		try {
