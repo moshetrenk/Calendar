@@ -19,7 +19,7 @@ public class User {
 
 	public static void main(String[] args){
 		User moshe = new User("Moshe");
-		
+		System.out.println("myEvents = " + moshe.myEvents);
 		
 	}
 	
@@ -67,16 +67,15 @@ public class User {
 	}
 	
 	
-	
-	public String getUsername(){
+	String getUsername(){
 		return username;
 	}
 	
-	void addAdminRights(String groupName){
+	private void addAdminRights(String groupName){
 		iAreAdmin.add(groupName);
 	}
 	
-	public boolean isAdmin(String groupName){
+	private boolean isAdmin(String groupName){
 		int i = help.isUserAdmin(username);
 		
 		if (i == 1)
@@ -85,7 +84,7 @@ public class User {
 		return false;
 	}
 	
-	public void addUserToGroup(String groupName, int isAdmin){
+	private void addUserToGroup(String groupName, int isAdmin){
 		if(isAdmin != 0){
 			SelfClosingMessage.output("You must enter a value of either 1 or 0 for \"isAdmin\"", "Warning!", 10000);
 		}
@@ -95,7 +94,7 @@ public class User {
 		}
 	}
 	
-	public boolean isThereAnEventToday(String date){
+	private boolean isThereAnEventToday(String date){
 		if (copyOfMyEventsForFindingIfThereIsAnEvent.containsKey(date))
 			return true;
 		
@@ -107,7 +106,7 @@ public class User {
 	 It's too much more efficient to get the date from
 	 memory, rather than query to SQL that many times
 	  
-	public boolean isThereAnEventToday(String date){
+	private boolean isThereAnEventToday(String date){
 		String query = "select * from theEvent where user_groupID = '"  
 					+ username + "' and dateOfEvent = '" + date + "'";
 		
@@ -121,24 +120,40 @@ public class User {
 		return false;
 	}*/
 	
-	public boolean equals(String username){
+	private boolean equals(String username){
 		return (username.equals(this.username));
 	}
 		
-	public Event getEvent(String dateTime){
+	Event getEvent(String dateTime){
 		return myEvents.get(dateTime);
 	}
 	
-	public void deleteEvent(String dateTime){
+	void deleteEvent(String dateTime){
 		String date = dateTime.substring(0, 10),
 				time = dateTime.substring(10, 12) + dateTime.substring(13, 15) + "00";
 		
 		help.deleteEvent(username, date, Integer.parseInt(time));
+		
+		
+		//this needs some form of testing or verification
+		//I have no indication yet that it works...
+		
+		myEvents.remove(dateTime);
+		copyOfMyEventsForFindingIfThereIsAnEvent.remove(date);	
 	}
-	/*
-	public void deleteNotification(Notification n){
-		help.deleteNotification(n);
-	}*/
+	
+	private void deleteGroupNotification(){
+		
+	}
+	
+	private void deleteEventNotification(){
+		
+	}
+	
+	private void deleteCanceledEventNotification(){
+		
+	}
+	
 }
 
 
