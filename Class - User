@@ -94,7 +94,7 @@ public class User {
 		}
 	}
 	
-	private boolean isThereAnEventToday(String date){
+	boolean isThereAnEventToday(String date){
 		if (copyOfMyEventsForFindingIfThereIsAnEvent.containsKey(date))
 			return true;
 		
@@ -142,14 +142,17 @@ public class User {
 		copyOfMyEventsForFindingIfThereIsAnEvent.remove(date);	
 	}
 	
-	private void deleteGroupNotification(){
+	//public void deleteNotificationGroup(Notification_Group n){
+	private void deleteGroupNotification(Notification_Group notif){
 		
 	}
-	
+	 
+	//public void deleteNotificationEvent(User user, Event event){
 	private void deleteEventNotification(){
 		
 	}
 	
+	//public void deleteCancelledEventNotification(CancelledEventNotification cen){
 	private void deleteCanceledEventNotification(){
 		
 	}
