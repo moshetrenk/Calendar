@@ -26,6 +26,8 @@ public class SQLHelper {
 	public static void main(String[] args){	
 		SQLHelper help = new SQLHelper();
 
+		System.out.println(help.getCancelledEventNotifications("moshe"));
+		
 	}
 	
 	SQLHelper(){
@@ -410,7 +412,43 @@ public class SQLHelper {
 			System.err.println("DB Exception: " + ex); 
 		}
 	}
-		
+	
+	//needs to be tested
+	public void insertGroupNotification(Notification_Group gr){
+		try{
+			statement.execute("insert notificationsGroup values(" 
+					+ getHighestPrimaryKey("notificationsGroup") + ", '" + gr.getSender()
+					+ "', '" + gr.getRecipient() + "', '" + gr.getGroupName() + "')");
+		}
+		catch(SQLException ex){
+			System.err.println("DB Exception: " + ex); 
+		}
+	}
+	
+	//needs to be tested
+	public void insertEventNotification(Notification_Event ev){
+		try{
+			statement.execute("insert notificationsEvent values(" + getHighestPrimaryKey("notificationsEvent")
+			+ ", '" + ev.getGroupName() + "', '" + ev.getRecipient() + "', '"
+			+ ev.getDate() + "', " + ev.getStartTime() + ", " + ev.getEndTime() + ")");
+		} catch (SQLException ex){
+			System.err.println("DB Exception: " + ex); 
+		}
+	}
+	
+	//needs to be tested
+	public void insertCancelledEventNotification(CancelledEventNotification cen){
+		try{
+			statement.execute("insert notificationscancelledevent values (" 
+					+ getHighestPrimaryKey("notificationscancelledevent") + ", '"
+					+ cen.getGroupName() + "', '" + cen.getRecipient() + "', '"
+					+ cen.getEventName() + "', '" + cen.getDate() + "', " 
+					+ cen.getStartTime() + ")");
+		}catch(SQLException ex){
+			System.err.println("DB Exception: " + ex); 
+		}
+	}
+	
 	public int getHighestPrimaryKey(String tableName){
 		String primaryKey = getPrimaryKeyForAnyTable(tableName);
 		
@@ -419,7 +457,7 @@ public class SQLHelper {
 													+ " order by " + primaryKey + " desc");
 			while(resultSet.next()) {
 				System.out.println(resultSet.getInt(1));
-				return resultSet.getInt(1);
+				return resultSet.getInt(1) + 1;
 			}
 		}
 		catch(SQLException ex ) {
