@@ -11,6 +11,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Profile {
@@ -18,12 +19,14 @@ public class Profile {
 	static JFrame frmMain;
 	static Container pane;
 	static JPanel pnlProfile;
-	static DefaultTableModel mtblFriends, mtblGroups;
-	static JTable tblFriends, tblGroups;
-	static JScrollPane stblFriends, stblGroups;
-	static JLabel lblUsername, profilePic;
-	static JButton btnMyCalendar, btnModifyEvents;
+	static DefaultTableModel mtblDailyEvents, mtblGroups;
+	static JTable tblDailyEvents, tblGroups;
+	static JScrollPane stblDailyEvents, stblGroups;
+	static JLabel lblUsername, profilePic, usernameDoesntExist;
+	static JButton btnMyCalendar, btnModifyEvents, btnAddFriend, btnGroups;
+	static JTextField addFriendText;
 	static private String username;
+	static private User userForProfile;
 	
 	static private void prepareFrame(){
 		
@@ -53,25 +56,40 @@ public class Profile {
 				pane.setLayout(null);
 				frmMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Close when X is clicked
 	}
+	public static void centerWindow(Window frame) {
+	    Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
+	    int x = (int) ((dimension.getWidth() - frame.getWidth()) / 2);
+	    int y = (int) ((dimension.getHeight() - frame.getHeight()) / 2);
+	    frame.setLocation(x, y);
+	}
+
 	static private void createControls() throws IOException{
 		//create controls
-				mtblFriends = new DefaultTableModel(){public boolean isCellEditable(int rowIndex, int mColIndex){return false;}};
+				mtblDailyEvents = new DefaultTableModel(){public boolean isCellEditable(int rowIndex, int mColIndex){return false;}};
 				mtblGroups = new DefaultTableModel(){public boolean isCellEditable(int rowIndex, int mColIndex){return false;}};
 				
-				tblFriends = new JTable(mtblFriends);
+				tblDailyEvents = new JTable(mtblDailyEvents);
 				tblGroups = new JTable(mtblGroups);
 				
-				stblFriends = new JScrollPane(tblFriends);
+				stblDailyEvents = new JScrollPane(tblDailyEvents);
 				stblGroups = new JScrollPane(tblGroups);
+				
+				addFriendText = new JTextField();
 				
 				pnlProfile = new JPanel(null);
 				
 				btnMyCalendar = new JButton("My Calendar");
 				btnModifyEvents = new JButton("Modify Events");
+				btnAddFriend = new JButton("Add Friend");
+				btnAddFriend.setEnabled(false);
+				btnGroups = new JButton("Groups");
+				btnGroups.setEnabled(true);
 				
 				//CALL METHOD TO GET USERNAME FROM DATABASE
-				username = "BillGates"; // query
+				username = "billGates"; // query
 				lblUsername = new JLabel(username);
+				
+				usernameDoesntExist = new JLabel(" ");
 				
 				//CALL METHOD TO GET IMAGE FROM DATABASE
 				BufferedImage myPicture = ImageIO.read(new File("/Users/keiththompson/Downloads/src/edu/cuny/csi/csc330/j1f9DiJi_200x200.jpeg"));
@@ -79,7 +97,7 @@ public class Profile {
 	}
 	static private void setBorder(){
 		//set border
-				pnlProfile.setBorder(BorderFactory.createTitledBorder("Profile" + "                                                                                                                         " + "Current Temperature: " + getTempByZip.getTemperature("10314") + "\u00B0 F"));
+				pnlProfile.setBorder(BorderFactory.createTitledBorder("Profile"));
 				
 				//set color
 				frmMain.getContentPane().setBackground(Color.BLUE);
@@ -87,42 +105,67 @@ public class Profile {
 	static private void addControls(){
 		//add controls to pane
 				pane.add(pnlProfile);
-				pnlProfile.add(stblFriends);
+				pnlProfile.add(stblDailyEvents);
 				pnlProfile.add(stblGroups);
 				pnlProfile.add(lblUsername);
 				pnlProfile.add(profilePic);
 				pnlProfile.add(btnMyCalendar);
 				pnlProfile.add(btnModifyEvents);
-				frmMain.setJMenuBar(MenuExp.PrepareMenuBar());
+				pnlProfile.add(btnGroups);
+				//pnlProfile.add(btnAddFriend);
+				pnlProfile.add(addFriendText);
+				pnlProfile.add(usernameDoesntExist);
+				frmMain.setJMenuBar(MenuExp.PrepareMenuBar(userForProfile));
 	}
 	static private void registerActionListeners(){
 		//add action listeners
 				btnMyCalendar.addActionListener(new btnMyCalendar_Action());
 				btnModifyEvents.addActionListener(new btnModifyEvents_Action());
+				
+	/*			
+				addFriendText.addActionListener(new java.awt.event.ActionListener() {
+			        public void actionPerformed(java.awt.event.ActionEvent evt) {
+			        	addFriendTextActionPerformed(evt);
+			        }
+			    });
+				addFriendText.addKeyListener(new java.awt.event.KeyAdapter() {
+			        public void keyReleased(java.awt.event.KeyEvent evt) {
+			        	addFriendTextKeyReleased(evt);
+			        }
+			     
+			    });
+	 */
 	}
 	static private void setBounds(){
 		//set bounds
 		pnlProfile.setBounds(0,0,650,650);
 		lblUsername.setBounds(75,15,100,50);
-		stblGroups.setBounds(325,225,150,100);
-		stblFriends.setBounds(75,225,150,100);
+		stblGroups.setBounds(75,225,150,100);
+		stblDailyEvents.setBounds(325,225,150,100);
 		profilePic.setBounds(325,45,150,150);
 		btnMyCalendar.setBounds(75,80 ,100,50);
-		btnModifyEvents.setBounds(75,150, 100,50);
+		btnGroups.setBounds(75,150,100,50);
+		//btnModifyEvents.setBounds(75,150, 100,50);
+		//addFriendText.setBounds(75,150,110,25);
+		btnAddFriend.setBounds(200, 150,100 ,25);
+		usernameDoesntExist.setBounds(75, 180, 210,25);
+		
+		
 	}
 	static private void populateTables(){
 		//All must be a method from a query for database
-				tblFriends.setRowHeight(13);
-				mtblFriends.setRowCount(6);
-				mtblFriends.addColumn("Friends");
+				tblDailyEvents.setRowHeight(13);
+				mtblDailyEvents.setRowCount(6);
+				mtblDailyEvents.addColumn("Today's Events");
 				
-				mtblFriends.setValueAt("steveJobs",0,0);
-				mtblFriends.setValueAt("alanTuring", 1, 0);
-				mtblFriends.setValueAt("timCook",2,0);
+				mtblDailyEvents.setValueAt("Work for CSC330",0,0);
+				mtblDailyEvents.setValueAt("Sleep", 1, 0);
+				mtblDailyEvents.setValueAt("Repeat",2,0);
 				
 				tblGroups.setRowHeight(13);
 				mtblGroups.setRowCount(6);
 				mtblGroups.addColumn("Groups");
+				
 				mtblGroups.setValueAt("CSC330", 0, 0);
 				mtblGroups.setValueAt("JIG", 1, 0);
 	}
@@ -131,9 +174,12 @@ public class Profile {
 		frmMain.setResizable(false);
 	}
 	static private void backgroundProcesses(){}
-	public static void paintFrame() throws IOException{
+	
+	public static void paintFrame(User user) throws IOException{
+		userForProfile = user;
 		prepareFrame();
 		createControls();
+		centerWindow(frmMain);
 		setBorder();
 		addControls();
 		registerActionListeners();
@@ -142,8 +188,7 @@ public class Profile {
 		makeFrameVisible(true);
 		backgroundProcesses();
 	}
-	
-	
+
 
 	public static void main(String[] args) throws IOException {
 	
@@ -153,12 +198,14 @@ public class Profile {
 		catch (IllegalAccessException e) {}
 		catch (UnsupportedLookAndFeelException e) {}
 	
-		paintFrame();
+		paintFrame(new User("Moshe"));
+		
+		
 	}
 
 	static class btnMyCalendar_Action implements ActionListener{
 		public void actionPerformed(ActionEvent e){
-			CalendarProgram.paintFrame();
+			CalendarProgram.paintFrame(userForProfile);
 			frmMain.repaint();
 			frmMain.setVisible(false);
 		}
@@ -169,5 +216,5 @@ public class Profile {
 			
 		}
 	}
-	
+
 }
