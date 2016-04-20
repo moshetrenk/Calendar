@@ -22,7 +22,6 @@ public class User {
 
 	public static void main(String[] args){
 		User moshe = new User("Moshe");
-		System.out.println("notifs: " + help.getEventNotifications(username));
 		
 	}
 	
@@ -146,6 +145,14 @@ public class User {
 		copyOfMyEventsForFindingIfThereIsAnEvent.remove(date);	
 	}
 	
+	public ArrayList<Event> getEventNotifications(){
+		return notifications_ev;
+	}
+
+	public ArrayList<CancelledEventNotification> getCancelledEventNotifications(){
+		return notifications_cancelled_ev;
+	}
+
 	private void acceptEventInvite(Event event){
 		help.deleteNotificationEvent(new User(username), event);
 		notifications_ev.remove(event);
