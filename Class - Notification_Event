@@ -1,5 +1,6 @@
 package cal;
 
+
 import java.util.ArrayList;
 
 public class Notification_Event extends Notification{
@@ -10,6 +11,13 @@ public class Notification_Event extends Notification{
 		startTime = (int) one.get(3);
 		endTime = (int) one.get(4);
 	}
+	Notification_Event(String userName, String nameOfGroup , String dateOfEvent, int timeStart, int timeEnd){
+		super(userName,nameOfGroup);
+		date = dateOfEvent;
+		startTime = timeStart;
+		endTime = timeEnd;
+	}
+	
 	
 	private String date;
 	private int startTime, endTime;
