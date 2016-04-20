@@ -10,6 +10,10 @@ public abstract class Notification{
 		recipient = (String) one.get(1);
 	}
 
+	Notification(String rec, String group){
+		recipient = rec;
+		groupName = group;
+	}
 	public String getRecipient() {
 		return recipient;
 	}
