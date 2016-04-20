@@ -1,0 +1,25 @@
+package cal;
+
+import java.util.ArrayList;
+
+public class CancelledEventNotification extends Notification {
+	private String eventName, date, startTime;
+	CancelledEventNotification(ArrayList one) {
+		super(one);
+		//CancelledEventNotification a = new CancelledEventNotification(one);
+		//a.getGroupName();
+		//a.getRecipient();
+		
+	}
+	public String getEventName() {
+		return eventName;
+	}
+	public String getDate() {
+		return date;
+	}
+	public String getStartTime() {
+		return startTime;
+	}
+
+	
+}
