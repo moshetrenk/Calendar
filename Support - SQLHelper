@@ -315,7 +315,6 @@ public class SQLHelper {
 		
 		return -1;
 	}
-	
 	public int getNumberOfElements(String tableName){
 		return getHighestPrimaryKey(tableName);
 		//don't use this method, use getHighestPrimaryKey(...)
@@ -374,6 +373,7 @@ public class SQLHelper {
 		}
 	}
 	
+	//needs to be tested
 	public void deleteCancelledEventNotification(CancelledEventNotification cen){
 		try {			
 			statement.execute("delete from notificationsCancelledEvent where groupName = '" + cen.getGroupName()
@@ -386,6 +386,7 @@ public class SQLHelper {
 		}
 	}
 	
+	//needs to be tested
 	public void deleteNotificationGroup(Notification_Group n){
 		try {			
 			statement.execute("delete from notificationsGroup where sender = '" + n.getSender()
@@ -397,6 +398,7 @@ public class SQLHelper {
 		}
 	}
 	
+	//needs to be tested
 	public void deleteNotificationEvent(User user, Event event){
 		try {			
 			statement.execute("delete from notificationsevent where groupname = '" + event.getId()  
