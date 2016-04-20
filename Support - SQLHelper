@@ -26,8 +26,6 @@ public class SQLHelper {
 	public static void main(String[] args){	
 		SQLHelper help = new SQLHelper();
 
-		help.getCancelledEventNotifications("moshe");
-		
 	}
 	
 	SQLHelper(){
@@ -489,8 +487,6 @@ public class SQLHelper {
 			}	
 		}
 		
-		System.out.println("notifs = " + notifs);
-		
 		return notifs;
 	}
 	
@@ -514,9 +510,9 @@ public class SQLHelper {
 		return sender_and_group;
 	}
 	
-	public ArrayList getCancelledEventNotifications(String username){
+	public ArrayList<CancelledEventNotification> getCancelledEventNotifications(String username){
 		ArrayList one = new ArrayList(), two = new ArrayList();
-		ArrayList locNotifs = new ArrayList();
+		ArrayList<CancelledEventNotification> locNotifs = new ArrayList<CancelledEventNotification>();
 		
 		try {			
 			resultSet = statement.executeQuery("select * from notificationsCancelledEvent where recipient = '" + username + "'");
