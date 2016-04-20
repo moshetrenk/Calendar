@@ -14,12 +14,15 @@ public class User {
 	
 	private ArrayList<Event> notifications_ev = new ArrayList<Event>();
 	private ArrayList<String[]> notifications_gr = new ArrayList<String[]>();
+	private ArrayList<CancelledEventNotification> notifications_cancelled_ev = new ArrayList<CancelledEventNotification>();
+	
+	
 	private HashMap<String, Event> myEvents = new HashMap<String, Event>();
 	private static HashMap<String, Integer> copyOfMyEventsForFindingIfThereIsAnEvent = new HashMap<String, Integer>();
 
 	public static void main(String[] args){
 		User moshe = new User("Moshe");
-		System.out.println("myEvents = " + moshe.myEvents);
+		System.out.println("notifs: " + help.getEventNotifications(username));
 		
 	}
 	
@@ -29,6 +32,7 @@ public class User {
 		myGroups = (List) help.getGroups(username);;
 		notifications_ev = help.getEventNotifications(username);
 		notifications_gr = help.getGroupNotifications(username);
+		notifications_cancelled_ev = help.getCancelledEventNotifications(username);
 	}
 	
 	private static void putEventDatesIntoCopyOfMyEvents(String date){
@@ -142,18 +146,35 @@ public class User {
 		copyOfMyEventsForFindingIfThereIsAnEvent.remove(date);	
 	}
 	
-	//public void deleteNotificationGroup(Notification_Group n){
-	private void deleteGroupNotification(Notification_Group notif){
-		
-	}
-	 
-	//public void deleteNotificationEvent(User user, Event event){
-	private void deleteEventNotification(){
-		
+	private void acceptEventInvite(Event event){
+		help.deleteNotificationEvent(new User(username), event);
+		notifications_ev.remove(event);
+		help.giveYourApproval(event);
 	}
 	
-	//public void deleteCancelledEventNotification(CancelledEventNotification cen){
-	private void deleteCanceledEventNotification(){
+	private void rejectEventInvite(Event event){
+		help.deleteNotificationEvent(new User(username), event);
+		notifications_ev.remove(event);
+		
+		//send a cancelled eventNotification to all users
+		//remove event from SQL and all other places that the event
+		//has been placed into
+	}
+
+	private void acceptGroupInvite(Notification_Group notif){
+		help.addUserToGroup(username, notif.getGroupName(), 0);		
+		myGroups.add(notif.getGroupName());
+		
+		help.deleteNotificationGroup(notif);
+		notifications_gr.remove(notif);
+	}
+	
+	private void rejectGroupInvite(Notification_Group notif){
+		help.deleteNotificationGroup(notif);
+		notifications_gr.remove(notif);
+	}
+	
+	private void deleteCancelledEventNotification(){
 		
 	}
 	
