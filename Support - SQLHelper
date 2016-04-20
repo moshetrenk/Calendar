@@ -25,8 +25,6 @@ public class SQLHelper {
 	
 	public static void main(String[] args){	
 		SQLHelper help = new SQLHelper();
-
-
 	}
 	
 	SQLHelper(){
@@ -378,7 +376,10 @@ public class SQLHelper {
 	
 	public void deleteCancelledEventNotification(CancelledEventNotification cen){
 		try {			
-			statement.execute(null);
+			statement.execute("delete from notificationsCancelledEvent where groupName = '" + cen.getGroupName()
+			+ "'and recipient = '" + cen.getRecipient() + "' and eventname = '"
+			+ cen.getEventName() + "' and dateofevent = '" + cen.getDate() 
+			+ "' and startTimeEvent = " + cen.getStartTime());
 		}
 		catch(SQLException ex ) {
 			System.err.println("DB Exception: " + ex); 
