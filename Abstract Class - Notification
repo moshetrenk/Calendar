@@ -6,8 +6,8 @@ public abstract class Notification{
 	private String recipient, groupName;
 	
 	Notification(ArrayList one){
-		recipient = (String) one.get(0);
-		groupName = (String) one.get(1);
+		groupName = (String) one.get(0);
+		recipient = (String) one.get(1);
 	}
 
 	public String getRecipient() {
