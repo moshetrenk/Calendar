@@ -1,19 +1,22 @@
 package calendarTest;
 
 
+
+
 import java.util.ArrayList;
 
 public class Event {
 	
-	protected int eventNumber;
-	protected String eventName;
-	protected String eventDate;
-	protected Object startTime;
-	protected Object endTime;
-	protected String id;
-	protected String description;
-	protected int numberOfAccepted;
-	protected int numberOfTotal;
+	private int eventNumber;
+	private String eventName;
+	private String eventDate;
+	private Object startTime;
+	private Object endTime;
+	private String id;
+	private String description;
+	private int numberOfAccepted;
+	private int numberOfTotal;
+	
 
 	public Event(ArrayList eventList){
 		
@@ -79,7 +82,27 @@ public class Event {
 		return numberOfTotal;
 	}
 	
+	public boolean isEventApproved(){
+		return numberOfAccepted == numberOfTotal;
+	}
+	@Override
+	public String toString() {
+		return "Event [eventNumber=" + eventNumber + ", eventName=" + eventName + ", eventDate=" + eventDate
+				+ ", startTime=" + startTime + ", endTime=" + endTime + ", id=" + id + ", description=" + description
+				+ ", numberOfAccepted=" + numberOfAccepted + ", numberOfTotal=" + numberOfTotal + "]";
+	}
 	
+	public void userAcceptedEvent(){
+		if (numberOfAccepted < numberOfTotal){
+		numberOfAccepted ++;
+		}
+	}
+	
+	public Notification_Event createNotification(User user){
+		return new Notification_Event(user.getUsername(), id, eventDate,((int)startTime),((int)endTime));
+		
+		
+	}
 	
 	
 }
