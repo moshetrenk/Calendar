@@ -376,6 +376,15 @@ public class SQLHelper {
 		}
 	}
 	
+	public void deleteCancelledEventNotification(CancelledEventNotification cen){
+		try {			
+			statement.execute(null);
+		}
+		catch(SQLException ex ) {
+			System.err.println("DB Exception: " + ex); 
+		}
+	}
+	
 	public void deleteNotificationGroup(Notification_Group n){
 		try {			
 			statement.execute("delete from notificationsGroup where sender = '" + n.getSender()
@@ -387,18 +396,17 @@ public class SQLHelper {
 		}
 	}
 	
-	public void deleteNotificationEvent(Notification_Event n){
+	public void deleteNotificationEvent(User user, Event event){
 		try {			
-			//delete events from here
-			statement.execute(null);
+			statement.execute("delete from notificationsevent where groupname = '" + event.getId()  
+			+ "' and recipient = '" + user.getUsername() + "'and dateofevent = '" 
+			+ event.getEventDate() + "' and starttimeofevent = " + event.getStartTime());
 		}
 		catch(SQLException ex ) {
 			System.err.println("DB Exception: " + ex); 
 		}
 	}
-	
-	
-	
+		
 	public int getHighestPrimaryKey(String tableName){
 		String primaryKey = getPrimaryKeyForAnyTable(tableName);
 		
@@ -494,7 +502,7 @@ public class SQLHelper {
 		catch(SQLException ex ) {
 			System.err.println("DB Exception: " + ex); 
 		}
-		
+
 		return sender_and_group;
 	}
 	
@@ -505,8 +513,7 @@ public class SQLHelper {
 		}
 		catch (SQLException ex){
 			System.err.println("DB Exception: " + ex);
-		}
-		
+		}	
 	}
 	
 	public ArrayList getGroupsThatHaveAskedForYourPresence(String username){
@@ -527,7 +534,6 @@ public class SQLHelper {
 
 		return groups;
 	}
-
 	
 	private String getPrimaryKeyForAnyTable(String tableName){
 		try {
