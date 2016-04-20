@@ -180,7 +180,7 @@ public class EventDetails extends javax.swing.JFrame {
         	user.deleteEvent(locTimeDate);
         }
 
-        //DailyEvents.refreshDailyEvents(user, list.get(3).toString().substring(0, 2) + list.get(3).toString().substring(3, 5) + list.get(3).toString().substring(6, 10));
+        DailyEvents.refreshDailyEvents(list.get(3).toString().substring(0, 2) + list.get(3).toString().substring(3, 5) + list.get(3).toString().substring(6, 10), user);
 
         SelfClosingMessage.output("Event succesfully deleted", "Success", 2500);
         //CalendarProgram.refreshCalendar(Integer.valueOf(list.get(3).toString().substring(0, 2)), Integer.valueOf(list.get(3).toString().substring(6, 10)));
