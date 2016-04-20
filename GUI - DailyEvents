@@ -220,11 +220,22 @@ public class DailyEvents {
 			super.getTableCellRendererComponent(table, value, selected, focused, row, column);
 			int columnSelected = table.getSelectedColumn();
 			int rowSelected = table.getSelectedRow();
+			String date;
+			if(column < 9){
+			date = "0"+String.valueOf(column+1);
+			}
+			else {
+				date = String.valueOf(column+1);
+			}
+			date = dateToView.substring(0,2) +"/"+ date+"/" + dateToView.substring(4);
+			
 			
 			
 			if(column +1  == Integer.valueOf((String.valueOf(dateToView.charAt(2)))+(String.valueOf(dateToView.charAt(3)))))
 				setBackground(new Color(0,191,255));
-			
+			else if(userDailyEvents.isThereAnEventToday(date)){
+				setBackground(new Color(0, 250, 0));
+			}
 			else if (column % 2 == 0){ 
 				setBackground(new Color(235,235,235));
 			}
@@ -243,10 +254,21 @@ public class DailyEvents {
 		public Component getTableCellRendererComponent (JTable table, Object value, boolean selected, boolean focused, int row, int column){
 			super.getTableCellRendererComponent(table, value, selected, focused, row, column);
 	
+			String test;
+			if(column < 9){
+			test = "0"+String.valueOf(column+1);
+			}
+			else {
+				test = String.valueOf(column+1);
+			}
+			test = dateToView.substring(0,2) + test + dateToView.substring(4);
+			System.out.println(test);
+			
 			if(column +1  == Integer.valueOf((String.valueOf(dateToView.charAt(2)))+(String.valueOf(dateToView.charAt(3))))){
 				setBackground(new Color(0,191,255));
 		}
-			
+					
+			//else if()
 			else if (column % 2 == 0){ 
 				setBackground(new Color(235,235,235));
 			}
@@ -418,6 +440,13 @@ public class DailyEvents {
 		setBounds();
 		tblChooseDays.setDefaultRenderer(tblChooseDays.getColumnClass(0), new tblDaySelectedRenderer());
 		makeFrameVisible(true);
+	}
+	
+	public static void refreshDailyEvents(String date, User user){
+		JFrame frame = (JFrame) SwingUtilities.getRoot(tblDailyEvents);
+		paintFrame(date, user);
+		frame.setVisible(false);
+		
 	}
 	
 	public static void main (String args[]){
