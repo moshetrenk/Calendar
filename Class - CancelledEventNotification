@@ -11,6 +11,14 @@ public class CancelledEventNotification extends Notification {
 		//a.getRecipient();
 		
 	}
+	
+	CancelledEventNotification(ArrayList one, ArrayList two) {
+		super(one);
+		eventName = (String) two.get(0);
+		date 	  = (String) two.get(1);
+		startTime = (String) two.get(2);
+	}
+	
 	public String getEventName() {
 		return eventName;
 	}
