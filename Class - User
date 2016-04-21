@@ -7,15 +7,13 @@ import java.awt.List;
 public class User {
 	private static SQLHelper help = new SQLHelper();
 	private static String username;
-	private String url;
 	
 	private List iAreAdmin = new List();
 	private List myGroups = new List();
 	
 	private ArrayList<Event> notifications_ev = new ArrayList<Event>();
-	private ArrayList<String[]> notifications_gr = new ArrayList<String[]>();
+	private ArrayList<Notification_Group> notifications_gr = new ArrayList<Notification_Group>();
 	private ArrayList<CancelledEventNotification> notifications_cancelled_ev = new ArrayList<CancelledEventNotification>();
-	
 	
 	private HashMap<String, Event> myEvents = new HashMap<String, Event>();
 	private static HashMap<String, Integer> copyOfMyEventsForFindingIfThereIsAnEvent = new HashMap<String, Integer>();
@@ -28,7 +26,7 @@ public class User {
 	User(String username){
 		this.username = username;
 		myEvents = initEvents();
-		myGroups = (List) help.getGroups(username);;
+		myGroups = (List) help.getGroups(username);
 		notifications_ev = help.getEventNotifications(username);
 		notifications_gr = help.getGroupNotifications(username);
 		notifications_cancelled_ev = help.getCancelledEventNotifications(username);
@@ -44,7 +42,7 @@ public class User {
 	}
 	
 	private static HashMap<String, Event> initEvents(){
-		ArrayList cur = help.getEvents(username),
+		ArrayList<Object> cur = help.getEvents(username),
 				 temp = new ArrayList();	
 		
 		int numEvents = help.getNumberOfEventsByUser(username);
@@ -70,7 +68,7 @@ public class User {
 	}
 	
 	
-	String getUsername(){
+	public String getUsername(){
 		return username;
 	}
 	
@@ -87,17 +85,7 @@ public class User {
 		return false;
 	}
 	
-	private void addUserToGroup(String groupName, int isAdmin){
-		if(isAdmin != 0){
-			SelfClosingMessage.output("You must enter a value of either 1 or 0 for \"isAdmin\"", "Warning!", 10000);
-		}
-		else{
-		myGroups.add(groupName);
-		help.addUserToGroup(username, groupName, isAdmin);
-		}
-	}
-	
-	boolean isThereAnEventToday(String date){
+	public boolean isThereAnEventToday(String date){
 		if (copyOfMyEventsForFindingIfThereIsAnEvent.containsKey(date))
 			return true;
 		
@@ -123,7 +111,7 @@ public class User {
 		return false;
 	}*/
 	
-	private boolean equals(String username){
+	public boolean equals(String username){
 		return (username.equals(this.username));
 	}
 		
@@ -131,7 +119,7 @@ public class User {
 		return myEvents.get(dateTime);
 	}
 	
-	void deleteEvent(String dateTime){
+	public void deleteEvent(String dateTime){
 		String date = dateTime.substring(0, 10),
 				time = dateTime.substring(10, 12) + dateTime.substring(13, 15) + "00";
 		
@@ -143,23 +131,16 @@ public class User {
 		
 		myEvents.remove(dateTime);
 		copyOfMyEventsForFindingIfThereIsAnEvent.remove(date);	
+		
 	}
 	
-	public ArrayList<Event> getEventNotifications(){
-		return notifications_ev;
-	}
-
-	public ArrayList<CancelledEventNotification> getCancelledEventNotifications(){
-		return notifications_cancelled_ev;
-	}
-
-	private void acceptEventInvite(Event event){
+	public void acceptEventInvite(Event event){
 		help.deleteNotificationEvent(new User(username), event);
 		notifications_ev.remove(event);
 		help.giveYourApproval(event);
 	}
 	
-	private void rejectEventInvite(Event event){
+	public void rejectEventInvite(Event event){
 		help.deleteNotificationEvent(new User(username), event);
 		notifications_ev.remove(event);
 		
@@ -168,7 +149,7 @@ public class User {
 		//has been placed into
 	}
 
-	private void acceptGroupInvite(Notification_Group notif){
+	public void acceptGroupInvite(Notification_Group notif){
 		help.addUserToGroup(username, notif.getGroupName(), 0);		
 		myGroups.add(notif.getGroupName());
 		
@@ -176,19 +157,38 @@ public class User {
 		notifications_gr.remove(notif);
 	}
 	
-	private void rejectGroupInvite(Notification_Group notif){
+	public void rejectGroupInvite(Notification_Group notif){
 		help.deleteNotificationGroup(notif);
 		notifications_gr.remove(notif);
 	}
 	
-	private void deleteCancelledEventNotification(){
-		
+	public void addEvent(Event event){
+		if(!myEvents.containsKey(event.getDateTime()))
+			myEvents.put(event.getDateTime(), event);
+		else System.out.println("you dun goofed");
+	}	
+	
+	public void deleteCancelledEventNotification(CancelledEventNotification cen){
+		notifications_cancelled_ev.remove(cen);
+		help.deleteCancelledEventNotification(cen);
+	}
+	
+	public void addEventCancelledNotification(CancelledEventNotification cen){
+		notifications_cancelled_ev.add(cen);
+		help.addEventCancelledNotification(cen);
+	}
+	
+	public void addNotificationGroupRequest(Notification_Group gr){
+		notifications_gr.add(gr);
+		help.addNotificationGroupRequest(gr);
+	}
+	
+	public void addNewEventNotification(Event evt){
+			notifications_ev.add(evt);
+			help.addNewEventNotification(evt, username);	
 	}
 	
 }
-
-
-
 
 
 
