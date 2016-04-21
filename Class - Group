@@ -1,0 +1,141 @@
+package cal;
+
+import java.util.*;
+
+public class Group {
+	private String currentUser;
+	private static String groupName;
+	
+	private HashMap<String, Event> groupEvents = new HashMap<String, Event>();
+	private static HashMap<String, Integer> copyOfGroupEventsForFindingIfThereIsAnEvent = new HashMap<String, Integer>();
+	
+	private ArrayList<String> usersInGroup = new ArrayList<String>();
+	private static SQLHelper sqlHelper = new SQLHelper();
+	private ArrayList<User> members = new ArrayList<User>();
+	
+	public Group(String username, String groupnameN){
+		
+		currentUser = username;
+		this.groupName = groupName;
+		usersInGroup = sqlHelper.getGroupMembersByGroupName(groupName);
+		groupEvents = initEvents();
+		usersInGroup.remove(currentUser);
+		for(int i = 0; i < usersInGroup.size(); i++)
+			members.add(new User(usersInGroup.get(i)));
+	}
+	
+	public void eventHasBeenDeleted(CancelledEventNotification event){
+		for(User u : members){
+			u.addEventCancelledNotification(event);
+		}
+		
+		int x =  Integer.parseInt(event.getStartTime());
+		
+		sqlHelper.deleteEvent(groupName, event.getDate(), x);
+	}
+	
+	private static HashMap<String, Event> initEvents(){
+		ArrayList cur = sqlHelper.getEvents(groupName),
+				 temp = new ArrayList();	
+		
+		int numEvents = sqlHelper.getNumberOfEventsByUser(groupName);
+		HashMap<String, Event> these = new HashMap<String, Event>();
+		Event event;
+		String delimiter = sqlHelper.getDelimiter();
+		
+		for(int i = 0; i < cur.size(); i++){
+			if(!cur.get(i).equals(delimiter)){
+				temp.add(cur.get(i));	
+				if(i % 10 == 3)
+					putEventDatesIntoCopyOfMyEvents((String) cur.get(i));
+			}
+			else{
+				event = new Event(temp);
+				temp = new ArrayList();
+				
+				these.put(event.getDateTime(), event);
+				}
+		}
+		
+		return these;
+	}
+	
+	private static void putEventDatesIntoCopyOfMyEvents(String date){
+		if(copyOfGroupEventsForFindingIfThereIsAnEvent.containsKey(date)){
+			int a = copyOfGroupEventsForFindingIfThereIsAnEvent.get(date);
+			copyOfGroupEventsForFindingIfThereIsAnEvent.replace(date, a, a++);
+		}
+		else
+			copyOfGroupEventsForFindingIfThereIsAnEvent.put(date, 1);
+	}
+	
+	public void addApproval(Event e){
+		groupEvents.get(e.getEventDate()).userAcceptedEvent();
+	}
+	
+	public String getGroupName() {
+		return groupName;
+	}
+	
+	public void addMember(User u){
+		if(!members.contains(u))
+			members.add(u);
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Group other = (Group) obj;
+		if (currentUser == null) {
+			if (other.currentUser != null)
+				return false;
+		} else if (!currentUser.equals(other.currentUser))
+			return false;
+		if (groupEvents == null) {
+			if (other.groupEvents != null)
+				return false;
+		} else if (!groupEvents.equals(other.groupEvents))
+			return false;
+		if (members == null) {
+			if (other.members != null)
+				return false;
+		} else if (!members.equals(other.members))
+			return false;
+		if (usersInGroup == null) {
+			if (other.usersInGroup != null)
+				return false;
+		} else if (!usersInGroup.equals(other.usersInGroup))
+			return false;
+		return true;
+	}
+
+	boolean isThereAnEventToday(String date){
+		if (copyOfGroupEventsForFindingIfThereIsAnEvent.containsKey(date))
+			return true;
+		
+		return false;
+	}
+	
+	Event getEvent(String dateTime){
+		return groupEvents.get(dateTime);
+	}
+	
+	public HashMap<String, Event> getEventList() {
+		return groupEvents;
+	}
+	
+	public ArrayList getUsersInGroup() {
+		return usersInGroup;
+	}
+	
+	public void addEvent(Event event){
+		if(!groupEvents.containsKey(event.getDateTime()))
+			groupEvents.put(event.getDateTime(), event);
+		else System.out.println("you dun goofed");
+	}	
+
+}
