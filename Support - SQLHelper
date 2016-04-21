@@ -1,5 +1,11 @@
 package cal;
 
+/*
+ * give list specific types
+ * use list instead of arraylist
+ */
+
+
 import java.awt.List;
 import java.sql.*;
 import java.util.ArrayList;
@@ -25,8 +31,9 @@ public class SQLHelper {
 	
 	public static void main(String[] args){	
 		SQLHelper help = new SQLHelper();
-
-		System.out.println(help.getCancelledEventNotifications("moshe"));
+		
+		System.out.println(help.getGroupMembersByGroupName("CSC330 Project"));
+		//System.out.println(help.getCancelledEventNotifications("moshe"));
 		
 	}
 	
@@ -293,7 +300,7 @@ public class SQLHelper {
 			
 			int i = 0;
 			while(resultSet.next()) {
-				members.add(resultSet.getString(1));
+				members.add(resultSet.getString(2));
 				i++;
 			}
 		}
@@ -528,16 +535,20 @@ public class SQLHelper {
 		return notifs;
 	}
 	
-	public ArrayList<String[]> getGroupNotifications(String username){
-		ArrayList<String[]> sender_and_group = new ArrayList<String[]>();
-  		
+	public ArrayList<Notification_Group> getGroupNotifications(String username){
+		ArrayList<Notification_Group> sender_and_group = new ArrayList<Notification_Group>();
+		
 		try {
 			resultSet = statement.executeQuery("select * from notificationsGroup where recipient = '" + username + "'");
 			while(resultSet.next()) {
-				String[] temp = new String[2];
+				ArrayList ohm = new ArrayList();
 				
-				temp[0] = resultSet.getString(2);
-				temp[1] = resultSet.getString(4);
+				ohm.add(resultSet.getString(2));
+				ohm.add(resultSet.getString(4));
+				ohm.add(resultSet.getString(3));
+				
+				Notification_Group temp = new Notification_Group(ohm);
+				
 				sender_and_group.add(temp);
 			}
 		}
@@ -572,6 +583,43 @@ public class SQLHelper {
 		}
 		
 		return locNotifs;
+	}
+	
+	//needs to be tested
+	public void addEventCancelledNotification(CancelledEventNotification cen){
+		try{
+			statement.execute("insert notificationscancelledevent values (" + getHighestPrimaryKey("notificationscancelledevent")
+					+ ", '" + cen.getGroupName() + "', '" + cen.getRecipient() + "', '" 
+					+ cen.getEventName() + "', " + cen.getStartTime() + ")");
+		} 
+		catch (SQLException ex){
+			System.err.println("DB Exception: " + ex); 
+		}
+	}
+
+	//needs to be tested
+	public void addNotificationGroupRequest(Notification_Group gr){
+		try{
+			statement.execute("insert notificationsgroup values (" + getHighestPrimaryKey("notificationsgroup") 
+						+ ", '" + gr.getSender() + "', '" + gr.getRecipient() + "', '" + gr.getGroupName() + "')");
+		}
+		catch(SQLException ex){
+			System.err.println("DB Exception: " + ex); 
+		}
+	}
+	
+	//needs to be tested
+	public void addNewEventNotification(Event evt, String recipient){
+		String a = "insert notificationsevent values (3, 'groupName', 'recipient', 'dateOfEvent', startTime, endTime)";
+
+		try{
+			statement.execute("insert notificationsevent values (" + getHighestPrimaryKey("notificationsevent") 
+						+ ", '" + evt.getId() + "', '" + recipient + "', '" + evt.getEventDate() 
+						+ "', " + evt.getStartTime() + ", " + evt.getEndTime() + "')");
+		}
+		catch(SQLException ex){
+			System.err.println("DB Exception: " + ex); 
+		}
 	}
 	
 	public void giveYourApproval(Event evt){
