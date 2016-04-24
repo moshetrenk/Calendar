@@ -4,25 +4,64 @@ import  javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.awt.event.*;
 import java.io.IOException;
 import javax.swing.*; 
 
-public class AddEvent extends  JFrame {      
+public class AddEvent extends JFrame {
+    static LocalDateTime today;
+    boolean startHourPicked = false, endHourPicked = false, 
+    			groupPicked = false, isGroupEvent = false;
+    static User user;
+    private List listOfGroups;
+    private static String whichGroupToAddTo, insertion, username, fullDate, eventNameAtChosenTime;
+    private String[] groups;
+    
+    private int startTimeHour, startTimeMinute, endTimeHour, endTimeMinute;
+	private static int month;
+	private static int date;
+	private static int year;
+	private static int startTime, endTime;
+    
+    private static SQLHelper help = new SQLHelper();
+    private static AddEvent one;
+
+    private JLabel charactersRemainingLabel = new JLabel(), eventDateLabel = new JLabel(),
+    			eventDetailsLabel = new JLabel(), eventNameLabel = new JLabel(), 
+    			eventTimeLabel = new JLabel(), eventTimeLabel1 = new JLabel(),
+    			invalidTimeLabel = new JLabel(), titleLabel = new JLabel();
+    
+    private JButton jButton1 = new JButton(), buttonAmPm = new JButton(), 
+    			buttonAmPm2 = new JButton(), completeButton = new JButton();
+    
+    private JComboBox<String> monthDropDown = new JComboBox<String>(), 
+    		startHourDropDown = new JComboBox<String>(), startMinDropDown = new JComboBox<String>(),
+    			yearDropDown = new JComboBox<String>(), dayDropDown = new JComboBox<String>(), 
+    			endHourDropDown = new JComboBox<String>(), endMinDropDown = new JComboBox<String>();
+    
+    private static JComboBox<String> groupComboBox = new JComboBox<String>();
+    private JCheckBox isGroupEventCheckBox = new JCheckBox();
+    private JScrollPane jScrollPane2 = new JScrollPane();
+    private JTextField eventNameTextBox = new JTextField();
+    private JTextPane eventDescriptionTextBox = new JTextPane();
+	private Event event;
+    
     public AddEvent() {
         initComponents();
         setTitle("Add Event");
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 help.closePath();
-                System.exit(1);
+               // System.exit(1);
             }
         });
     }
 
     private void initComponents() {
-    	setJMenuBar(MenuExp.PrepareMenuBar());
-    	
+    	today = LocalDateTime.now();
+    	setJMenuBar(MenuExp.PrepareMenuBar(user));
         jButton1.setText("jButton1");
 
         setDefaultCloseOperation( WindowConstants.EXIT_ON_CLOSE);
@@ -55,7 +94,10 @@ public class AddEvent extends  JFrame {
         });
         jScrollPane2.setViewportView(eventDescriptionTextBox);
 
-        buttonAmPm.setText("AM");
+        if (today.getHour() < 12)
+        	buttonAmPm.setText("AM");
+        else 
+        	buttonAmPm.setText("PM");
         buttonAmPm.setMaximumSize(new java.awt.Dimension(49, 23));
         buttonAmPm.setMinimumSize(new java.awt.Dimension(49, 23));
         buttonAmPm.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -101,6 +143,7 @@ public class AddEvent extends  JFrame {
             startHours[i] = Integer.toString(i + 1);
         }
         startHourDropDown.setModel(new  DefaultComboBoxModel<>(startHours));
+        
         startHourDropDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 startHourDropDownActionPerformed(evt);
@@ -108,6 +151,9 @@ public class AddEvent extends  JFrame {
         });
 
         startMinDropDown.setModel(new  DefaultComboBoxModel<>(new String[] { "00", "30" }));
+        
+
+        
         startMinDropDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 startMinDropDownActionPerformed(evt);
@@ -118,6 +164,7 @@ public class AddEvent extends  JFrame {
         for(int i = 0; i < 12; i++){
             hours[i] = Integer.toString(i + 1);
         }
+        
         endHourDropDown.setModel(new  DefaultComboBoxModel<>(hours));
         endHourDropDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -132,7 +179,11 @@ public class AddEvent extends  JFrame {
             }
         });
 
-        buttonAmPm2.setText("AM");
+        if (today.getHour() < 12)
+        	buttonAmPm2.setText("AM");
+        else 
+        	buttonAmPm2.setText("PM");
+        
         buttonAmPm2.setMaximumSize(new java.awt.Dimension(49, 23));
         buttonAmPm2.setMinimumSize(new java.awt.Dimension(49, 23));
         buttonAmPm2.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -147,6 +198,7 @@ public class AddEvent extends  JFrame {
         });
 
         monthDropDown.setModel(new  DefaultComboBoxModel<>(new String[] {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}));
+        monthDropDown.setSelectedIndex(today.getMonth().getValue() - 1);
         monthDropDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 monthDropDownActionPerformed(evt);
@@ -158,6 +210,7 @@ public class AddEvent extends  JFrame {
             days[i] = Integer.toString(i + 1);
         }
         dayDropDown.setModel(new  DefaultComboBoxModel<>(days));
+        dayDropDown.setSelectedIndex(today.getDayOfMonth() - 1);
         dayDropDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dayDropDownActionPerformed(evt);
@@ -169,6 +222,7 @@ public class AddEvent extends  JFrame {
             years[i] = Integer.toString(2016 + i);
         }
         yearDropDown.setModel(new  DefaultComboBoxModel<>(years));
+        yearDropDown.setSelectedIndex(today.getYear() - 2016);
         yearDropDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 yearDropDownActionPerformed(evt);
@@ -177,16 +231,31 @@ public class AddEvent extends  JFrame {
 
         invalidTimeLabel.setVisible(false);
         invalidTimeLabel.setText("End Time Should Be After Start Time");
-        today = LocalDateTime.now();
-
+        
         //change these and the drop downs to update to today
-        month = 1;
-        date = 1;
-        year = 2016;
-        startTime = 10000;
-        endTime = 10000;
-
-         GroupLayout layout = new  GroupLayout(getContentPane());
+        month = today.getMonthValue();
+        date = today.getDayOfMonth();
+        year = today.getYear();
+        startTimeHour = (today.getHour() % 12) * 1000;
+        endTimeHour = (today.getHour() % 12) * 1000 + 1000;
+        
+        if(today.getHour() != 11 && today.getHour() != 12 && today.getHour() != 23 && today.getHour() != 24){
+    		startHourDropDown.setSelectedIndex(today.getHour() % 12);
+    		endHourDropDown.setSelectedIndex(today.getHour() % 12);
+    	}
+    	else {
+    		startHourDropDown.setSelectedIndex(today.getHour() % 12 - 1);
+    		endHourDropDown.setSelectedIndex(0);
+    	}
+        
+        if (today.getMinute() >= 30){
+        	endMinDropDown.setSelectedIndex(1);
+        }
+        else{
+        	endMinDropDown.setSelectedIndex(0);        	
+        }
+        
+        GroupLayout layout = new  GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup( GroupLayout.Alignment.LEADING)
@@ -328,25 +397,36 @@ public class AddEvent extends  JFrame {
         
     }                                        
 
-    private void completeButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
+    private void completeButtonActionPerformed(java.awt.event.ActionEvent evt) {   
+    	System.out.println("StartTime before fucking around = " + startTime);
+    	System.out.println("StartTimeHour before fucking around = " + startTimeHour);
         if(!groupComboBox.isEnabled()){
         	username = whichGroupToAddTo;
         }
-        startTime = (startTimeHour * 10000) + (startTimeMinute * 100);
-        endTime = (endTimeHour * 10000) + (endTimeMinute * 100);
-        
-        System.out.println("month = " + month);
-        System.out.println("day = " + date);
-        System.out.println("year = " + year);
-        System.out.println(today.getHour()*10000);
-        System.out.println(startTime);
-        
-        if (buttonAmPm.getText().equals("PM")){
-                startTime += 120000;
-            } 
-        if (buttonAmPm2.getText().equals("PM")){
-                endTime += 120000;
+                
+        if (!startHourPicked){
+        	if (startMinDropDown.getSelectedItem().toString().equals("30"))
+        		startTime = today.getHour() * 10000 + 3000 ;
+        	else
+        		startTime = today.getHour() * 10000;
         }
+        else
+        	startTime = startTimeHour * 10000 + startTimeMinute * 100;
+        
+        if(!endHourPicked){
+        	if(endMinDropDown.getSelectedItem().toString().equals("30"))
+        		endTime = (today.getHour() + 1) * 10000 + 3000;
+        	else
+        		endTime = (today.getHour() + 1) * 10000;
+        }
+        else
+        	endTime = endTimeHour * 10000 + endTimeMinute * 100;
+        
+        if (buttonAmPm.getText().equals("PM"))
+        	startTime += 120000;
+        if (buttonAmPm2.getText().equals("PM"))
+        	endTime += 120000;
+        
         
         if((buttonAmPm.getText().equals("PM") 
                 && buttonAmPm2.getText().equals("AM")) 
@@ -374,20 +454,18 @@ public class AddEvent extends  JFrame {
         }
         else{
             invalidTimeLabel.setVisible(false);
+            addEventToDataBase(); 
             
             
-            addEventToDataBase();
             
-           /* try {
-				Profile.paintFrame();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-      		one.rootPane.repaint();
-      		one.setVisible(false);*/
+            
+            
+            
             
         }
+        
+        System.out.println("StartTime = " + startTime);
+        System.out.println("EndTime = " + endTime);
     }                                              
 
     private void isGroupEventCheckBoxActionPerformed(java.awt.event.ActionEvent evt) { 
@@ -521,10 +599,12 @@ public class AddEvent extends  JFrame {
     	ArrayList times;
     	if (groupComboBox.isEnabled()){
     		times = help.isTimeAvailableForEvent(whichGroupToAddTo, "", true);
+    		System.out.println("times1 = " + times);
     	}
-    	else
+    	else{
     		times = help.isTimeAvailableForEvent("", username, false);
-    	
+    		System.out.println("times2 = " + times);
+    	}
        String timeS, timeE;
        boolean dateHasEvent = false;
        
@@ -541,8 +621,6 @@ public class AddEvent extends  JFrame {
        fullDate += "/";
        
        fullDate += String.valueOf(year);
-       
-       System.out.println("Times = " + times);
        
        Integer startTimeEvent = null, endTimeEvent = null;
          for(int i = 0; i < times.size()/4; i++){
@@ -609,9 +687,7 @@ public class AddEvent extends  JFrame {
         	whichGroupToAddTo = username;
         }
         ArrayList insert = new ArrayList();
-
         
-        	
         insert.add(a);
         insert.add(eventName);
         insert.add(whichGroupToAddTo);
@@ -622,7 +698,7 @@ public class AddEvent extends  JFrame {
         	else if (month >= 10 && date < 10)
         		insert.add(month + "/" + "0" + date + "/" + year);
         	else
-        	       insert.add("0" + month + "/" + "0" + date + "/" + year);
+        		insert.add("0" + month + "/" + "0" + date + "/" + year);
         }       
         
         insert.add(startTime);
@@ -634,13 +710,17 @@ public class AddEvent extends  JFrame {
        Boolean one = AddEvent.isEventTimeAvailable();
         
        if(one.equals(true)){
-        	help.insertEvent(insert);
+    	   System.out.println("insert = " + insert);
+    	   help.insertEvent(insert);
+    	   event = new Event(insert);
+    	   setVisible(false);
        }
        else{
     	   if(groupComboBox.isEnabled())
     		   invalidTimeLabel.setText("That time is unavailable for " + whichGroupToAddTo);
     	   else
     		   invalidTimeLabel.setText("You have \"" + eventNameAtChosenTime + "\" at that time");
+    	   
     	   invalidTimeLabel.setVisible(true);
        }
     }   
@@ -705,41 +785,5 @@ public class AddEvent extends  JFrame {
             }
         });
     }
-    
-    LocalDateTime today;
-    boolean startHourPicked = false, endHourPicked = false, 
-    			groupPicked = false, isGroupEvent = false;
-    static User user;
-    private List listOfGroups;
-    private static String whichGroupToAddTo, insertion, username, fullDate, eventNameAtChosenTime;
-    private String[] groups;
-    
-    private int startTimeHour, startTimeMinute, endTimeHour, endTimeMinute;
-	private static int month;
-	private static int date;
-	private static int year;
-	private static int startTime, endTime;
-    
-    private static SQLHelper help = new SQLHelper();
-    private static AddEvent one;
-    
-    private JLabel charactersRemainingLabel = new JLabel(), eventDateLabel = new JLabel(),
-    			eventDetailsLabel = new JLabel(), eventNameLabel = new JLabel(), 
-    			eventTimeLabel = new JLabel(), eventTimeLabel1 = new JLabel(),
-    			invalidTimeLabel = new JLabel(), titleLabel = new JLabel();
-    
-    private JButton jButton1 = new JButton(), buttonAmPm = new JButton(), 
-    			buttonAmPm2 = new JButton(), completeButton = new JButton();
-    
-    private JComboBox<String> monthDropDown = new JComboBox<String>(), 
-    		startHourDropDown = new JComboBox<String>(), startMinDropDown = new JComboBox<String>(),
-    			yearDropDown = new JComboBox<String>(), dayDropDown = new JComboBox<String>(), 
-    			endHourDropDown = new JComboBox<String>(), endMinDropDown = new JComboBox<String>();
-    
-    private static JComboBox<String> groupComboBox = new JComboBox<String>();
-    private JCheckBox isGroupEventCheckBox = new JCheckBox();
-    private JScrollPane jScrollPane2 = new JScrollPane();
-    private JTextField eventNameTextBox = new JTextField();
-    private JTextPane eventDescriptionTextBox = new JTextPane();
 }
 
