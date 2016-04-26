@@ -1,22 +1,21 @@
+
 package cal;
 
-import  javax.swing.text.BadLocationException;
+import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.awt.event.*;
-import java.io.IOException;
 import javax.swing.*; 
 
+@SuppressWarnings({"serial", "static-access"})
 public class AddEvent extends JFrame {
     static LocalDateTime today;
     boolean startHourPicked = false, endHourPicked = false, 
     			groupPicked = false, isGroupEvent = false;
     static User user;
     private List listOfGroups;
-    private static String whichGroupToAddTo, insertion, username, fullDate, eventNameAtChosenTime;
+    private static String whichGroupToAddTo, username, fullDate, eventNameAtChosenTime;
     private String[] groups;
     
     private int startTimeHour, startTimeMinute, endTimeHour, endTimeMinute;
@@ -25,7 +24,7 @@ public class AddEvent extends JFrame {
 	private static int year;
 	private static int startTime, endTime;
     
-    private static SQLHelper help = new SQLHelper();
+    private static SQLHelper sqlHelper = new SQLHelper();
     private static AddEvent one;
 
     private JLabel charactersRemainingLabel = new JLabel(), eventDateLabel = new JLabel(),
@@ -46,6 +45,7 @@ public class AddEvent extends JFrame {
     private JScrollPane jScrollPane2 = new JScrollPane();
     private JTextField eventNameTextBox = new JTextField();
     private JTextPane eventDescriptionTextBox = new JTextPane();
+	@SuppressWarnings("unused")
 	private Event event;
     
     public AddEvent() {
@@ -53,7 +53,7 @@ public class AddEvent extends JFrame {
         setTitle("Add Event");
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                help.closePath();
+            	sqlHelper.closePath();
                // System.exit(1);
             }
         });
@@ -595,18 +595,18 @@ public class AddEvent extends JFrame {
     //event name and whatever comes after will be seen as a syntax error
     //This same issue applies to event description
     
-    private static boolean isEventTimeAvailable(){
-    	ArrayList times;
+   private static boolean isEventTimeAvailable(){
+    	ArrayList<? extends Object> times;
+    	times = new ArrayList<Object>();
     	if (groupComboBox.isEnabled()){
-    		times = help.isTimeAvailableForEvent(whichGroupToAddTo, "", true);
+    		
+    		times = (ArrayList<? extends Object>) sqlHelper.isTimeAvailableForEvent(whichGroupToAddTo, "", true);
     		System.out.println("times1 = " + times);
     	}
     	else{
-    		times = help.isTimeAvailableForEvent("", username, false);
+    		times = (ArrayList<? extends Object>) sqlHelper.isTimeAvailableForEvent("", username, false);
     		System.out.println("times2 = " + times);
     	}
-       String timeS, timeE;
-       boolean dateHasEvent = false;
        
        if(String.valueOf(month).length() == 1)
     	   fullDate = "0" + String.valueOf(month);
@@ -625,7 +625,6 @@ public class AddEvent extends JFrame {
        Integer startTimeEvent = null, endTimeEvent = null;
          for(int i = 0; i < times.size()/4; i++){
 			if(fullDate.equals(times.get(i * 4 + 2))){
-				dateHasEvent = true;
 				startTimeEvent = Integer.valueOf(times.get(i * 4).toString().substring(0, 2) + times.get(i * 4).toString().substring(3, 5) + "00");
 				endTimeEvent = Integer.valueOf(times.get(i * 4 + 1).toString().substring(0, 2) + times.get(i * 4 + 1).toString().substring(3, 5) + "00");
 				
@@ -675,18 +674,18 @@ public class AddEvent extends JFrame {
     		System.out.println(eventDescription);
     	}
     	
-        int a = -1, numMem = help.getNumberOfGroupMembers(whichGroupToAddTo);
+        int a = -1, numMem = sqlHelper.getNumberOfGroupMembers(whichGroupToAddTo);
         if(numMem == 0)
     	   numMem++;       
        
-        a = help.getHighestPrimaryKey("theEvent") + 1;
+        a = sqlHelper.getHighestPrimaryKey("theEvent") + 1;
         
         username = user.getUsername();
         
         if(!groupComboBox.isEnabled()){
         	whichGroupToAddTo = username;
         }
-        ArrayList insert = new ArrayList();
+        ArrayList<Object> insert = new ArrayList<Object>();
         
         insert.add(a);
         insert.add(eventName);
@@ -711,7 +710,7 @@ public class AddEvent extends JFrame {
         
        if(one.equals(true)){
     	   System.out.println("insert = " + insert);
-    	   help.insertEvent(insert);
+    	   sqlHelper.insertEvent(insert);
     	   event = new Event(insert);
     	   setVisible(false);
        }
@@ -727,7 +726,7 @@ public class AddEvent extends JFrame {
     
     
     private void getGroups(){
-        listOfGroups = (List)help.getGroups(username);
+        listOfGroups = (List)sqlHelper.getGroups(username);
         groups = new String [listOfGroups.getItemCount()];
     	
     	for(int i = 0; i < listOfGroups.getItemCount(); i++){
@@ -741,7 +740,7 @@ public class AddEvent extends JFrame {
     	 user = locUser;
     	 username = user.getUsername();
     	 java.awt.EventQueue.invokeLater(new Runnable() {
-             public void run() {
+			public void run() {
             	 one = new AddEvent();
              	 JFrame frame = (JFrame) SwingUtilities.getRoot(groupComboBox);
             	 one.centerWindow(frame);
@@ -777,7 +776,7 @@ public class AddEvent extends JFrame {
         }
       
         java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
+			public void run() {
             	 one = new AddEvent();
              	 JFrame frame = (JFrame) SwingUtilities.getRoot(groupComboBox);
             	 one.centerWindow(frame);
