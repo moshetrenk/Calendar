@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class Notification_Event extends Notification{
 	
-	Notification_Event(ArrayList one) {
+	Notification_Event(ArrayList<Object> one) {
 		super(one);
 		date = (String) one.get(2);
 		startTime = (int) one.get(3);
@@ -17,7 +17,6 @@ public class Notification_Event extends Notification{
 		startTime = timeStart;
 		endTime = timeEnd;
 	}
-	
 	
 	private String date;
 	private int startTime, endTime;
