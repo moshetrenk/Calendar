@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public abstract class Notification{
 	private String recipient, groupName;
 	
-	Notification(ArrayList one){
+	Notification(ArrayList<?> one){
 		groupName = (String) one.get(0);
 		recipient = (String) one.get(1);
 	}
@@ -14,6 +14,7 @@ public abstract class Notification{
 		recipient = rec;
 		groupName = group;
 	}
+
 	public String getRecipient() {
 		return recipient;
 	}
