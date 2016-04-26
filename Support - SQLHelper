@@ -7,9 +7,10 @@ package cal;
 
 
 import java.awt.List;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.*;
 
 /*
 setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
@@ -34,7 +35,21 @@ public class SQLHelper {
 		
 		System.out.println(help.getGroupMembersByGroupName("CSC330 Project"));
 		//System.out.println(help.getCancelledEventNotifications("moshe"));
+		/*
+		 //if you run this commented block, you'll see that 
+		//the user's input will always be encrypted to 32 characters
+		 //so the database needs to store 32 char passwords not 16
+		  
+		StringBuilder a = new StringBuilder();
 		
+		for(int i = 0; i < Integer.MAX_VALUE / 150; i++)
+			a.append(String.valueOf(i));
+		
+		String b = a.toString();
+		
+		System.out.println(a);
+		System.out.println(help.encrypt(b));
+		*/
 	}
 	
 	SQLHelper(){
@@ -52,7 +67,7 @@ public class SQLHelper {
 		
 	}
 	
-	public static void closePath(){
+	public void closePath(){
 		try {
 			if(statement != null ) 
 				statement.close(); 
@@ -102,7 +117,7 @@ public class SQLHelper {
 			return false;	
 	}
 	
-	public void insertEvent(ArrayList deets){
+	public void insertEvent(ArrayList<?> deets){
 		try {			
 			statement.execute("insert theEvent values (" + deets.get(0) + ", '" 
 					+ deets.get(1) + "', '" + deets.get(2) + "', '" + deets.get(3)
@@ -167,7 +182,7 @@ public class SQLHelper {
 	}	
 	
 	//overloaded insert, pass a table and the values to give it
-	public void insert(String table, ArrayList values){
+	public void insert(String table, ArrayList<?> values){
 		String query = "insert into " + table + " values (";
 	
 		for(int i = 0; i < values.size(); i++){
@@ -204,8 +219,8 @@ public class SQLHelper {
 		}
 	}
 	
-	public ArrayList isTimeAvailableForEvent(String groupName, String username, boolean isGroupEvent){
-		ArrayList times = new ArrayList();
+	public ArrayList<? extends Object> isTimeAvailableForEvent(String groupName, String username, boolean isGroupEvent){
+		ArrayList<Object> times = new ArrayList<Object>();
 		String query;
 		
 		if(isGroupEvent)
@@ -244,8 +259,8 @@ public class SQLHelper {
 		}       
 	}
 	
-	public ArrayList getEvents(String userId){
-		ArrayList list = new ArrayList();
+	public ArrayList<?> getEvents(String userId){
+		ArrayList<Object> list = new ArrayList<Object>();
 		
 		try {
 			resultSet = statement.executeQuery("select * from theevent where user_groupid = '" + userId + "'");
@@ -279,10 +294,8 @@ public class SQLHelper {
 		try {
 			resultSet = statement.executeQuery("select * from calGroup where username = '" + username + "'");
 			
-			int i = 0;
 			while(resultSet.next()) {
 				groups.add(resultSet.getString(3));
-				i++;
 			}
 		}
 		catch(SQLException ex ) {
@@ -292,16 +305,14 @@ public class SQLHelper {
 		return groups;
 	}
 	
-	public ArrayList getGroupMembersByGroupName(String groupName){
-		ArrayList members = new ArrayList();
+	public ArrayList<String> getGroupMembersByGroupName(String groupName){
+		ArrayList<String> members = new ArrayList<String>();
 
 		try {
 			resultSet = statement.executeQuery("select * from calGroup where groupName= '" + groupName + "'");
 			
-			int i = 0;
 			while(resultSet.next()) {
 				members.add(resultSet.getString(2));
-				i++;
 			}
 		}
 		catch(SQLException ex ) {
@@ -474,13 +485,13 @@ public class SQLHelper {
 		return -1;
 	}
 	
-	public ArrayList getEventNotifications(String username){
+	public ArrayList<Event> getEventNotifications(String username){
 	//this method is unecessarily complicated because the notifications table
 	//doesn't store event data so a separate query needs to be made, using the
 	//date from the notifications 
 		
 		ArrayList<Event> notifs = new ArrayList<Event>();
-		ArrayList temp = new ArrayList();
+		ArrayList<Object> temp = new ArrayList<Object>();
 		
 		try {
 			resultSet = statement.executeQuery("select * from notificationsEvent where recipient = '" + username + "'");
@@ -506,7 +517,7 @@ public class SQLHelper {
 		}
 		
 		for(int b = 0; b < queries.length; b++){
-			ArrayList list = new ArrayList();
+			ArrayList<Object> list = new ArrayList<Object>();
 			
 			try {
 				resultSet = statement.executeQuery(queries[b]);
@@ -541,7 +552,7 @@ public class SQLHelper {
 		try {
 			resultSet = statement.executeQuery("select * from notificationsGroup where recipient = '" + username + "'");
 			while(resultSet.next()) {
-				ArrayList ohm = new ArrayList();
+				ArrayList<String> ohm = new ArrayList<String>();
 				
 				ohm.add(resultSet.getString(2));
 				ohm.add(resultSet.getString(4));
@@ -560,19 +571,20 @@ public class SQLHelper {
 	}
 	
 	public ArrayList<CancelledEventNotification> getCancelledEventNotifications(String username){
-		ArrayList one = new ArrayList(), two = new ArrayList();
+		
+		ArrayList<String> one = new ArrayList<String>();
+		ArrayList<Object> two = new ArrayList<Object>();
 		ArrayList<CancelledEventNotification> locNotifs = new ArrayList<CancelledEventNotification>();
 		
 		try {			
 			resultSet = statement.executeQuery("select * from notificationsCancelledEvent where recipient = '" + username + "'");
 			
-			int i = 0;
 			while(resultSet.next()){
 				one.add(resultSet.getString(2));
 				one.add(resultSet.getString(3));
-				two.add(resultSet.getString(3));
 				two.add(resultSet.getString(4));
 				two.add(resultSet.getString(5));
+				two.add(resultSet.getString(6));
 				locNotifs.add(new CancelledEventNotification(one, two));
 				one.clear();
 				two.clear();
@@ -610,8 +622,6 @@ public class SQLHelper {
 	
 	//needs to be tested
 	public void addNewEventNotification(Event evt, String recipient){
-		String a = "insert notificationsevent values (3, 'groupName', 'recipient', 'dateOfEvent', startTime, endTime)";
-
 		try{
 			statement.execute("insert notificationsevent values (" + getHighestPrimaryKey("notificationsevent") 
 						+ ", '" + evt.getId() + "', '" + recipient + "', '" + evt.getEventDate() 
@@ -632,16 +642,14 @@ public class SQLHelper {
 		}	
 	}
 	
-	public ArrayList getGroupsThatHaveAskedForYourPresence(String username){
-		ArrayList groups = new ArrayList();
+	public ArrayList<String> getGroupsThatHaveAskedForYourPresence(String username){
+		ArrayList<String> groups = new ArrayList<String>();
 
 		try {
 			resultSet = statement.executeQuery("select * from notificationsGroup where recipient = '" + username + "'");
 			
-			int i = 0;
 			while(resultSet.next()) {
 				groups.add(resultSet.getString(4));
-				i++;
 			}
 		}
 		catch(SQLException ex ) {
@@ -665,7 +673,34 @@ public class SQLHelper {
 		return " ";
 	}
 	
-	public static String getDelimiter(){
+	
+	//this method was taken from online resources
+	//some minor modifications were made 
+	//but it is largely not our original code
+    public String encrypt(String password) 
+    {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(password.getBytes());
+            
+            byte[] bytes = md.digest();
+            StringBuilder sb = new StringBuilder();
+            
+            for(int i=0; i< bytes.length; i++)
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+ 
+            return sb.toString();
+            
+        } 
+        catch (NoSuchAlgorithmException e) 
+        {
+            e.printStackTrace();
+        }
+
+        return "error";
+    }
+	
+	public String getDelimiter(){
 		return delimiter;
 	}
 }
