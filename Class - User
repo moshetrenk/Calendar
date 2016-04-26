@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.awt.List;
 
+@SuppressWarnings({"static-access", "unused"})
 public class User {
-	private static SQLHelper help = new SQLHelper();
+	private static SQLHelper sqlHelper = new SQLHelper();
 	private static String username;
 	
 	private List iAreAdmin = new List();
@@ -19,17 +20,16 @@ public class User {
 	private static HashMap<String, Integer> copyOfMyEventsForFindingIfThereIsAnEvent = new HashMap<String, Integer>();
 
 	public static void main(String[] args){
-		User moshe = new User("Moshe");
 		
 	}
 	
 	User(String username){
 		this.username = username;
 		myEvents = initEvents();
-		myGroups = (List) help.getGroups(username);
-		notifications_ev = help.getEventNotifications(username);
-		notifications_gr = help.getGroupNotifications(username);
-		notifications_cancelled_ev = help.getCancelledEventNotifications(username);
+		myGroups = (List) sqlHelper.getGroups(username);
+		notifications_ev = sqlHelper.getEventNotifications(username);
+		notifications_gr = sqlHelper.getGroupNotifications(username);
+		notifications_cancelled_ev = sqlHelper.getCancelledEventNotifications(username);
 	}
 	
 	private static void putEventDatesIntoCopyOfMyEvents(String date){
@@ -41,14 +41,22 @@ public class User {
 			copyOfMyEventsForFindingIfThereIsAnEvent.put(date, 1);
 	}
 	
+	//there might be issues with this, if there are then remove warning and insert this 
+	/*
+	 ArrayList<Object> cur = sqlHelper.getEvents(username),
+				 temp = new ArrayList(); 
+	 
+	 also remove the type from the ArrayList instantiation in the getEvents method
+	 */
+	
 	private static HashMap<String, Event> initEvents(){
-		ArrayList<Object> cur = help.getEvents(username),
-				 temp = new ArrayList();	
+		ArrayList<? extends Object> cur = (ArrayList<? extends Object>) sqlHelper.getEvents(username);
+		ArrayList<Object> temp = new ArrayList<Object>();	
 		
-		int numEvents = help.getNumberOfEventsByUser(username);
+		//int numEvents = sqlHelper.getNumberOfEventsByUser(username);
 		HashMap<String, Event> these = new HashMap<String, Event>();
 		Event event;
-		String delimiter = help.getDelimiter();
+		String delimiter = sqlHelper.getDelimiter();
 		
 		for(int i = 0; i < cur.size(); i++){
 			if(!cur.get(i).equals(delimiter)){
@@ -58,7 +66,6 @@ public class User {
 			}
 			else{
 				event = new Event(temp);
-				temp = new ArrayList();
 				
 				these.put(event.getDateTime(), event);
 				}
@@ -77,7 +84,7 @@ public class User {
 	}
 	
 	private boolean isAdmin(String groupName){
-		int i = help.isUserAdmin(username);
+		int i = sqlHelper.isUserAdmin(username);
 		
 		if (i == 1)
 			return true;
@@ -101,7 +108,7 @@ public class User {
 		String query = "select * from theEvent where user_groupID = '"  
 					+ username + "' and dateOfEvent = '" + date + "'";
 		
-		String result = help.query(query);
+		String result = sqlHelper.query(query);
 		
 		for(int i = 0; i < result.length(); i++){
 			if (result.charAt(i) != ' ')
@@ -123,7 +130,7 @@ public class User {
 		String date = dateTime.substring(0, 10),
 				time = dateTime.substring(10, 12) + dateTime.substring(13, 15) + "00";
 		
-		help.deleteEvent(username, date, Integer.parseInt(time));
+		sqlHelper.deleteEvent(username, date, Integer.parseInt(time));
 		
 		
 		//this needs some form of testing or verification
@@ -135,13 +142,13 @@ public class User {
 	}
 	
 	public void acceptEventInvite(Event event){
-		help.deleteNotificationEvent(new User(username), event);
+		sqlHelper.deleteNotificationEvent(new User(username), event);
 		notifications_ev.remove(event);
-		help.giveYourApproval(event);
+		sqlHelper.giveYourApproval(event);
 	}
 	
 	public void rejectEventInvite(Event event){
-		help.deleteNotificationEvent(new User(username), event);
+		sqlHelper.deleteNotificationEvent(new User(username), event);
 		notifications_ev.remove(event);
 		
 		//send a cancelled eventNotification to all users
@@ -150,15 +157,15 @@ public class User {
 	}
 
 	public void acceptGroupInvite(Notification_Group notif){
-		help.addUserToGroup(username, notif.getGroupName(), 0);		
+		sqlHelper.addUserToGroup(username, notif.getGroupName(), 0);		
 		myGroups.add(notif.getGroupName());
 		
-		help.deleteNotificationGroup(notif);
+		sqlHelper.deleteNotificationGroup(notif);
 		notifications_gr.remove(notif);
 	}
 	
 	public void rejectGroupInvite(Notification_Group notif){
-		help.deleteNotificationGroup(notif);
+		sqlHelper.deleteNotificationGroup(notif);
 		notifications_gr.remove(notif);
 	}
 	
@@ -170,22 +177,22 @@ public class User {
 	
 	public void deleteCancelledEventNotification(CancelledEventNotification cen){
 		notifications_cancelled_ev.remove(cen);
-		help.deleteCancelledEventNotification(cen);
+		sqlHelper.deleteCancelledEventNotification(cen);
 	}
 	
 	public void addEventCancelledNotification(CancelledEventNotification cen){
 		notifications_cancelled_ev.add(cen);
-		help.addEventCancelledNotification(cen);
+		sqlHelper.addEventCancelledNotification(cen);
 	}
 	
 	public void addNotificationGroupRequest(Notification_Group gr){
 		notifications_gr.add(gr);
-		help.addNotificationGroupRequest(gr);
+		sqlHelper.addNotificationGroupRequest(gr);
 	}
 	
 	public void addNewEventNotification(Event evt){
 			notifications_ev.add(evt);
-			help.addNewEventNotification(evt, username);	
+			sqlHelper.addNewEventNotification(evt, username);	
 	}
 	
 }
