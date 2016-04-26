@@ -5,12 +5,7 @@ import java.util.ArrayList;
 public class Notification_Group extends Notification{
 	private String sender;
 	
-	public static void main(String[] args){
-		Notification_Group o = new Notification_Group(new ArrayList());
-		
-	}
-	
-	Notification_Group(ArrayList one) {
+	Notification_Group(ArrayList<?> one) {
 		super(one);
 		sender = (String) one.get(2);
 	}
