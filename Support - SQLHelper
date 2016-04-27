@@ -1,10 +1,6 @@
 package cal;
 
-/*
- * give list specific types
- * use list instead of arraylist
- */
-
+// use list instead of arraylist
 
 import java.awt.List;
 import java.security.MessageDigest;
@@ -137,6 +133,25 @@ public class SQLHelper {
 		
 		try {
 			resultSet = statement.executeQuery("select username from thecalendar.friend where username = '" + username +"'");
+			
+			while(resultSet.next()) {
+				queryResult = resultSet.getString(1); 
+			}
+		}
+		catch(SQLException ex ) {
+			System.err.println("DB Exception: " + ex); 
+		}
+		
+		if(queryResult == null){
+			return "  ";
+		}
+		
+		return queryResult;
+	}
+	
+	public String getGroupName(String groupName){
+		try {
+			resultSet = statement.executeQuery("select distinct groupName from thecalendar.calgroup where groupName = '" + groupName +"'");
 			
 			while(resultSet.next()) {
 				queryResult = resultSet.getString(1); 
