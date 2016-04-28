@@ -3,6 +3,7 @@ package cal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.awt.List;
+import java.time.LocalDateTime;
 
 @SuppressWarnings({"static-access", "unused"})
 public class User {
@@ -15,11 +16,16 @@ public class User {
 	private ArrayList<Event> notifications_ev = new ArrayList<Event>();
 	private ArrayList<Notification_Group> notifications_gr = new ArrayList<Notification_Group>();
 	private ArrayList<CancelledEventNotification> notifications_cancelled_ev = new ArrayList<CancelledEventNotification>();
+	private ArrayList<String> namesOfTodaysEvents = new ArrayList<String>();
 	
 	private HashMap<String, Event> myEvents = new HashMap<String, Event>();
 	private static HashMap<String, Integer> copyOfMyEventsForFindingIfThereIsAnEvent = new HashMap<String, Integer>();
 
 	public static void main(String[] args){
+		User user = new User("moshe");
+		
+		System.out.println(user.getTodaysEventNames());
+		//System.out.println(user.getEvent("04/22/20168:30:00"));
 		
 	}
 	
@@ -66,14 +72,21 @@ public class User {
 			}
 			else{
 				event = new Event(temp);
-				
 				these.put(event.getDateTime(), event);
-				}
+				temp.clear();
+			}
 		}
 		
 		return these;
 	}
 	
+	public ArrayList<Event> getEventNotifications(){
+		return notifications_ev;
+	}
+
+	public ArrayList<CancelledEventNotification> getCancelledEventNotifications(){
+		return notifications_cancelled_ev;
+	}
 	
 	public String getUsername(){
 		return username;
@@ -117,6 +130,24 @@ public class User {
 		
 		return false;
 	}*/
+	
+	private ArrayList<String> getTodaysEventNames(){
+		LocalDateTime today = LocalDateTime.now();
+		String date;
+		if(today.getMonth().getValue() < 10)
+			date = "0" + String.valueOf(today.getMonth().getValue()) + "/";
+		else
+			date = String.valueOf(today.getMonth().getValue()) + "/";
+			
+		if(today.getDayOfMonth() < 10)
+				date += "0" + String.valueOf(today.getDayOfMonth()) + "/";
+		else
+			date += String.valueOf(today.getDayOfMonth()) + "/";
+		 
+		date +=  String.valueOf(today.getYear());
+		
+		return sqlHelper.getTodaysEventNames(date, getUsername());
+	}
 	
 	public boolean equals(String username){
 		return (username.equals(this.username));
