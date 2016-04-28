@@ -1,5 +1,4 @@
 package cal;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.awt.List;
@@ -139,9 +138,10 @@ public class User {
 		return false;
 	}*/
 	
-	private ArrayList<String> getTodaysEventNames(){
+	public ArrayList<String> getTodaysEventNames(){
 		LocalDateTime today = LocalDateTime.now();
 		String date;
+		ArrayList<String> todaysEventNames;
 		if(today.getMonth().getValue() < 10)
 			date = "0" + String.valueOf(today.getMonth().getValue()) + "/";
 		else
@@ -154,7 +154,12 @@ public class User {
 		 
 		date +=  String.valueOf(today.getYear());
 		
-		return sqlHelper.getTodaysEventNames(date, getUsername());
+		
+		todaysEventNames = sqlHelper.getTodaysEventNames(date, getUsername());
+		for(int i = 0; i < myGroups.getItemCount();i++)
+		todaysEventNames.addAll(sqlHelper.getTodaysEventNames(date, myGroups.getItem(i)));
+		
+		 return todaysEventNames;
 	}
 	
 	public boolean equals(String username){
