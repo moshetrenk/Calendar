@@ -7,6 +7,7 @@ import javax.swing.event.*;
 import javax.swing.table.*;
 import javax.swing.Timer; 
 import java.awt.*;
+import java.awt.List;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -23,7 +24,7 @@ public class Profile {
 	static JTable tblDailyEvents, tblGroups;
 	static JScrollPane stblDailyEvents, stblGroups;
 	static JLabel lblUsername, profilePic, usernameDoesntExist;
-	static JButton btnMyCalendar, btnModifyEvents, btnAddFriend, btnGroups;
+	static JButton btnMyCalendar, btnModifyEvents, btnAddFriend, btnGroups, btnAddEvent, btnNotifications;
 	static JTextField addFriendText;
 	static private String username;
 	static private User userForProfile;
@@ -81,12 +82,14 @@ public class Profile {
 				btnMyCalendar = new JButton("My Calendar");
 				btnModifyEvents = new JButton("Modify Events");
 				btnAddFriend = new JButton("Add Friend");
+				btnAddEvent = new JButton("Add Event");
+				btnNotifications = new JButton("Notifications");
 				btnAddFriend.setEnabled(false);
 				btnGroups = new JButton("Groups");
 				btnGroups.setEnabled(true);
 				
 				//CALL METHOD TO GET USERNAME FROM DATABASE
-				username = "billGates"; // query
+				username = userForProfile.getUsername(); // query
 				lblUsername = new JLabel(username);
 				
 				usernameDoesntExist = new JLabel(" ");
@@ -112,7 +115,8 @@ public class Profile {
 				pnlProfile.add(btnMyCalendar);
 				pnlProfile.add(btnModifyEvents);
 				pnlProfile.add(btnGroups);
-				//pnlProfile.add(btnAddFriend);
+				pnlProfile.add(btnAddEvent);
+				pnlProfile.add(btnNotifications);
 				pnlProfile.add(addFriendText);
 				pnlProfile.add(usernameDoesntExist);
 				frmMain.setJMenuBar(MenuExp.PrepareMenuBar(userForProfile));
@@ -140,12 +144,13 @@ public class Profile {
 		//set bounds
 		pnlProfile.setBounds(0,0,650,650);
 		lblUsername.setBounds(75,15,100,50);
-		stblGroups.setBounds(75,225,150,100);
-		stblDailyEvents.setBounds(325,225,150,100);
+		stblGroups.setBounds(75,225,175,100);
+		stblDailyEvents.setBounds(300,225,175,100);
 		profilePic.setBounds(325,45,150,150);
 		btnMyCalendar.setBounds(75,80 ,100,50);
 		btnGroups.setBounds(75,150,100,50);
-		//btnModifyEvents.setBounds(75,150, 100,50);
+		btnAddEvent.setBounds(200,80, 100,50);
+		btnNotifications.setBounds(200,150,100,50);
 		//addFriendText.setBounds(75,150,110,25);
 		btnAddFriend.setBounds(200, 150,100 ,25);
 		usernameDoesntExist.setBounds(75, 180, 210,25);
@@ -155,19 +160,25 @@ public class Profile {
 	static private void populateTables(){
 		//All must be a method from a query for database
 				tblDailyEvents.setRowHeight(13);
-				mtblDailyEvents.setRowCount(6);
-				mtblDailyEvents.addColumn("Today's Events");
 				
-				mtblDailyEvents.setValueAt("Work for CSC330",0,0);
-				mtblDailyEvents.setValueAt("Sleep", 1, 0);
-				mtblDailyEvents.setValueAt("Repeat",2,0);
+				mtblDailyEvents.addColumn("Today's Events");
+				ArrayList<String> todaysEvents = userForProfile.getTodaysEventNames();
+				mtblDailyEvents.setRowCount(todaysEvents.size());
+				
+				for(int i = 0; i < todaysEvents.size();i++)
+				mtblDailyEvents.setValueAt(todaysEvents.get(i),i,0);
+				
 				
 				tblGroups.setRowHeight(13);
-				mtblGroups.setRowCount(6);
 				mtblGroups.addColumn("Groups");
 				
-				mtblGroups.setValueAt("CSC330", 0, 0);
-				mtblGroups.setValueAt("JIG", 1, 0);
+				
+				
+				List myGroups =  userForProfile.getGroups();
+				mtblGroups.setRowCount(myGroups.getItemCount());
+				for(int i = 0; i< myGroups.getItemCount(); i++)
+					mtblGroups.setValueAt(myGroups.getItem(i), i, 0);
+				
 	}
 	static private void makeFrameVisible(boolean decision){
 		frmMain.setVisible(decision);
@@ -216,5 +227,9 @@ public class Profile {
 			
 		}
 	}
+	
+
+	 
+
 
 }
