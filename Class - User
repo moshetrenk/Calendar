@@ -88,6 +88,14 @@ public class User {
 		return notifications_cancelled_ev;
 	}
 	
+	public ArrayList<Notification_Group> getGroupNotifications(){
+		return notifications_gr;
+	}
+	public List getGroups(){
+		return myGroups;
+	}
+	
+	
 	public String getUsername(){
 		return username;
 	}
