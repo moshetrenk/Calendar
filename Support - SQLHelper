@@ -1,6 +1,6 @@
 package cal;
 
-// use list instead of arraylist
+//use list instead of arraylist
 
 import java.awt.List;
 import java.security.MessageDigest;
@@ -27,10 +27,10 @@ public class SQLHelper {
 	private static String delimiter = "THIS STRING IS THE BETWEEN EVENTS DELIMITER";
 	
 	public static void main(String[] args){	
-		SQLHelper help = new SQLHelper();
+		SQLHelper sqlHelper = new SQLHelper();
 		
-		System.out.println(help.getGroupMembersByGroupName("CSC330 Project"));
-		//System.out.println(help.getCancelledEventNotifications("moshe"));
+		System.out.println(sqlHelper.getGroupMembersByGroupName("CSC330 Project"));
+		//System.out.println(sqlHelper.getCancelledEventNotifications("moshe"));
 		/*
 		 //if you run this commented block, you'll see that 
 		//the user's input will always be encrypted to 32 characters
@@ -46,6 +46,12 @@ public class SQLHelper {
 		System.out.println(a);
 		System.out.println(help.encrypt(b));
 		*/
+		
+		System.out.println(sqlHelper.getTodaysEventNames("08/06/2017", "moshe"));
+		
+		
+		
+		
 	}
 	
 	SQLHelper(){
@@ -267,7 +273,7 @@ public class SQLHelper {
 	
 	public void addUserToGroup(String username, String groupName, int a){
 		try {			
-			statement.execute("insert calgroup values (" + (getNumberOfElements("calGroup") + 1) + ", '" + username + "', '" + groupName + "'," + a + ")");
+			statement.execute("insert calgroup values (" + (getHighestPrimaryKey("calGroup") + 1) + ", '" + username + "', '" + groupName + "'," + a + ")");
 		}
 		catch(SQLException ex ) {
 			System.err.println("DB Exception: " + ex); 
@@ -337,6 +343,23 @@ public class SQLHelper {
 		return members;
 	}
 	
+	static ArrayList<String> getTodaysEventNames(String date, String username){
+		ArrayList<String> eventNames= new ArrayList<String>();
+
+		try {
+			resultSet = statement.executeQuery("select eventName from theEvent where dateOfEvent = '" + date + "' and user_groupID = '" + username + "'");
+			System.out.println("select eventName from theEvent where dateOfEvent = '" + date + "' and user_groupID = '" + username + "'");
+			while(resultSet.next()) {
+				eventNames.add(resultSet.getString(1));
+			}
+		}
+		catch(SQLException ex ) {
+			System.err.println("DB Exception: " + ex); 
+		}
+
+		return eventNames;
+	}
+	
 	public int getNumberOfGroupMembers(String groupName){
 		try {
 			resultSet = statement.executeQuery("select count(*) from calGroup where groupname = '" + groupName + "'");
@@ -351,11 +374,12 @@ public class SQLHelper {
 		
 		return -1;
 	}
-	public int getNumberOfElements(String tableName){
+
+	/*public int getNumberOfElements(String tableName){
 		return getHighestPrimaryKey(tableName);
 		//don't use this method, use getHighestPrimaryKey(...)
 		
-		/*String query = "select count(*) from " + tableName;
+		String query = "select count(*) from " + tableName;
 		
 		try {
 			resultSet = statement.executeQuery(query);
@@ -367,8 +391,8 @@ public class SQLHelper {
 			System.err.println("DB Exception: " + ex); 
 		}
 		
-		return -1;*/
-	}
+		return -1;
+	}*/
 	
 	public int getNumberOfEventsByUser(String username){
 		try {
