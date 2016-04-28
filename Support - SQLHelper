@@ -126,7 +126,7 @@ public class SQLHelper {
 	}
 	
 	
-	public String getUsername(String username){
+	public static String getUsername(String username){
 		//this method is only used when a user is trying to create
 		//a new account and the input needs to be verified as a 
 		//unique username
@@ -149,7 +149,7 @@ public class SQLHelper {
 		return queryResult;
 	}
 	
-	public String getGroupName(String groupName){
+	public static String getGroupName(String groupName){
 		try {
 			resultSet = statement.executeQuery("select distinct groupName from thecalendar.calgroup where groupName = '" + groupName +"'");
 			
