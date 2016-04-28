@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
@@ -20,6 +21,9 @@ public class NotificationScreen {
 	static MyEventNotificationTableModel mtblEventNotifications;
 	static JButton submitBtn;
 	private static SQLHelper sqlHelper = new SQLHelper();
+	private static ArrayList<Notification_Group> groups;
+	private static ArrayList<Event> events;
+	private static ArrayList<CancelledEventNotification> cancelledEvents;
 	
 	
 	static private void prepareFrame(){
@@ -53,47 +57,74 @@ public class NotificationScreen {
 
 		mtblGroupNotifications = new MyGroupNotificationTableModel();
 		
-		ArrayList groups = (sqlHelper.getGroupsThatHaveAskedForYourPresence(user.getUsername()));
-		System.out.print(user.getUsername());
-		System.out.println(groups);
+		groups = (user.getGroupNotifications());
+		events = (user.getEventNotifications());
+		cancelledEvents = (user.getCancelledEventNotifications());
+		
 		
 		for(int i = 0; i < groups.size(); i++){
-			mtblGroupNotifications.addRow(new Object[]{groups.get(i),false, false});
+			mtblGroupNotifications.addRow(new Object[]{groups.get(i).getGroupName(),false, false});
 		}
 		
-		/*
-		for(int i = 0; i < 30; i++){
-		mtblGroupNotifications.addRow(new Object[]{"1234567891234567 has inivited you to join 1234567891CSC330" + String.valueOf(i), false, false});
-		}
-		*/
+		
 		tblGroupNotifications = new JTable(mtblGroupNotifications);
 		tblGroupNotifications.getColumnModel().getColumn(0).setPreferredWidth(450);
 		tblGroupNotifications.getColumnModel().getColumn(1).setPreferredWidth(50);
 		tblGroupNotifications.getColumnModel().getColumn(2).setPreferredWidth(50);
 		
+		//Now set up rejection notifications
 		
+				mtblEventWasRejected = new MyEventRejectedTableModel();
+				
+				tblEventWasRejected = new JTable(mtblEventWasRejected);
+				tblEventWasRejected.getColumnModel().getColumn(0).setPreferredWidth(90);
+				tblEventWasRejected.getColumnModel().getColumn(1).setPreferredWidth(90);
+				tblEventWasRejected.getColumnModel().getColumn(2).setPreferredWidth(105);
+				tblEventWasRejected.getColumnModel().getColumn(3).setPreferredWidth(185);
+				tblEventWasRejected.getColumnModel().getColumn(4).setPreferredWidth(80);
+				
+				for(int i = 0; i < cancelledEvents.size(); i++){
+					mtblEventWasRejected.addRow(new Object[]{cancelledEvents.get(i).getDate(), cancelledEvents.get(i).getStartTime(), cancelledEvents.get(i).getGroupName(), cancelledEvents.get(i).getEventName(), false});
+					
+				}
+				
+				//mtblEventWasRejected.addRow(new Object[]{"04/25/2016", "5:00 PM", "9:00 PM", "Finish Project",false});
 		
 	//Now set up event notifications
 		
 		mtblEventNotifications = new MyEventNotificationTableModel();
 		
-		//ArrayList events = (sqlHelper.getEventNotifications);
 		
-		/*for(int i = 0; i < events.size(); i++){
-			mtblEventNotifications.addRow(new Object[]{events.get(0).);
+		
+		for(int i = 0; i < events.size(); i++){
+			String amOrPm = "";
+			String changeFromMilitaryTime;
+			if(Integer.parseInt(events.get(i).getEndTime().substring(0,2)) > 12){
+				changeFromMilitaryTime = String.valueOf((Integer.parseInt(events.get(i).getEndTime().substring(0,2))%2));
+				amOrPm = "PM";
+			}
+			else{
+				changeFromMilitaryTime = String.valueOf(Integer.parseInt(events.get(i).getEndTime().substring(0,2)));
+				amOrPm = "AM";
+			}
+				
+			String timeForEvent = events.get(i).getStartTime().substring(0, 5) + "-" + changeFromMilitaryTime + events.get(i).getEndTime().substring(2,5) + amOrPm;
+			mtblEventNotifications.addRow(new Object[]{events.get(i).getEventDate(), timeForEvent/*events.get(i).getStartTime()*/, events.get(i).getId(), events.get(i).getEventName(),false, false});
 		}
-		*/
+		
+		/*
 		for(int i = 0; i < 30; i++){
 			mtblEventNotifications.addRow(new Object[]{"04/15/2016", "12:00 PM", "1:00 PM", "Finish Project" + String.valueOf(i),false, false});
 		}
+		*/
 		
 		tblEventNotifications = new JTable(mtblEventNotifications);
-		tblEventNotifications.getColumnModel().getColumn(0).setPreferredWidth(95);
-		tblEventNotifications.getColumnModel().getColumn(1).setPreferredWidth(85);
-		tblEventNotifications.getColumnModel().getColumn(2).setPreferredWidth(85);
-		tblEventNotifications.getColumnModel().getColumn(3).setPreferredWidth(185);
-		tblEventNotifications.getColumnModel().getColumn(4).setPreferredWidth(50);
-		tblEventNotifications.getColumnModel().getColumn(5).setPreferredWidth(50);
+		tblEventNotifications.getColumnModel().getColumn(0).setPreferredWidth(80);
+		tblEventNotifications.getColumnModel().getColumn(1).setPreferredWidth(100);
+		tblEventNotifications.getColumnModel().getColumn(2).setPreferredWidth(105);
+		tblEventNotifications.getColumnModel().getColumn(3).setPreferredWidth(175);
+		tblEventNotifications.getColumnModel().getColumn(4).setPreferredWidth(45);
+		tblEventNotifications.getColumnModel().getColumn(5).setPreferredWidth(45);
 		
 		
 		tblEventNotifications.addMouseListener(new MouseAdapter() {
@@ -107,23 +138,12 @@ public class NotificationScreen {
 		    }
 		});
 		
-		//Now set up rejection notifications
-		
-		mtblEventWasRejected = new MyEventRejectedTableModel();
-		
-		tblEventWasRejected = new JTable(mtblEventWasRejected);
-		tblEventWasRejected.getColumnModel().getColumn(0).setPreferredWidth(95);
-		tblEventWasRejected.getColumnModel().getColumn(1).setPreferredWidth(85);
-		tblEventWasRejected.getColumnModel().getColumn(2).setPreferredWidth(85);
-		tblEventWasRejected.getColumnModel().getColumn(3).setPreferredWidth(195);
-		tblEventWasRejected.getColumnModel().getColumn(4).setPreferredWidth(90);
-		
-		mtblEventWasRejected.addRow(new Object[]{"04/25/2016", "5:00 PM", "9:00 PM", "Finish Project",false});
 	}
+	
 	private static void centerWindow(Window frame) {
 	    Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-	    int x = (int) ((dimension.getWidth() - frame.getWidth()) / 2);
-	    int y = (int) ((dimension.getHeight() - frame.getHeight()) / 2);
+	    int x = (int) ((dimension.getWidth() - frame.getWidth())/2);
+	    int y = (int) ((dimension.getHeight() - frame.getHeight())/2);
 	    frame.setLocation(x, y);
 	}
 	
@@ -138,11 +158,18 @@ public class NotificationScreen {
 		
 		stblEventWasRejected = new JScrollPane(tblEventWasRejected);
 		
-		lblGroupNotifications = new JLabel("You have " + String.valueOf(2)+/*get size of notification list +*/ " group invitations!", SwingConstants.CENTER );
-	
-		lblEventNotifications = new JLabel("You have " + String.valueOf(4)+/*get size of events list+*/ " events awaiting your answer.", SwingConstants.CENTER);
-		
-		lblEventWasRejected = new JLabel(String.valueOf(5)+ /*get number of events that were rejected*/" events have been rejected.", SwingConstants.CENTER);
+		if(groups.size() == 1)
+			lblGroupNotifications = new JLabel("You a group invitation!", SwingConstants.CENTER );
+		else
+		lblGroupNotifications = new JLabel("You have " + groups.size()+ " group invitations!", SwingConstants.CENTER );
+		if(events.size() == 1)
+			lblEventNotifications = new JLabel("You have an event awaiting your answer.", SwingConstants.CENTER);
+		else
+		lblEventNotifications = new JLabel("You have " + events.size() + " events awaiting your answer.", SwingConstants.CENTER);
+		if(cancelledEvents.size() == 1)
+			lblEventWasRejected = new JLabel("The following event has been rejected.", SwingConstants.CENTER);
+		else
+		lblEventWasRejected = new JLabel("The following " + cancelledEvents.size() +" events have been rejected.", SwingConstants.CENTER);
 		
 		submitBtn = new JButton("Submit");
 		
@@ -161,7 +188,7 @@ public class NotificationScreen {
 		frmMain.setJMenuBar(MenuExp.PrepareMenuBar(new User("Moshe")));
 	}
 	
-	static private void setBounds(){
+	static private void setBounds(User user){
 		
 		pnlNotifications.setBounds(0,0,550,550);
 		
@@ -179,173 +206,9 @@ public class NotificationScreen {
 		
 		submitBtn.setBounds(450,7,75,20);
 		
-		
-		
-	}
+		submitBtn.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                submitBtnActionPerformed(evt, user);
+            }
+        });
 	
-	static private void makeFrameVisible(boolean decision){
-		//Make frame visible
-				frmMain.setResizable(false);
-				frmMain.setVisible(decision);
-	}
-	
-	public static void paintFrame(User user){
-		prepareFrame();
-		setUpTables(user);
-		centerWindow(frmMain);
-		createControls();
-		addControls();
-		setBounds();
-		makeFrameVisible(true);
-	}
-	
-	 public static class MyEventRejectedTableModel extends DefaultTableModel {
-
-		    public MyEventRejectedTableModel() {
-		      super(new String[]{"Date", "Start Time", "End Time","Event Name","Mark as Read" }, 0);
-		      
-		    }
-			@Override
-		    public Class<?> getColumnClass(int columnIndex) {
-		      Class clazz = String.class;
-		      switch (columnIndex) {
-		      	case 4:
-		          clazz = Boolean.class;
-		          break;
-		      }
-		      return clazz;
-		    }
-
-		    @Override
-		    public boolean isCellEditable(int row, int column) {
-		      return (column == 4);
-		    }
-		    
-		    
-
-		    @Override
-		    public void setValueAt(Object aValue, int row, int column) {
-		    	if (aValue instanceof Boolean && column == 4) {
-			        Vector rowData = (Vector)getDataVector().get(row);
-			        rowData.set(4, (boolean)aValue);
-			        fireTableCellUpdated(row, column);
-			        
-		    	}
-	}
-	 }
-	
-
-	 public static class MyEventNotificationTableModel extends DefaultTableModel {
-
-		    public MyEventNotificationTableModel() {
-		      super(new String[]{"Date", "Start Time", "End Time","Event Name","Accept", "Reject" }, 0);
-		      
-		    }
-			@Override
-		    public Class<?> getColumnClass(int columnIndex) {
-		      Class clazz = String.class;
-		      switch (columnIndex) {
-		      	case 4:
-		        case 5:
-		          clazz = Boolean.class;
-		          break;
-		      }
-		      return clazz;
-		    }
-
-		    @Override
-		    public boolean isCellEditable(int row, int column) {
-		      return (column == 4 || column == 5);
-		    }
-		    
-		    
-
-		    @Override
-		    public void setValueAt(Object aValue, int row, int column) {
-		      if (aValue instanceof Boolean && column == 5) {
-		        Vector rowData = (Vector)getDataVector().get(row);
-		        rowData.set(5, (boolean)aValue);
-		        if (((boolean)rowData.get(4)) == true && ((boolean)aValue) == true)
-		        	rowData.set(4,false);
-		        	
-		        fireTableCellUpdated(row, column);
-		        fireTableCellUpdated(row,column-1);
-		      }
-		      else if (aValue instanceof Boolean && column == 4) {
-			        Vector rowData = (Vector)getDataVector().get(row);
-			        rowData.set(4, (boolean)aValue);
-			        if (((boolean)rowData.get(5)) == true && ((boolean)aValue) == true)
-			        	rowData.set(5,false);
-			        fireTableCellUpdated(row, column);
-			        fireTableCellUpdated(row,column+1);
-		    }
-
-	}
-	 }
-	 
-	
-	 public static class MyGroupNotificationTableModel extends DefaultTableModel {
-
-		    public MyGroupNotificationTableModel() {
-		      super(new String[]{"Group Name", "Accept", "Reject"}, 0);
-		      
-		    }
-
-		   
-
-			@Override
-		    public Class<?> getColumnClass(int columnIndex) {
-		      Class clazz = String.class;
-		      switch (columnIndex) {
-		      	case 1:
-		        case 2:
-		          clazz = Boolean.class;
-		          break;
-		      }
-		      return clazz;
-		    }
-
-		    @Override
-		    public boolean isCellEditable(int row, int column) {
-		      return (column == 1 || column == 2);
-		    }
-		    
-		    
-
-		    @Override
-		    public void setValueAt(Object aValue, int row, int column) {
-		      if (aValue instanceof Boolean && column == 2) {
-		        Vector rowData = (Vector)getDataVector().get(row);
-		        rowData.set(2, (boolean)aValue);
-		        if (((boolean)rowData.get(1)) == true && ((boolean)aValue) == true)
-		        	rowData.set(1,false);
-		        	
-		        fireTableCellUpdated(row, column);
-		        fireTableCellUpdated(row,column-1);
-		      }
-		      else if (aValue instanceof Boolean && column == 1) {
-			        Vector rowData = (Vector)getDataVector().get(row);
-			        rowData.set(1, (boolean)aValue);
-			        if (((boolean)rowData.get(2)) == true && ((boolean)aValue) == true)
-			        	rowData.set(2,false);
-			        fireTableCellUpdated(row, column);
-			        fireTableCellUpdated(row,column+1);
-		    }
-
-	}
-	 } 
-	 
-	
-	public static void main (String args[]){
-		//Look and feel
-		try {UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());}
-		catch (ClassNotFoundException e) {}
-		catch (InstantiationException e) {}
-		catch (IllegalAccessException e) {}
-		catch (UnsupportedLookAndFeelException e) {}
-
-		paintFrame(new User("Moshe"));
-	}
-
-	
-	 }
