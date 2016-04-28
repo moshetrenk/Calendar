@@ -1,8 +1,5 @@
 package CalendarTest;
 
-
-/*Contents of CalendarProgram.class */
-
 /*Contents of CalendarProgram.class */
 
 //Import packages
@@ -221,6 +218,9 @@ public class CalendarProgram extends JFrame{
 	public static int getCurrentYear(){
 		return realYear;
 	}
+	public static void setMonthBeforeToNull(){
+		monthBefore = 0;
+	}
 	public static void main (String args[]){
 		//Look and feel
 		try {UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());}
@@ -269,8 +269,10 @@ public class CalendarProgram extends JFrame{
 	if(month != monthBefore){
 		cmbDay.removeAllItems();
 		for( int i = 1; i <=nod ;i++){
+			cmbDay_clicked=0;
 			cmbDay.addItem(String.valueOf(i));
 		}
+		cmbDay_clicked = 1;
 	}
 
 		//Apply renderers
@@ -310,10 +312,11 @@ public class CalendarProgram extends JFrame{
 				setBackground(new Color(0, 250, 0));
 				//table.setValueAt(table.getValueAt(row, column)+" "+"\u00B7",row,column);
 			}
-			else{ //Week
-				setBackground(new Color(255, 255, 255));
+			else if(table.getValueAt(row, column) != null){ //Week
+				setBackground(new Color(235, 235, 235));
 			}
-			
+			else
+				setBackground(new Color(245,245,245));
 		
 			if (value != null){
 				if (Integer.parseInt(value.toString()) == realDay && currentMonth == realMonth && currentYear == realYear){ //Today
