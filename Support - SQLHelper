@@ -585,6 +585,9 @@ public class SQLHelper {
 		return notifs;
 	}
 	
+	//TEST THIS SHIT!!!
+	//Seriously, the getString()s are definitely out of order
+	//Test the shit out of this
 	public ArrayList<Notification_Group> getGroupNotifications(String username){
 		ArrayList<Notification_Group> sender_and_group = new ArrayList<Notification_Group>();
 		
@@ -593,9 +596,9 @@ public class SQLHelper {
 			while(resultSet.next()) {
 				ArrayList<String> ohm = new ArrayList<String>();
 				
-				ohm.add(resultSet.getString(2));
 				ohm.add(resultSet.getString(4));
 				ohm.add(resultSet.getString(3));
+				ohm.add(resultSet.getString(2));
 				
 				Notification_Group temp = new Notification_Group(ohm);
 				
