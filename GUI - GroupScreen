@@ -195,6 +195,7 @@ public class GroupScreen extends  JFrame {
        
        SelfClosingMessage.output(addMemberTextBox.getText() + " has been added to " + groups.getItem(table.getSelectedRow()), "Success", 2500);
        addMemberTextBox.setText("");
+       addMemberToGroupButton.setEnabled(false);
     }                                                      
    
     private void newGroupTextBoxKeyReleased(java.awt.event.KeyEvent evt) {                                            
