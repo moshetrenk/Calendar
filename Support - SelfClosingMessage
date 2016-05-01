@@ -1,20 +1,16 @@
-package lab3;
-/* This class is a combination of several resources I found online 
- * with the goal being to make a message that closes by itself
- * after a specified amount of time, 
+package cal;
+/* This class is a combination of my own work and several resources I found online. 
+ * The class serves to allow prompts to be output and to disappear after a specified
+ * amount of time
  */
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
+import javax.swing.*;
 
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.Timer;
-
+@SuppressWarnings("serial")
 class SelfClosingMessage extends JFrame{
-	static void output(String text, String title, int time){
 
+	static void output(String text, String title, int time){
 		JFrame frame = new JFrame();
 		final JDialog dialog = new JDialog(frame, title, true);
 	    dialog.setLocation(450, 300);
@@ -24,7 +20,7 @@ class SelfClosingMessage extends JFrame{
 	    dialog.setTitle(title);
 	    dialog.add(label);
 	    dialog.pack();
-	    dialog.resize(350, 110);
+	    dialog.setSize(350, 110);
 	    
 	    Timer timer = new Timer(time, new ActionListener() {
 	        public void actionPerformed(ActionEvent e) {
@@ -37,4 +33,28 @@ class SelfClosingMessage extends JFrame{
 	
 	    dialog.setVisible(true);
 	}
+
+	public static void loadingSymbol(int time){
+		JFrame frame = new JFrame("Logging in");
+		frame.setLocation(450, 300);
+		
+		ImageIcon loading = new ImageIcon("C:\\ajax-loader.gif");
+		frame.add(new JLabel("         Loading... One moment", loading, JLabel.CENTER));
+
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setSize(400, 100);
+		frame.setVisible(true);
+		
+		Timer timer = new Timer(time, new ActionListener() {
+		        public void actionPerformed(ActionEvent e) {
+		            frame.setVisible(false);
+		            frame.dispose();
+		        }
+		});
+		timer.setRepeats(false);
+		timer.start();
+		
+		frame.setVisible(true);
+	}
+	
 };
