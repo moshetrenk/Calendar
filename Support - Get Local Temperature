@@ -4,6 +4,13 @@ package cal;
  * this is a heavily modified version of Professor Iacona's WebPageGetter 
  */
 
+/* Here is an ideal point to indicate that we absolutely made portions of 
+ * this with intent of greater funcionality. In this case, we would only 
+ * get a user's location the first time or maybe store it in the database
+ * but the point is we have two getTemp() methods and we only really need 
+ * to use the slower version one time, when a user creates their account
+ */
+
 import java.io.*;
 import java.net.*;
 
