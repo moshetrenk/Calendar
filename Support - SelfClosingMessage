@@ -37,6 +37,7 @@ class SelfClosingMessage extends JFrame{
 	public static void loadingSymbol(int time){
 		JFrame frame = new JFrame("Logging in");
 		frame.setLocation(450, 300);
+		frame.setAlwaysOnTop(true);
 		
 		ImageIcon loading = new ImageIcon("C:\\ajax-loader.gif");
 		frame.add(new JLabel("         Loading... One moment", loading, JLabel.CENTER));
@@ -46,10 +47,10 @@ class SelfClosingMessage extends JFrame{
 		frame.setVisible(true);
 		
 		Timer timer = new Timer(time, new ActionListener() {
-		        public void actionPerformed(ActionEvent e) {
-		            frame.setVisible(false);
-		            frame.dispose();
-		        }
+	        public void actionPerformed(ActionEvent e) {
+	            frame.setVisible(false);
+	            frame.dispose();
+	        }
 		});
 		timer.setRepeats(false);
 		timer.start();
