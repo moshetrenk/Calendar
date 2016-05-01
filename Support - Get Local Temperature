@@ -1,14 +1,12 @@
-package lab3;
+package cal;
 //returns the temperature if valid zip code is passed in or if not it returns -1
 
 import java.io.*;
 import java.net.*;
-import java.util.*;
 
 public class getTempByZip {  
-	public static int getTemperature(String zip)  {
+	public static int getTemperature(String zip){
 			StringBuffer buffer = new StringBuffer();
-			WebPageGetter pageOne = new WebPageGetter();
 			String theUrl = "https://www.bing.com/search?q=" + zip + "+weather&form=EDGEAR&qs=WA&cvid=8921203ba63844f99e376494cc5fe5f6&pq=" + zip + "%20weather";
 	    	try {
 		         URL gotoUrl = new URL(theUrl);
@@ -26,3 +24,5 @@ public class getTempByZip {
 	    	return -1;
 	    }      
 }
+
+
