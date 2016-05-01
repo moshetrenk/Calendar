@@ -1,5 +1,7 @@
 package cal;
-//returns the temperature if valid zip code is passed in or if not it returns -1
+/* returns the temperature if valid zip code is passed in or if not it returns -1
+ * this is a heavily modified version of Professor Iacona's WebPageGetter 
+ */
 
 import java.io.*;
 import java.net.*;
