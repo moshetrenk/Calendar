@@ -80,6 +80,7 @@ public class getTemp{
 			 theUrl = "https://www.wunderground.com/cgi-bin/findweather/getForecast?query=" + getUserCity().substring(0, getUserCity().indexOf(' ')) + "+" + getUserCity().substring(getUserCity().indexOf(' ') + 1, getUserCity().length());
 		else
 			 theUrl = "https://www.wunderground.com/cgi-bin/findweather/getForecast?query=" + getUserCity();
+		System.out.println("theurl = " + theUrl);
     	try {
 	         URL gotoUrl = new URL(theUrl);
 	         InputStreamReader isr = new InputStreamReader(gotoUrl.openStream());
@@ -93,7 +94,7 @@ public class getTemp{
 	         StringBuilder cur = new StringBuilder();
 	         cur.append(buffer.charAt(buffer.indexOf("&deg") - 4));
 	         cur.append(buffer.charAt(buffer.indexOf("&deg") - 3));
-	         
+	         System.out.println(cur);
 	         return new String(cur + "\u00B0 F");
 	         
     	} catch (IOException e) {
