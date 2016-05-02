@@ -1,12 +1,17 @@
 package cal;
 
-//use list instead of arraylist
+/*
+ * This class is used to prevent the GUIs from directly accessing the SQL database
+ * that is used for this application. It prevents a lot of repetition and is used
+ * as a local instance in any GUI that uses it. This is done so that the path can 
+ * be opened only once, even if multiple methods are used. The local instance will
+ * call the constructor which opens the path and then the particular methods used
+ * will operate using that instance until the exit button is clicked at which point
+ * the closePath() method must be called
+ */
 
-import java.awt.List;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.sql.*;
-import java.util.ArrayList;
+//the following block of code should be put into the constructor of any class that 
+//uses an instance of SQLHelper
 
 /*
 setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
@@ -17,6 +22,68 @@ setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
             }
         });
 */
+
+//use list instead of arraylist
+
+/*I won't comment on every method in this class, for the most part
+* they operate in a manner that is almost identical. If a method has 
+* something unique about it, then I will describe it. The essential 
+* detail is that the database used is this:
+
+
+create database thecalendar;
+use thecalendar;
+
+create table friend (
+username varchar(16) primary key,
+userpassword varchar (32), 
+imgUrl varchar(100));
+
+create table theEvent (
+eventNumber int primary key,
+eventName varchar (25),
+user_groupID varchar (16),
+dateOfEvent varchar(10),
+startTimeOfEvent time,
+endTimeofEvent time,
+description varchar(140),
+approvalsNeeded int,
+approved int);
+
+create table calGroup (
+idNum int primary key,
+username varchar (16),
+groupName varchar (16),
+isAdmin bool);
+
+create table notifications (
+idNum int primary key,
+sender varchar (16),
+recipient varchar(16),
+groupName varchar(16),
+notificationType varchar(1)
+);
+
+alter table notifications drop column notificationType;
+alter table notifications drop column groupName;
+alter table notifications add column groupName varchar(16) not null;
+
+create table notificationsEvent (
+idNum int primary key,
+groupName varchar (16),
+recipient varchar(16),
+dateOfEvent varchar(16),
+startTimeOfEvent time,
+endTimeofEvent time);
+
+alter table notifications rename notificationsGroup;
+*/
+
+import java.awt.List;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.sql.*;
+import java.util.ArrayList;
 
 public class SQLHelper {
 	private static Connection connection;
@@ -47,14 +114,18 @@ public class SQLHelper {
 		System.out.println(help.encrypt(b));
 		*/
 		
-		System.out.println(sqlHelper.getTodaysEventNames("08/06/2017", "moshe"));
-		
-		
-		
 		
 	}
 	
 	SQLHelper(){
+	/*
+	 * The constructor opens the path to the localhost MySQL database
+	 * It also calls the method to turn off safe updates which in turn
+	 * allows us to modify elements of the database without identifying
+	 * them by their primary key. For example to delete an event, you
+	 * need the Date, time, and whose event it is, the primary key is
+	 * not relevant
+	 */
 		//change this to your localhost's username and password
 		url = "jdbc:mysql://localhost/thecalendar?useSSL=false&user=root&password=6815";
 		
@@ -119,12 +190,15 @@ public class SQLHelper {
 			return false;	
 	}
 	
-	public void insertEvent(ArrayList<?> deets){
+	public void insertEvent(ArrayList<?> list){
+		//this method is built around the AddEvent screens current simplest
+		//option. 
+		//TODO Change parameter to Event and have AddEvent do the same
 		try {			
-			statement.execute("insert theEvent values (" + deets.get(0) + ", '" 
-					+ deets.get(1) + "', '" + deets.get(2) + "', '" + deets.get(3)
-					+ "', " + deets.get(4) + ", " + deets.get (5)+ ", '" 
-	                + deets.get(6)  + "', 1, " + deets.get(7) + ")");
+			statement.execute("insert theEvent values (" + list.get(0) + ", '" 
+					+ list.get(1) + "', '" + list.get(2) + "', '" + list.get(3)
+					+ "', " + list.get(4) + ", " + list.get (5)+ ", '" 
+	                + list.get(6)  + "', 1, " + list.get(7) + ")");
 		}
 		catch(SQLException ex ) {
 			System.err.println("DB Exception: " + ex); 
@@ -156,6 +230,9 @@ public class SQLHelper {
 	}
 	
 	public static String getGroupName(String groupName){
+		//this method is only used when a user is trying to create
+		//a new group and the input needs to be verified as a 
+		//unique group name
 		try {
 			resultSet = statement.executeQuery("select distinct groupName from thecalendar.calgroup where groupName = '" + groupName +"'");
 			
@@ -175,6 +252,16 @@ public class SQLHelper {
 	}
 	
 	public String query(String query){
+		/* This is a generic method that can be used for any query that
+		 * will return exactly one field. If the query returns multiple
+		 * fields then it will return the first element of the LAST row
+		 * Also it assumes that the datatype returned is (or can be 
+		 * parsed to) a String.
+		 * This method is never used as it would require the class calling
+		 * it to have knowledge of the database. Instead, there are 
+		 * specific query methods
+		 */
+		
 		try {
 			resultSet = statement.executeQuery(query);
 			while(resultSet.next()) {
@@ -192,8 +279,12 @@ public class SQLHelper {
 		return queryResult;
 	}
 	
-	//pass an argument such as "insert into friend values ("moshe", "password", "url")
 	public void insert(String query){
+		//This is a generic insert method, any insert statement can be sent
+		//pass an argument such as "insert into friend values ("moshe", "password", "url")
+		/* This method is never used as it would require the class calling it to have
+		 * knowledge of the database. Instead, there are specific insert methods
+		 */
 		try {			
 			statement.execute(query);
 		}
@@ -204,6 +295,13 @@ public class SQLHelper {
 	
 	//overloaded insert, pass a table and the values to give it
 	public void insert(String table, ArrayList<?> values){
+		/* This is an even more generic insert method, it only needs a table name
+		 * and an ArrayList of the values to insert. Again this method is avoided 
+		 * because it requires the class calling it to have knowledge of the database
+		 * Specifically, it would have to know the order of the fields of the table. 
+		 * This method is designed such that if the input is of type String then it 
+		 * will surround it in apostrophes per MySQL's delimiting
+		 */
 		String query = "insert into " + table + " values (";
 	
 		for(int i = 0; i < values.size(); i++){
@@ -221,7 +319,7 @@ public class SQLHelper {
 			}		
 		}
 		
-		System.out.println("For error-catching reasons:\n" + "Insertion = " + query);
+		//System.out.println("For error-catching reasons:\n" + "Insertion = " + query);
 		
 		try {			
 			statement.execute(query);
@@ -241,6 +339,15 @@ public class SQLHelper {
 	}
 	
 	public ArrayList<? extends Object> isTimeAvailableForEvent(String groupName, String username, boolean isGroupEvent){
+		/* This method is the effective combination of two methods - one for group events 
+		 * and one for personal events. What happens: if the boolean group event is true 
+		 * then a query is built around groupName, otherwise a query is built around the 
+		 * username. Either way it will return an ArrayList of the relevent data of any 
+		 * potentially clashing events. This method is arguably the most advanced bit of 
+		 * SQL we have. It's nothing too crazy but it leverages SQL's nested query function
+		 * to cut off a massive amount of work that would otherwise be required
+		 */
+		
 		ArrayList<Object> times = new ArrayList<Object>();
 		String query;
 		
@@ -281,6 +388,12 @@ public class SQLHelper {
 	}
 	
 	public ArrayList<?> getEvents(String userId){
+		/* This method creates a generic ArrayList of the data of 
+		 * a user's events. We considered directly returning a list
+		 * of type Event but we elected not to. This will likely be
+		 * changed but for the time being, we prefer it like this
+		 */
+		
 		ArrayList<Object> list = new ArrayList<Object>();
 		
 		try {
@@ -299,8 +412,7 @@ public class SQLHelper {
 				
 				//I know there are alternatives to this but for now, this is the simplest one
 				list.add(delimiter);
-			}
-			
+			}	
 		}
 		catch(SQLException ex ) {
 			System.err.println("DB Exception: " + ex); 
@@ -344,11 +456,15 @@ public class SQLHelper {
 	}
 	
 	static ArrayList<String> getTodaysEventNames(String date, String username){
+		/* This method allows the profile screen to show a user
+		 * any events that they have on the relevant date
+		 */
+		
 		ArrayList<String> eventNames= new ArrayList<String>();
 
 		try {
 			resultSet = statement.executeQuery("select eventName from theEvent where dateOfEvent = '" + date + "' and user_groupID = '" + username + "'");
-			System.out.println("select eventName from theEvent where dateOfEvent = '" + date + "' and user_groupID = '" + username + "'");
+			//System.out.println("select eventName from theEvent where dateOfEvent = '" + date + "' and user_groupID = '" + username + "'");
 			while(resultSet.next()) {
 				eventNames.add(resultSet.getString(1));
 			}
@@ -525,9 +641,12 @@ public class SQLHelper {
 	}
 	
 	public ArrayList<Event> getEventNotifications(String username){
-	//this method is unecessarily complicated because the notifications table
-	//doesn't store event data so a separate query needs to be made, using the
-	//date from the notifications 
+	/*this method is overly complicated because the notifications table
+	* doesn't store event data so a separate query needs to be made, using the
+	* date from the notifications. Basically this method takes in a user's
+	* eventNotifications and returns the ArrayList of the corresponding Events. 
+	* Easier said than done...
+	*/
 		
 		ArrayList<Event> notifs = new ArrayList<Event>();
 		ArrayList<Object> temp = new ArrayList<Object>();
@@ -586,7 +705,7 @@ public class SQLHelper {
 	}
 	
 	//TEST THIS SHIT!!!
-	//Seriously, the getString()s are definitely out of order
+	//Seriously, the getString() calls are definitely out of order
 	//Test the shit out of this
 	public ArrayList<Notification_Group> getGroupNotifications(String username){
 		ArrayList<Notification_Group> sender_and_group = new ArrayList<Notification_Group>();
@@ -613,6 +732,7 @@ public class SQLHelper {
 	}
 	
 	public ArrayList<CancelledEventNotification> getCancelledEventNotifications(String username){
+		//CancelledEventNotification takes two ArrayLists, hence the one and two
 		
 		ArrayList<String> one = new ArrayList<String>();
 		ArrayList<Object> two = new ArrayList<Object>();
@@ -675,6 +795,8 @@ public class SQLHelper {
 	}
 	
 	public void giveYourApproval(Event evt){
+	//to keep track of approved events, when a user accepts an invite,
+	//this method is called
 	//this needs to be tested	
 		try{
 			statement.executeQuery("update theevent set approvalsNeeded =" + (evt.getNumberOfAccepted() + 1) + "where eventNumber =" + evt.getEventNumber());
