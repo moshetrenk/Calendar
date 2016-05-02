@@ -1,6 +1,9 @@
-
 package cal;
 
+/* This class is called from the profile screen when a user 
+ * clicks add event. It is distinctly more difficult than it 
+ * might seem at first glance.
+ */
 import javax.swing.text.BadLocationException;
 import java.awt.*;
 import java.time.LocalDateTime;
@@ -32,7 +35,7 @@ public class AddEvent extends JFrame {
     			eventTimeLabel = new JLabel(), eventTimeLabel1 = new JLabel(),
     			invalidTimeLabel = new JLabel(), titleLabel = new JLabel();
     
-    private JButton jButton1 = new JButton(), buttonAmPm = new JButton(), 
+    private JButton buttonAmPm = new JButton(), 
     			buttonAmPm2 = new JButton(), completeButton = new JButton();
     
     private JComboBox<String> monthDropDown = new JComboBox<String>(), 
@@ -49,12 +52,33 @@ public class AddEvent extends JFrame {
 	private Event event;
     
     public AddEvent() {
-        initComponents();
-        setTitle("Add Event");
-        addWindowListener(new WindowAdapter() {
+    	
+    	//the following checks the operating system and displays the menubar accordingly
+    	try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
+
+    	String lcOSName = System.getProperty("os.name").toLowerCase();
+		boolean IS_MAC = lcOSName.startsWith("mac os x");
+		System.setProperty("apple.laf.useScreenMenuBar", String.valueOf(IS_MAC));
+        
+		
+		initComponents();
+
+		//the following method is used to close the path of the local instance of SQLHelper
+		//upon the user's click of the exit button
+		addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
             	sqlHelper.closePath();
-               // System.exit(1);
+            	System.exit(1);
             }
         });
     }
@@ -62,13 +86,10 @@ public class AddEvent extends JFrame {
     private void initComponents() {
     	today = LocalDateTime.now();
     	setJMenuBar(MenuExp.PrepareMenuBar(user));
-        jButton1.setText("jButton1");
-
-        setDefaultCloseOperation( WindowConstants.EXIT_ON_CLOSE);
-
+        
+    	setTitle("Add Event");
         titleLabel.setFont(new java.awt.Font("Tahoma", 1, 18));
         titleLabel.setText("Add Event");
-
         eventNameLabel.setFont(new java.awt.Font("Tahoma", 0, 16));
         eventNameLabel.setText("Event Name");
 
@@ -98,16 +119,17 @@ public class AddEvent extends JFrame {
         	buttonAmPm.setText("AM");
         else 
         	buttonAmPm.setText("PM");
+        
+        if (today.getHour() < 12)
+        	buttonAmPm2.setText("AM");
+        else 
+        	buttonAmPm2.setText("PM");
+        
         buttonAmPm.setMaximumSize(new java.awt.Dimension(49, 23));
         buttonAmPm.setMinimumSize(new java.awt.Dimension(49, 23));
         buttonAmPm.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 buttonAmPmMouseReleased(evt);
-            }
-        });
-        buttonAmPm.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonAmPmActionPerformed(evt);
             }
         });
 
@@ -151,9 +173,6 @@ public class AddEvent extends JFrame {
         });
 
         startMinDropDown.setModel(new  DefaultComboBoxModel<>(new String[] { "00", "30" }));
-        
-
-        
         startMinDropDown.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 startMinDropDownActionPerformed(evt);
@@ -179,18 +198,9 @@ public class AddEvent extends JFrame {
             }
         });
 
-        if (today.getHour() < 12)
-        	buttonAmPm2.setText("AM");
-        else 
-        	buttonAmPm2.setText("PM");
-        
         buttonAmPm2.setMaximumSize(new java.awt.Dimension(49, 23));
         buttonAmPm2.setMinimumSize(new java.awt.Dimension(49, 23));
-        buttonAmPm2.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                buttonAmPm2MouseReleased(evt);
-            }
-        });
+
         buttonAmPm2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonAmPm2ActionPerformed(evt);
@@ -229,18 +239,24 @@ public class AddEvent extends JFrame {
             }
         });
 
-        invalidTimeLabel.setVisible(false);
         invalidTimeLabel.setText("End Time Should Be After Start Time");
+        invalidTimeLabel.setVisible(false);
         
-        //change these and the drop downs to update to today
         month = today.getMonthValue();
         date = today.getDayOfMonth();
         year = today.getYear();
         startTimeHour = (today.getHour() % 12) * 1000;
         endTimeHour = (today.getHour() % 12) * 1000 + 1000;
         
+        //in the following if-else the default timing is prepared for events that overlap between AM/PM periods
         if(today.getHour() != 11 && today.getHour() != 12 && today.getHour() != 23 && today.getHour() != 24){
-    		startHourDropDown.setSelectedIndex(today.getHour() % 12);
+        	if(today.getMinute() < 30){
+        		startHourDropDown.setSelectedIndex(today.getHour() % 12 - 1);
+        		startMinDropDown.setSelectedIndex(1);
+        	}
+        	else 
+        		startHourDropDown.setSelectedIndex(today.getHour() % 12);
+        	
     		endHourDropDown.setSelectedIndex(today.getHour() % 12);
     	}
     	else {
@@ -255,6 +271,7 @@ public class AddEvent extends JFrame {
         	endMinDropDown.setSelectedIndex(0);        	
         }
         
+        //(mostly) autogenerated code starts here
         GroupLayout layout = new  GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -263,58 +280,58 @@ public class AddEvent extends JFrame {
                 .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup( GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(eventDetailsLabel,  GroupLayout.PREFERRED_SIZE, 120,  GroupLayout.PREFERRED_SIZE)
+                        .addComponent(eventDetailsLabel, GroupLayout.PREFERRED_SIZE, 120, GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap( LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup( GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2,  GroupLayout.PREFERRED_SIZE, 209,  GroupLayout.PREFERRED_SIZE)
-                            .addComponent(charactersRemainingLabel,  GroupLayout.PREFERRED_SIZE, 182,  GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 209, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(charactersRemainingLabel, GroupLayout.PREFERRED_SIZE, 182, GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup( GroupLayout.Alignment.LEADING)
-                            .addComponent(eventNameLabel,  GroupLayout.PREFERRED_SIZE, 86,  GroupLayout.PREFERRED_SIZE)
-                            .addComponent(eventTimeLabel,  GroupLayout.PREFERRED_SIZE, 86,  GroupLayout.PREFERRED_SIZE)
-                            .addComponent(eventTimeLabel1,  GroupLayout.PREFERRED_SIZE, 86,  GroupLayout.PREFERRED_SIZE)
-                            .addComponent(eventDateLabel,  GroupLayout.PREFERRED_SIZE, 86,  GroupLayout.PREFERRED_SIZE))
+                            .addComponent(eventNameLabel, GroupLayout.PREFERRED_SIZE, 86, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(eventTimeLabel, GroupLayout.PREFERRED_SIZE, 86, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(eventTimeLabel1, GroupLayout.PREFERRED_SIZE, 86, GroupLayout.PREFERRED_SIZE)
+                            .addComponent(eventDateLabel, GroupLayout.PREFERRED_SIZE, 86, GroupLayout.PREFERRED_SIZE))
                         .addGap(40, 40, 40)
                         .addGroup(layout.createParallelGroup( GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup( GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(startHourDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(startHourDropDown, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
-                                        .addComponent(startMinDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(startMinDropDown, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(endHourDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(endHourDropDown, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
-                                        .addComponent(endMinDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(endMinDropDown, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup( GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(buttonAmPm2,  GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE)
-                                    .addComponent(buttonAmPm,  GroupLayout.DEFAULT_SIZE,  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                    .addComponent(buttonAmPm2, GroupLayout.DEFAULT_SIZE, 49, Short.MAX_VALUE)
+                                    .addComponent(buttonAmPm, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(10, 10, 10)
-                                .addComponent(invalidTimeLabel,  GroupLayout.PREFERRED_SIZE, 212,  GroupLayout.PREFERRED_SIZE))
+                                .addComponent(invalidTimeLabel, GroupLayout.PREFERRED_SIZE, 212, GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(titleLabel,  GroupLayout.PREFERRED_SIZE, 128,  GroupLayout.PREFERRED_SIZE)
+                                .addComponent(titleLabel, GroupLayout.PREFERRED_SIZE, 128, GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap( LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(isGroupEventCheckBox))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup( GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(monthDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(monthDropDown, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
-                                        .addComponent(dayDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(eventNameTextBox,  GroupLayout.PREFERRED_SIZE, 144,  GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(dayDropDown, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(eventNameTextBox, GroupLayout.PREFERRED_SIZE, 144, GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap( LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup( GroupLayout.Alignment.LEADING)
-                                    .addComponent(groupComboBox, 0,  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(groupComboBox, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addGroup(layout.createSequentialGroup()
-                                        .addComponent(yearDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(yearDropDown, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                                         .addGap(0, 0, Short.MAX_VALUE)))))))
                 .addContainerGap())
             .addGroup( GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap( GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(completeButton,  GroupLayout.PREFERRED_SIZE, 202,  GroupLayout.PREFERRED_SIZE)
+                .addComponent(completeButton, GroupLayout.PREFERRED_SIZE, 202, GroupLayout.PREFERRED_SIZE)
                 .addGap(106, 106, 106))
         );
         layout.setVerticalGroup(
@@ -322,49 +339,56 @@ public class AddEvent extends JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(6, 6, 6)
                 .addGroup(layout.createParallelGroup( GroupLayout.Alignment.BASELINE)
-                    .addComponent(titleLabel,  GroupLayout.PREFERRED_SIZE, 27,  GroupLayout.PREFERRED_SIZE)
+                    .addComponent(titleLabel, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
                     .addComponent(isGroupEventCheckBox))
                 .addPreferredGap( LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup( GroupLayout.Alignment.BASELINE)
                     .addComponent(eventNameLabel)
-                    .addComponent(eventNameTextBox,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)
-                    .addComponent(groupComboBox,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE))
+                    .addComponent(eventNameTextBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(groupComboBox, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap( LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup( GroupLayout.Alignment.BASELINE)
-                    .addComponent(eventDateLabel,  GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
-                    .addComponent(monthDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)
-                    .addComponent(dayDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)
-                    .addComponent(yearDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE))
+                    .addComponent(eventDateLabel, GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
+                    .addComponent(monthDropDown, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dayDropDown, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                    .addComponent(yearDropDown, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup( GroupLayout.Alignment.LEADING, false)
-                    .addComponent(buttonAmPm,  GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(buttonAmPm, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(layout.createParallelGroup( GroupLayout.Alignment.BASELINE)
                         .addComponent(eventTimeLabel)
-                        .addComponent(startHourDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)
-                        .addComponent(startMinDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(startHourDropDown, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(startMinDropDown, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup( GroupLayout.Alignment.LEADING, false)
-                    .addComponent(buttonAmPm2,  GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(buttonAmPm2, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(layout.createParallelGroup( GroupLayout.Alignment.BASELINE)
                         .addComponent(eventTimeLabel1)
-                        .addComponent(endHourDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)
-                        .addComponent(endMinDropDown,  GroupLayout.PREFERRED_SIZE,  GroupLayout.DEFAULT_SIZE,  GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(endHourDropDown, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+                        .addComponent(endMinDropDown, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap( LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(invalidTimeLabel)
                 .addGap(1, 1, 1)
                 .addGroup(layout.createParallelGroup( GroupLayout.Alignment.TRAILING)
                     .addComponent(eventDetailsLabel)
-                    .addComponent(jScrollPane2,  GroupLayout.PREFERRED_SIZE, 54,  GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane2, GroupLayout.PREFERRED_SIZE, 54, GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap( LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(charactersRemainingLabel)
                 .addPreferredGap( LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(completeButton)
                 .addGap(33, 33, 33))
         );
+        
         setResizable(false);
         pack();
-    }
+    }	//end of autogenerated code
+    
 
+    /*
+     * When the user is entering the event description, as they type, they can see
+     * a label live update the amount of remaining characters. If they go over the
+     * limit then they will no longer be able to add characters before removing
+     */
     private void eventDescriptionTextBoxKeyReleased(java.awt.event.KeyEvent evt) {    
     	int maxSize = 140;
     	
@@ -385,89 +409,26 @@ public class AddEvent extends JFrame {
             		Color c = new Color(0, 0, 0);
                         charactersRemainingLabel.setForeground(c);
             	}
-        int rem = maxSize - eventDescriptionTextBox.getText().length();
-        charactersRemainingLabel.setText("Characters Remaining: " + rem);  	 
+
+        charactersRemainingLabel.setText("Characters Remaining: " + (maxSize - eventDescriptionTextBox.getText().length()));  	 
     }                                                   
 
+    //user can click on the button to toggle between AM and PM for the two buttons
     private void buttonAmPmMouseReleased(java.awt.event.MouseEvent evt) {                                         
         if(buttonAmPm.getText().equals("AM"))
     	   buttonAmPm.setText("PM");
        else
     	   buttonAmPm.setText("AM");
-        
-    }                                        
-
-    private void completeButtonActionPerformed(java.awt.event.ActionEvent evt) {   
-    	System.out.println("StartTime before fucking around = " + startTime);
-    	System.out.println("StartTimeHour before fucking around = " + startTimeHour);
-        if(!groupComboBox.isEnabled()){
-        	username = whichGroupToAddTo;
-        }
-                
-        if (!startHourPicked){
-        	if (startMinDropDown.getSelectedItem().toString().equals("30"))
-        		startTime = today.getHour() * 10000 + 3000 ;
-        	else
-        		startTime = today.getHour() * 10000;
-        }
+    }     
+    
+    private void buttonAmPm2ActionPerformed(java.awt.event.ActionEvent evt) {                                            
+        if(buttonAmPm2.getText().equals("AM"))
+     	   buttonAmPm2.setText("PM");
         else
-        	startTime = startTimeHour * 10000 + startTimeMinute * 100;
-        
-        if(!endHourPicked){
-        	if(endMinDropDown.getSelectedItem().toString().equals("30"))
-        		endTime = (today.getHour() + 1) * 10000 + 3000;
-        	else
-        		endTime = (today.getHour() + 1) * 10000;
-        }
-        else
-        	endTime = endTimeHour * 10000 + endTimeMinute * 100;
-        
-        if (buttonAmPm.getText().equals("PM"))
-        	startTime += 120000;
-        if (buttonAmPm2.getText().equals("PM"))
-        	endTime += 120000;
-        
-        
-        if((buttonAmPm.getText().equals("PM") 
-                && buttonAmPm2.getText().equals("AM")) 
-                || (startTime >= endTime) 
-                || (month < today.getMonthValue() && year == today.getYear()) 
-                || (month == today.getMonthValue() && year == today.getYear() && date < today.getDayOfMonth())
-                || eventNameTextBox.getText().length() == 0
-                || startTime < (today.getHour() * 10000) && month == today.getMonthValue() && year == today.getYear() && date < today.getDayOfMonth()   )
-        {
-            invalidTimeLabel.setVisible(true);
-            if (month < today.getMonthValue() && year == today.getYear())
-                invalidTimeLabel.setText("Events Cannot Be In The Past");
+     	   buttonAmPm2.setText("AM");
+     }  
 
-            if((buttonAmPm.getText().equals("PM") && buttonAmPm2.getText().equals("AM")) || (startTime >= endTime))
-                invalidTimeLabel.setText("End Time Should Be After Start Time");
-        
-            if(month == today.getMonthValue() && year == today.getYear() && date < today.getDayOfMonth())
-                invalidTimeLabel.setText("Events Cannot Be In The Past");
-            
-            if (eventNameTextBox.getText().length() == 0)
-                invalidTimeLabel.setText("Please Enter An Event Name");
-            
-            if (startTime < (today.getHour() * 10000) && month == today.getMonthValue() && year == today.getYear() && date < today.getDayOfMonth())
-                invalidTimeLabel.setText("Events Cannot Be In The Past");
-        }
-        else{
-            invalidTimeLabel.setVisible(false);
-            addEventToDataBase(); 
-            
-            
-            
-            
-            
-            
-            
-        }
-        
-        System.out.println("StartTime = " + startTime);
-        System.out.println("EndTime = " + endTime);
-    }                                              
-
+    //users can toggle event status as being part of a group or not
     private void isGroupEventCheckBoxActionPerformed(java.awt.event.ActionEvent evt) { 
        if (groupComboBox.isEnabled())
            groupComboBox.setEnabled(false);
@@ -475,47 +436,16 @@ public class AddEvent extends JFrame {
            groupComboBox.setEnabled(true);
     }                                                    
 
+    //sets the group of choice
     private void groupComboBoxActionPerformed(java.awt.event.ActionEvent evt) {     
     	groupPicked = true;
-        System.out.println(groupComboBox.getSelectedIndex() + 1);
         whichGroupToAddTo = groups[groupComboBox.getSelectedIndex()];    
-    }                                             
-    
-    private void buttonAmPm2MouseReleased(java.awt.event.MouseEvent evt) {                                          
-    
-    }                                         
+    }                                                                                                                         
 
-    private void buttonAmPmActionPerformed(java.awt.event.ActionEvent evt) {                                           
-
-    }                                          
-
-    private void buttonAmPm2ActionPerformed(java.awt.event.ActionEvent evt) {                                            
-       if(buttonAmPm2.getText().equals("AM"))
-    	   buttonAmPm2.setText("PM");
-       else
-    	   buttonAmPm2.setText("AM");
-    }                                           
-
-    private void monthDropDownActionPerformed(java.awt.event.ActionEvent evt) {                                              
-        month = monthDropDown.getSelectedIndex() + 1;
-        correctTheDaysDropDown();
-        System.out.println("month = " + month);
-    }                                             
-
-    private void dayDropDownActionPerformed(java.awt.event.ActionEvent evt) {                                            
-        date = dayDropDown.getSelectedIndex() + 1;
-        System.out.println("date = " + date);
-    }                                           
-
-    private void yearDropDownActionPerformed(java.awt.event.ActionEvent evt) {                                             
-        year = yearDropDown.getSelectedIndex() + 1;
-        year += 2015;
-        System.out.println("year = " + year);
-        
-        if(isLeapYear(year) && month == 2)
-        	correctTheDaysDropDown();
-    }                                            
-    
+    //This method enables the user to choose from the correct number of days in the
+    //month and year of their choice. For example, if the user selected January then
+    //the drop down will offer 31 days, if the user selects Febuary and the year is 
+    //a leap year then the drop down will offer 29 days etc.
     private void correctTheDaysDropDown(){
         String[] days  = {};
         if(month == 2 && isLeapYear(year)){
@@ -546,6 +476,26 @@ public class AddEvent extends JFrame {
         dayDropDown.setModel(new  DefaultComboBoxModel<>(days));
     }
     
+    //The month is selected and then the days drop down is set to allow
+    //the user options for the correct number of days in that month
+    private void monthDropDownActionPerformed(java.awt.event.ActionEvent evt) {                                              
+        month = monthDropDown.getSelectedIndex() + 1;
+        correctTheDaysDropDown();
+    }                                             
+
+    private void dayDropDownActionPerformed(java.awt.event.ActionEvent evt) {                                            
+        date = dayDropDown.getSelectedIndex() + 1;
+    }                                           
+
+    //year is selected, if it's a leap year then the days drop down is corrected again
+    private void yearDropDownActionPerformed(java.awt.event.ActionEvent evt) {                                             
+        year = yearDropDown.getSelectedIndex() + 1;
+        year += 2015;
+        
+        if(isLeapYear(year) && month == 2)
+        	correctTheDaysDropDown();
+    }                                            
+    
     private boolean isLeapYear(int leap){
         return ((leap % 400 == 0) || ((leap % 4 == 0) && (leap % 100 != 0)));
     }
@@ -553,28 +503,35 @@ public class AddEvent extends JFrame {
     private void startHourDropDownActionPerformed(java.awt.event.ActionEvent evt) {                                                  
         startHourPicked = true;
     	startTimeHour = startHourDropDown.getSelectedIndex() + 1;
-        System.out.println("startTimeHour = " + startTimeHour);
     }                                                 
 
     private void startMinDropDownActionPerformed(java.awt.event.ActionEvent evt) {                                                 
         startTimeMinute = startMinDropDown.getSelectedIndex();
         startTimeMinute *= 30;
-        System.out.println("startTimeMinute = " + startTimeMinute);
     }                                                
 
     private void endHourDropDownActionPerformed(java.awt.event.ActionEvent evt) {  
     	endHourPicked = true;
         endTimeHour = endHourDropDown.getSelectedIndex() + 1;
-        System.out.println("1. endTimeHour = " + endTimeHour);
     }                                               
 
     private void endMinDropDownActionPerformed(java.awt.event.ActionEvent evt) {                                               
         endTimeMinute = endMinDropDown.getSelectedIndex();
         endTimeMinute *= 30;
-        System.out.println("endTimeMinute = " + endTimeMinute);
     }                                              
 
     private void eventNameTextBoxKeyReleased(java.awt.event.KeyEvent evt) { 
+    /*
+     * Users can enter the event name here, the entry is limited to 16 chars
+     * If a user goes above 16, they will be unable to enter more characters
+     * 
+     *     
+     * note: if event name contains two apostrophes, a SQL exception will be thrown
+     * ie if the user enter's Dad's son's then the first apostrophe will be escape
+     * sequenced but the second is going to be interpreted by SQL as the end of the 
+     * event name and whatever comes after will be seen as a syntax error
+     * This same issue applies to event description
+    */ 
     	int maxSize = 16;
     	
     	if(eventNameTextBox.getText().contains("'")){
@@ -589,17 +546,22 @@ public class AddEvent extends JFrame {
         }
     }                                            
     
-    //note: if event name contains two apostrophes, a SQL exception will be thrown
-    //ie if the user enter's Dad's son's then the first apostrophe will be escape
-    //sequenced but the second is going to be interpreted by SQL as the end of the 
-    //event name and whatever comes after will be seen as a syntax error
-    //This same issue applies to event description
-    
    private static boolean isEventTimeAvailable(){
+	   /*
+	    * This method checks if the requested time should be blocked by an event you have,
+	    * by an event one of your groups has, or if you selected a group event then if the 
+	    * time is blocked by an event that any member of that group has or any event of a
+	    * group that any member of the group of choice is also a member of. For example
+	    * Group1 has members A, B, C
+	    * Group2 has members C, D, E
+	    * User A is trying to add an event at a time when group2 has an existing event
+	    * User C has a conflicting event at the time so User A cannot add the event
+	    * at theie desired time
+	    */
+	   
     	ArrayList<? extends Object> times;
     	times = new ArrayList<Object>();
     	if (groupComboBox.isEnabled()){
-    		
     		times = (ArrayList<? extends Object>) sqlHelper.isTimeAvailableForEvent(whichGroupToAddTo, "", true);
     		System.out.println("times1 = " + times);
     	}
@@ -608,6 +570,9 @@ public class AddEvent extends JFrame {
     		System.out.println("times2 = " + times);
     	}
        
+    	//for the date to function it must be in MM/DD/YYYY form so a date such as 4/4/2016
+    	//must be changed to 04/04/2016
+    	
        if(String.valueOf(month).length() == 1)
     	   fullDate = "0" + String.valueOf(month);
        
@@ -622,26 +587,39 @@ public class AddEvent extends JFrame {
        
        fullDate += String.valueOf(year);
        
+       //full events are all in the ArrayList times so the corresponding multiples of numbers are the 
+       //same member of the database, hence the i * k + r
        Integer startTimeEvent = null, endTimeEvent = null;
-         for(int i = 0; i < times.size()/4; i++){
+       for(int i = 0; i < times.size()/4; i++){
 			if(fullDate.equals(times.get(i * 4 + 2))){
 				startTimeEvent = Integer.valueOf(times.get(i * 4).toString().substring(0, 2) + times.get(i * 4).toString().substring(3, 5) + "00");
 				endTimeEvent = Integer.valueOf(times.get(i * 4 + 1).toString().substring(0, 2) + times.get(i * 4 + 1).toString().substring(3, 5) + "00");
 				
-				System.out.println("startTimeEvent = " + startTimeEvent);
-				System.out.println("endTimeEvent = " + endTimeEvent);
+				/* return false if:
+				 * event starts inside another event's time
+				 * event ends inside another event's time
+				 * event is at the same time as another event
+				 * event is entirely contained in another event
+				 * event contains an entire other event
+				 */
 				
-				
-				//if starting time is between start and finish of another event...
-				if(startTime >= startTimeEvent 
-						&& Integer.valueOf(startTime) < endTimeEvent){
+				if(startTime > startTimeEvent && startTime < endTimeEvent){
 					eventNameAtChosenTime = times.get(i * 4 + 3).toString();
 					return false;
-					
 				}
-				//if the end time cuts into the start time of another event...
-				if(Integer.valueOf(endTime) > startTimeEvent)
-				{
+				else if (endTime > startTimeEvent && endTime < endTimeEvent){
+					eventNameAtChosenTime = times.get(i * 4 + 3).toString();
+					return false;
+				}
+				else if (startTime > startTimeEvent && endTime < endTimeEvent){
+					eventNameAtChosenTime = times.get(i * 4 + 3).toString();
+					return false;
+				}
+				else if (startTime < startTimeEvent && endTime > endTimeEvent){
+					eventNameAtChosenTime = times.get(i * 4 + 3).toString();
+					return false;
+				}
+				else if(startTime == startTimeEvent && endTime == endTimeEvent){
 					eventNameAtChosenTime = times.get(i * 4 + 3).toString();
 					return false;
 				}
@@ -652,15 +630,28 @@ public class AddEvent extends JFrame {
     }
     
     private void addEventToDataBase(){
+    /*
+     * in order to add the event to the database, a lot of things need to happen, here's the step-by-step
+     */
+    	//if the user didn't select a group but did select groupEvent then 
+    	//it is clearly intended that it be the first group in the drop down
+    	//becuase it appears as already selected so it is set to the zeroeth element
     	if(groupComboBox.isEnabled() && !groupPicked){
     		whichGroupToAddTo = groups[0];
     	}
+    	
     	if(!startHourPicked)
-    		startTimeHour = 1;
+    		startTimeHour = today.getHour();
     	if (!endHourPicked)
-    		endTimeHour = 1;
+    		endTimeHour = today.getHour() + 1;
     	
     	String eventName = eventNameTextBox.getText();
+    	
+    	/*
+    	 * since SQL's string delimiter is a single apostrophe, if the user entered any apostrophes,
+    	 * they need to get an escape sequence added to prevent the application from crashing. It should
+    	 * be noted that if the user enters more than one apostrophe then the program will crash
+    	 */
     	if (eventName.contains("'")){
     		int f = eventName.indexOf('\'');
     		eventName = eventName.substring(0, f) + "\\'" + eventName.substring(f + 1, eventName.length());
@@ -674,23 +665,28 @@ public class AddEvent extends JFrame {
     		System.out.println(eventDescription);
     	}
     	
-        int a = -1, numMem = sqlHelper.getNumberOfGroupMembers(whichGroupToAddTo);
+    	//the number of approvals needed is selected, if it's a personal event then 
+    	//0 will be returned and so it is set to 1
+        int numMem = sqlHelper.getNumberOfGroupMembers(whichGroupToAddTo);
         if(numMem == 0)
     	   numMem++;       
        
-        a = sqlHelper.getHighestPrimaryKey("theEvent") + 1;
-        
         username = user.getUsername();
         
+        //if it's not a groupEvent then the user_groupID is the username
         if(!groupComboBox.isEnabled()){
         	whichGroupToAddTo = username;
         }
-        ArrayList<Object> insert = new ArrayList<Object>();
         
-        insert.add(a);
+        //an arraylist must be put together containing all of the above 
+        //in order to add the event
+        ArrayList<Object> insert = new ArrayList<Object>();
+        insert.add(sqlHelper.getHighestPrimaryKey("theEvent") + 1);
         insert.add(eventName);
         insert.add(whichGroupToAddTo);
         
+        //the string for date must be a 10 char string in the form of MM/DD/YYYY
+        //if the month or day is < 10 then place a zero in the empty place(s)
         if(month < 10 || date < 10){
         	if (month < 10 && date >= 10)
         		insert.add("0" + month + "/" + date + "/" + year);
@@ -706,15 +702,17 @@ public class AddEvent extends JFrame {
         insert.add(1);
         insert.add(numMem);
         
-       Boolean one = AddEvent.isEventTimeAvailable();
-        
-       if(one.equals(true)){
+        //if the time is available then insert the event and remove the screen
+       if(AddEvent.isEventTimeAvailable()){
     	   System.out.println("insert = " + insert);
     	   sqlHelper.insertEvent(insert);
     	   event = new Event(insert);
     	   setVisible(false);
        }
        else{
+    	   //if the time is unavailable then if it's a group event, indicate that 
+    	   //the time is unavailable, otherwise indicate the event that is clashing
+    	   
     	   if(groupComboBox.isEnabled())
     		   invalidTimeLabel.setText("That time is unavailable for " + whichGroupToAddTo);
     	   else
@@ -724,9 +722,94 @@ public class AddEvent extends JFrame {
        }
     }   
     
-    
+    private void completeButtonActionPerformed(java.awt.event.ActionEvent evt) { 
+    	/*
+    	 * upon clicking submit, again a lot needs to happen to verify that 
+    	 * the event is valid and should be passed to the addEvent method
+    	 */
+    	
+    	if(!groupComboBox.isEnabled()){
+        	username = whichGroupToAddTo;
+        }
+                
+    	//if the start time was not picked then default to the time
+    	//that was displayed on the screen which should be the next
+    	//possible half hour period of the current day
+    	//otherwise, if the time was picked then set it to the form
+    	//of sql.time, which is 000000, or 6:30 PM is 183000
+        if (!startHourPicked){
+        	if (startMinDropDown.getSelectedItem().toString().equals("30"))
+        		startTime = today.getHour() * 10000 + 3000 ;
+        	else
+        		startTime = today.getHour() * 10000;
+        }
+        else
+        	startTime = startTimeHour * 10000 + startTimeMinute * 100;
+        
+        if(!endHourPicked){
+        	if(endMinDropDown.getSelectedItem().toString().equals("30"))
+        		endTime = (today.getHour() + 1) * 10000 + 3000;
+        	else
+        		endTime = (today.getHour() + 1) * 10000;
+        }
+        else
+        	endTime = endTimeHour * 10000 + endTimeMinute * 100;
+        
+        //if the start or end time is PM then set the SQL time as such
+        if (buttonAmPm.getText().equals("PM"))
+        	startTime += 120000;
+        if (buttonAmPm2.getText().equals("PM"))
+        	endTime += 120000;
+        
+        /*
+         * the following things cause the event to not be submitted:
+         * 1. the end time is AM but the start time is PM (events must start and end on the same day)
+         * 2. the start time is after the end time
+         * 3. the year is set to the current year and the month is earlier than the current month
+         * 4. the year is set to the current year and the month is set to the current month and the day is earlier than the current day
+         * 5. no event name was entered
+         * 6. the month, day, and year are set to today's date and the time is before the current time
+         */
+        
+        if((buttonAmPm.getText().equals("PM") 
+                && buttonAmPm2.getText().equals("AM")) 
+                || (startTime >= endTime) 
+                || (month < today.getMonthValue() && year == today.getYear()) 
+                || (month == today.getMonthValue() && year == today.getYear() && date < today.getDayOfMonth())
+                || eventNameTextBox.getText().length() == 0
+                || startTime < (today.getHour() * 10000) && month == today.getMonthValue() && year == today.getYear() && date < today.getDayOfMonth()   )
+        {
+        	//upon entering this, we are certain one of the above errors occured - this is my preferred variation of a try
+        	//now we determine which error it is and indicate the corresponding message to the user
+            invalidTimeLabel.setVisible(true);
+            if (month < today.getMonthValue() && year == today.getYear())
+                invalidTimeLabel.setText("Events Cannot Be In The Past");
+
+            if((buttonAmPm.getText().equals("PM") && buttonAmPm2.getText().equals("AM")) || (startTime >= endTime))
+                invalidTimeLabel.setText("End Time Should Be After Start Time");
+        
+            if(month == today.getMonthValue() && year == today.getYear() && date < today.getDayOfMonth())
+                invalidTimeLabel.setText("Events Cannot Be In The Past");
+            
+            if (eventNameTextBox.getText().length() == 0)
+                invalidTimeLabel.setText("Please Enter An Event Name");
+            
+            if (startTime < (today.getHour() * 10000) && month == today.getMonthValue() && year == today.getYear() && date < today.getDayOfMonth())
+                invalidTimeLabel.setText("Events Cannot Be In The Past");
+        }
+        else{
+        	//if nothing went wrong then hide any error messages and submit the event
+            invalidTimeLabel.setVisible(false);
+            addEventToDataBase();
+        }
+    }                                              
+
     private void getGroups(){
-        listOfGroups = (List)sqlHelper.getGroups(username);
+		/*
+		 * This method sets the groupDropDown to the logged in user's groups
+		 */
+    	
+    	listOfGroups = (List)sqlHelper.getGroups(username);
         groups = new String [listOfGroups.getItemCount()];
     	
     	for(int i = 0; i < listOfGroups.getItemCount(); i++){
@@ -736,6 +819,7 @@ public class AddEvent extends JFrame {
     	groupComboBox.setModel(new  DefaultComboBoxModel<>(groups));
     }
     
+    //paint frame is called by other classes to initialize this class
      public static void paintFrame(User locUser){
     	 user = locUser;
     	 username = user.getUsername();
@@ -748,7 +832,8 @@ public class AddEvent extends JFrame {
              }
          });
     }
-    
+     
+    //this method is user to put the window in the middle of the screen
      public static void centerWindow(Window frame){
     	 Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
     	 int x = (int) ((dimension.getWidth() - frame.getWidth())/2);
@@ -757,6 +842,7 @@ public class AddEvent extends JFrame {
     	 frame.setLocation(x, y);
      }
      
+     //nothing...
     public static void main(String args[]) {
         try {
             for ( UIManager.LookAndFeelInfo info :  UIManager.getInstalledLookAndFeels()) {
