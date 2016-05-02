@@ -1,4 +1,5 @@
 package cal;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.awt.List;
@@ -7,6 +8,7 @@ import java.time.LocalDateTime;
 @SuppressWarnings({"static-access", "unused"})
 public class User {
 	private static SQLHelper sqlHelper = new SQLHelper();
+	
 	private static String username;
 	
 	private List iAreAdmin = new List();
@@ -23,11 +25,22 @@ public class User {
 	public static void main(String[] args){
 		User user = new User("moshe");
 		
-		System.out.println(user.getTodaysEventNames());
+		ArrayList<String> list = user.getTodaysEventNames();
+		for(int i = 0; i < list.size(); i++)
+			System.out.println(list.get(i));
+		
+		//System.out.println(user.isThereAnEventToday("08/06/2017"));
+		
+		//System.out.println(user.getTodaysEventNames());
 		//System.out.println(user.getEvent("04/22/20168:30:00"));
 		
 	}
 	
+	/* Immediately upon instantiation, we want everything to be loaded into 
+	 * memory, this way we don't have to call on SQL every time we need user
+	 * data such as the user's notifications, groups, and events
+	 * 
+	 */
 	User(String username){
 		this.username = username;
 		myEvents = initEvents();
@@ -38,6 +51,10 @@ public class User {
 	}
 	
 	private static void putEventDatesIntoCopyOfMyEvents(String date){
+		/* This method stores the user's events into a hashmap
+		 * the key is the date, the object is the number of events
+		 * that the user has on that day
+		 */
 		if(copyOfMyEventsForFindingIfThereIsAnEvent.containsKey(date)){
 			int a = copyOfMyEventsForFindingIfThereIsAnEvent.get(date);
 			copyOfMyEventsForFindingIfThereIsAnEvent.replace(date, a, a++);
@@ -46,25 +63,29 @@ public class User {
 			copyOfMyEventsForFindingIfThereIsAnEvent.put(date, 1);
 	}
 	
-	//there might be issues with this, if there are then remove warning and insert this 
+	//if there are issues with the following method then remove 
+	//generic declaration and insert this 
 	/*
 	 ArrayList<Object> cur = sqlHelper.getEvents(username),
 				 temp = new ArrayList(); 
 	 
-	 also remove the type from the ArrayList instantiation in the getEvents method
+	 possibly also remove the type from the ArrayList instantiation in the getEvents method
 	 */
 	
 	private static HashMap<String, Event> initEvents(){
+		/* This method initializes a User's events. That is to say, it takes
+		 * all of the user's events from the database and brings them into
+		 * memory
+		 */
 		ArrayList<? extends Object> cur = (ArrayList<? extends Object>) sqlHelper.getEvents(username);
 		ArrayList<Object> temp = new ArrayList<Object>();	
 		
 		//int numEvents = sqlHelper.getNumberOfEventsByUser(username);
 		HashMap<String, Event> these = new HashMap<String, Event>();
 		Event event;
-		String delimiter = sqlHelper.getDelimiter();
 		
 		for(int i = 0; i < cur.size(); i++){
-			if(!cur.get(i).equals(delimiter)){
+			if(!cur.get(i).equals(sqlHelper.getDelimiter())){
 				temp.add(cur.get(i));	
 				if(i % 10 == 3)
 					putEventDatesIntoCopyOfMyEvents((String) cur.get(i));
@@ -104,19 +125,14 @@ public class User {
 	}
 	
 	private boolean isAdmin(String groupName){
-		int i = sqlHelper.isUserAdmin(username);
-		
-		if (i == 1)
+		if (sqlHelper.isUserAdmin(username) == 1)
 			return true;
 
 		return false;
 	}
 	
 	public boolean isThereAnEventToday(String date){
-		if (copyOfMyEventsForFindingIfThereIsAnEvent.containsKey(date))
-			return true;
-		
-		return false;
+		return copyOfMyEventsForFindingIfThereIsAnEvent.containsKey(date);
 	}
 	
 	/*
@@ -139,6 +155,13 @@ public class User {
 	}*/
 	
 	public ArrayList<String> getTodaysEventNames(){
+		/* This method takes today's date and converts it into
+		 * MM/DD/YYYY format. It then gets all of the event
+		 * names based on the user's username and then
+		 * adds all the events for each group that the user
+		 * is a member of
+		 */
+		
 		LocalDateTime today = LocalDateTime.now();
 		String date;
 		ArrayList<String> todaysEventNames;
@@ -154,10 +177,12 @@ public class User {
 		 
 		date +=  String.valueOf(today.getYear());
 		
-		
+		//get my event names
 		todaysEventNames = sqlHelper.getTodaysEventNames(date, getUsername());
+		
+		//get all event names of my groups
 		for(int i = 0; i < myGroups.getItemCount();i++)
-		todaysEventNames.addAll(sqlHelper.getTodaysEventNames(date, myGroups.getItem(i)));
+			todaysEventNames.addAll(sqlHelper.getTodaysEventNames(date, myGroups.getItem(i)));
 		
 		 return todaysEventNames;
 	}
@@ -171,6 +196,8 @@ public class User {
 	}
 	
 	public void deleteEvent(String dateTime){
+		System.out.println("Datetime = " + dateTime);
+
 		String date = dateTime.substring(0, 10),
 				time = dateTime.substring(10, 12) + dateTime.substring(13, 15) + "00";
 		
@@ -182,7 +209,6 @@ public class User {
 		
 		myEvents.remove(dateTime);
 		copyOfMyEventsForFindingIfThereIsAnEvent.remove(date);	
-		
 	}
 	
 	public void acceptEventInvite(Event event){
@@ -240,4 +266,3 @@ public class User {
 	}
 	
 }
-
