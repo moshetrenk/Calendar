@@ -9,12 +9,14 @@ import javax.swing.*;
 
 @SuppressWarnings("serial")
 class SelfClosingMessage extends JFrame{
-
+public static void main(String[] args){
+	loadingSymbol("", "", 1);
+}
 	static void output(String text, String title, int time){
 		JFrame frame = new JFrame();
 		final JDialog dialog = new JDialog(frame, title, true);
 	    dialog.setLocation(450, 300);
-
+	    frame.setResizable(false);
 	    JLabel label = new JLabel("      " + text);
 	    dialog.setLocationRelativeTo(null);
 	    dialog.setTitle(title);
@@ -34,13 +36,13 @@ class SelfClosingMessage extends JFrame{
 	    dialog.setVisible(true);
 	}
 
-	public static void loadingSymbol(int time){
-		JFrame frame = new JFrame("Logging in");
+	public static void loadingSymbol(String message, String title, int time){
+		JFrame frame = new JFrame(title);
 		frame.setLocation(450, 300);
 		frame.setAlwaysOnTop(true);
-		
-		ImageIcon loading = new ImageIcon("C:\\ajax-loader.gif");
-		frame.add(new JLabel("         Loading... One moment", loading, JLabel.CENTER));
+
+		ImageIcon icon = new ImageIcon("C:\\ajax-loader.gif");
+		frame.add(new JLabel(message, icon, JLabel.CENTER));
 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setSize(400, 100);
