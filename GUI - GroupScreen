@@ -1,8 +1,6 @@
-package Calendar;
-
+package cal;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -22,9 +20,7 @@ public class GroupScreen extends  JFrame {
     private  JScrollPane jScrollPane1 = new JScrollPane();
     private  JTable table = new JTable();
     
-	public GroupScreen() {
-    	
-    	
+	public GroupScreen() {x    	
         try {
     			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     		} catch (ClassNotFoundException e) {
@@ -46,25 +42,15 @@ public class GroupScreen extends  JFrame {
 	        setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 	        addWindowListener(new WindowAdapter() {
 	            public void windowClosing(WindowEvent e) {
-	               // sqlHelper.closePath();
-	                //System.exit(1);
-	                
-	                setVisible(false);
-	                
-	                try {
-	                	Profile.makeFrameVisible(false);
-						Profile.paintFrame(user);
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+	                sqlHelper.closePath();
+	                System.exit(1);
 	            }
 	        });
 	    }
 
     @SuppressWarnings("unchecked")
     private void initComponents() {
-    	setJMenuBar(MenuExp.PrepareMenuBar(user));
+    	
       
         setTitle("My Groups");
       
@@ -119,7 +105,7 @@ public class GroupScreen extends  JFrame {
             }
         });
 
-        addMemberToGroupButton.setText("Ok");
+        addMemberToGroupButton.setText("k");
         addMemberToGroupButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addMemberToGroupButtonActionPerformed(evt);
@@ -156,7 +142,7 @@ public class GroupScreen extends  JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(addMemberTextBox,  GroupLayout.PREFERRED_SIZE, 107,  GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap( LayoutStyle.ComponentPlacement.RELATED,  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(addMemberToGroupButton,  GroupLayout.PREFERRED_SIZE, 45,  GroupLayout.PREFERRED_SIZE)
+                        .addComponent(addMemberToGroupButton,  GroupLayout.PREFERRED_SIZE, 65,  GroupLayout.PREFERRED_SIZE)
                         .addGap(15, 15, 15))))
         );
         layout.setVerticalGroup(
@@ -199,14 +185,18 @@ public class GroupScreen extends  JFrame {
     } 
    
 
-    private void addMemberToGroupButtonActionPerformed(java.awt.event.ActionEvent evt) {                                                       
-       sqlHelper.addUserToGroup(addMemberTextBox.getText(), groups.getItem(table.getSelectedRow()), 0);
+    private void addMemberToGroupButtonActionPerformed(java.awt.event.ActionEvent evt) {   
+    	ArrayList<String> list = new ArrayList<String>();
+    	list.add(username);
+    	list.add(addMemberTextBox.getText());
+    	list.add(groups.getItem(table.getSelectedRow()));
+    	
+    	Notification_Group temp = new Notification_Group(list);
+    	
+    	sqlHelper.addNotificationGroupRequest(temp);
        
-       //add to Group's lists/maps?
-       
-       SelfClosingMessage.output(addMemberTextBox.getText() + " has been added to " + groups.getItem(table.getSelectedRow()), "Success", 2500);
-       addMemberTextBox.setText("");
-       addMemberToGroupButton.setEnabled(false);
+    	SelfClosingMessage.output(addMemberTextBox.getText() + " has been added to " + groups.getItem(table.getSelectedRow()), "Success", 2500);
+    	addMemberTextBox.setText("");
     }                                                      
    
     private void newGroupTextBoxKeyReleased(java.awt.event.KeyEvent evt) {                                            
@@ -271,7 +261,6 @@ public class GroupScreen extends  JFrame {
     
     private void addGroupButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
         sqlHelper.newGroup(username, newGroupTextBox.getText());
-        user.addGroup(newGroupTextBox.getText());
         SelfClosingMessage.output("Group Created", "", 2500);
         paintFrame(user);
     }                                              
