@@ -703,13 +703,13 @@ public class AddEvent extends JFrame {
         insert.add(numMem);
         
         //if the time is available then insert the event and remove the screen
-       if(AddEvent.isEventTimeAvailable()){
+        if(AddEvent.isEventTimeAvailable()){
     	   System.out.println("insert = " + insert);
     	   sqlHelper.insertEvent(insert);
-    	   event = new Event(insert);
+    	   user.addEvent(new Event(insert));
     	   setVisible(false);
-       }
-       else{
+        }
+        else{
     	   //if the time is unavailable then if it's a group event, indicate that 
     	   //the time is unavailable, otherwise indicate the event that is clashing
     	   
@@ -719,7 +719,7 @@ public class AddEvent extends JFrame {
     		   invalidTimeLabel.setText("You have \"" + eventNameAtChosenTime + "\" at that time");
     	   
     	   invalidTimeLabel.setVisible(true);
-       }
+        }
     }   
     
     private void completeButtonActionPerformed(java.awt.event.ActionEvent evt) { 
@@ -771,8 +771,9 @@ public class AddEvent extends JFrame {
          * 6. the month, day, and year are set to today's date and the time is before the current time
          */
         
-        if((buttonAmPm.getText().equals("PM") 
-                && buttonAmPm2.getText().equals("AM")) 
+        if(!isEventTimeAvailable() ||
+        		(buttonAmPm.getText().equals("PM") 
+        				&& buttonAmPm2.getText().equals("AM")) 
                 || (startTime >= endTime) 
                 || (month < today.getMonthValue() && year == today.getYear()) 
                 || (month == today.getMonthValue() && year == today.getYear() && date < today.getDayOfMonth())
