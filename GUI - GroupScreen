@@ -2,6 +2,7 @@ package Calendar;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -45,15 +46,25 @@ public class GroupScreen extends  JFrame {
 	        setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 	        addWindowListener(new WindowAdapter() {
 	            public void windowClosing(WindowEvent e) {
-	                sqlHelper.closePath();
-	                System.exit(1);
+	               // sqlHelper.closePath();
+	                //System.exit(1);
+	                
+	                setVisible(false);
+	                
+	                try {
+	                	Profile.makeFrameVisible(false);
+						Profile.paintFrame(user);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 	            }
 	        });
 	    }
 
     @SuppressWarnings("unchecked")
     private void initComponents() {
-    	setJMenuBar(MenuExp.PrepareMenuBar());
+    	setJMenuBar(MenuExp.PrepareMenuBar(user));
       
         setTitle("My Groups");
       
@@ -260,6 +271,7 @@ public class GroupScreen extends  JFrame {
     
     private void addGroupButtonActionPerformed(java.awt.event.ActionEvent evt) {                                               
         sqlHelper.newGroup(username, newGroupTextBox.getText());
+        user.addGroup(newGroupTextBox.getText());
         SelfClosingMessage.output("Group Created", "", 2500);
         paintFrame(user);
     }                                              
@@ -315,7 +327,7 @@ public class GroupScreen extends  JFrame {
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-               	paintFrame(new User("omar"));
+               	paintFrame(new User("moshe"));
             }
         });
     }              
