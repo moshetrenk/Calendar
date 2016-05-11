@@ -1,5 +1,6 @@
 package cal;
 
+
 import java.util.ArrayList;
 
 public class CancelledEventNotification extends Notification {
