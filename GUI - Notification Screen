@@ -24,6 +24,7 @@ public class NotificationScreen {
 	private static ArrayList<Notification_Group> groups;
 	private static ArrayList<Event> events;
 	private static ArrayList<CancelledEventNotification> cancelledEvents;
+	private static User userNotif;
 	
 	
 	static private void prepareFrame(){
@@ -176,7 +177,7 @@ public class NotificationScreen {
 	}
 	
 	
-	static private void addControls(){
+	static private void addControls(User user){
 		notifPane.add(pnlNotifications);
 		pnlNotifications.add(stblGroupNotifications);
 		pnlNotifications.add(lblGroupNotifications);
@@ -185,7 +186,7 @@ public class NotificationScreen {
 		pnlNotifications.add(stblEventWasRejected);
 		pnlNotifications.add(lblEventWasRejected);
 		pnlNotifications.add(submitBtn);
-		frmMain.setJMenuBar(MenuExp.PrepareMenuBar(new User("Moshe")));
+		frmMain.setJMenuBar(MenuExp.PrepareMenuBar(user));
 	}
 	
 	static private void setBounds(User user){
@@ -228,24 +229,42 @@ public class NotificationScreen {
     	}
     	for(int i = 0, j =0; i < tblEventNotifications.getRowCount();i++){
     		if((boolean)tblEventNotifications.getValueAt(i,4) == true){
-    			user.acceptEventInvite(events.get(i));
+    			user.acceptEventInvite(events.get(j));
     		}
     		else if((boolean)tblEventNotifications.getValueAt(i,5) == true){
-    			user.rejectEventInvite(events.get(i));
+    			ArrayList<String> usersInGroup = new Group(user.getUsername(),events.get(j).getId()).getUsersInGroup();
+    			
+    			
+    			
+    			for(int k = 0; k < usersInGroup.size();k++){
+    				ArrayList<String> tempOne = new ArrayList<String>();
+    				tempOne.add(events.get(j).getId());
+    				tempOne.add(user.getUsername());
+    				
+    				ArrayList<Object> tempTwo = new ArrayList<Object>();
+    				tempTwo.add(events.get(j).getEventName());
+    				tempTwo.add(events.get(j).getEventDate());
+    				tempTwo.add(events.get(j).getStartTime().substring(0,2)+events.get(j).getStartTime().substring(3,5)+events.get(j).getStartTime().substring(6));
+    				System.out.println(events.get(j).getStartTime());
+    				System.out.println(events.get(j).getStartTime().substring(0,2)+events.get(j).getStartTime().substring(3,5)+events.get(j).getStartTime().substring(6));
+    				
+    				new User(usersInGroup.get(k)).addEventCancelledNotification(new CancelledEventNotification(tempOne,tempTwo));
+    			}
+    			user.rejectEventInvite(events.get(j));
     		}
     		else
     			j++;
     	}
     	for(int i = 0, j = 0; i < tblEventWasRejected.getRowCount(); i++){
     		if((boolean) tblEventWasRejected.getValueAt(i,4) == true){
-    			user.deleteCancelledEventNotification(cancelledEvents.get(i));
+    			user.deleteCancelledEventNotification(cancelledEvents.get(j));
     		}
     		else 
     			j++;
     	}	
     	
     	frmMain.setVisible(false);
-    	paintFrame(user);
+    	paintFrame(userNotif);
     	
     }
 		
@@ -258,11 +277,12 @@ public class NotificationScreen {
 	}
 	
 	public static void paintFrame(User user){
+		userNotif = user;
 		prepareFrame();
 		setUpTables(user);
 		centerWindow(frmMain);
 		createControls();
-		addControls();
+		addControls(user);
 		setBounds(user);
 		makeFrameVisible(true);
 	}
@@ -414,10 +434,12 @@ public class NotificationScreen {
 		catch (IllegalAccessException e) {}
 		catch (UnsupportedLookAndFeelException e) {}
 
-		paintFrame(new User("Moshe"));
+		paintFrame(userNotif);
 	}
 
 	
 	 }
+	 
+
 	 
 
