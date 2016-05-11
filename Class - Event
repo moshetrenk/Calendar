@@ -1,8 +1,5 @@
 package calendarTest;
 
-
-
-
 import java.util.ArrayList;
 
 public class Event {
