@@ -1,34 +1,47 @@
 package cal;
-package cal;
-
 
 import java.util.*;
 
 public class Group {
 	private String currentUser;
 	private static String groupName;
-	
 	private HashMap<String, Event> groupEvents = new HashMap<String, Event>();
 	private static HashMap<String, Integer> copyOfGroupEventsForFindingIfThereIsAnEvent = new HashMap<String, Integer>();
-	
+	private User user;
 	private ArrayList<String> usersInGroup = new ArrayList<String>();
 	private static SQLHelper sqlHelper = new SQLHelper();
-	private ArrayList<User> members = new ArrayList<User>();
+	//private ArrayList<User> members = new ArrayList<User>();
 	
-	public Group(String username, String groupnameN){
+	public Group(String username, String tempGroupName){
 		
 		currentUser = username;
-		this.groupName = groupName;
+		this.groupName = tempGroupName;
 		usersInGroup = sqlHelper.getGroupMembersByGroupName(groupName);
 		groupEvents = initEvents();
-		usersInGroup.remove(currentUser);
-		for(int i = 0; i < usersInGroup.size(); i++)
+		//System.out.println("This is to make sure user is right =" + currentUser);
+		usersInGroup.remove(currentUser.toLowerCase());
+		//System.out.println("after user removed, usersInGroup = "+ usersInGroup);
+		
+		/*for(int i = 0; i < usersInGroup.size(); i++){
+			user = new User(usersInGroup.get(i));
 			members.add(new User(usersInGroup.get(i)));
+		}
+		System.out.println(usersInGroup);
+		for(int i = 0; i < usersInGroup.size(); i++){
+			System.out.println(members);
+			System.out.println("THIS IS WHAT WE WANT TO SEE" + usersInGroup.get(i));
+			user[i] = new User(usersInGroup.get(i));
+			System.out.println("user[i] =" + user[i]);
+			members.add(user[i]);
+			System.out.println("members after adding " + usersInGroup.get(i) + "=" + members);
+		}
+		*/
+		
 	}
 	
 	public void eventHasBeenDeleted(CancelledEventNotification event){
-		for(User u : members){
-			u.addEventCancelledNotification(event);
+		for(String u : usersInGroup){
+			new User(u).addEventCancelledNotification(event);
 		}
 		
 		int x =  Integer.parseInt(event.getStartTime());
@@ -80,8 +93,8 @@ public class Group {
 	}
 	
 	public void addMember(User u){
-		if(!members.contains(u))
-			members.add(u);
+		if(!usersInGroup.contains(u.getUsername()))
+			usersInGroup.add(u.getUsername());
 	}
 
 	public boolean equals(Object obj) {
@@ -102,10 +115,10 @@ public class Group {
 				return false;
 		} else if (!groupEvents.equals(other.groupEvents))
 			return false;
-		if (members == null) {
-			if (other.members != null)
+		if (usersInGroup == null) {
+			if (other.usersInGroup != null)
 				return false;
-		} else if (!members.equals(other.members))
+		} else if (!usersInGroup.equals(other.usersInGroup))
 			return false;
 		if (usersInGroup == null) {
 			if (other.usersInGroup != null)
@@ -140,4 +153,19 @@ public class Group {
 		else System.out.println("you dun goofed");
 	}	
 
+	public void sendEventNotifications(Event event){
+		for(int i = 0; i < usersInGroup.size();i++){
+			/*
+			System.out.println("members count = " + members.size());
+			//System.out.println(members.get(i).getUsername() + " was notified");
+			//members.get(i).addNewEventNotification(event);
+			user[i].addNewEventNotification(event);
+			*/
+			new User(usersInGroup.get(i)).addNewEventNotification(event);
+	
+		
+		}
+		
+	
+	}
 }
