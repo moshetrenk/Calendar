@@ -1,4 +1,5 @@
 package cal;
+
 /* This class gets a username and password from the user's input
  * and queries them to the SQL database. If it is a valid input
  * then a new instance of User is created by that username
@@ -79,7 +80,7 @@ public class Login extends JFrame {
         });
         
         createNewUserButton.setForeground(new Color(0, 102, 204));//___________
-        createNewUserButton.setText("<HTML><U>Create New User</U>" + "<font color = EEEEEE>___________" + "<font color = 'black'>Current Temperature: " + getTemp.getTemperature("10314") + "</HTML>");
+        createNewUserButton.setText("<HTML><U>Create New User</U>"/* + "<font color = EEEEEE>___________" + "<font color = 'black'> + "</HTML>"*/);
         createNewUserButton.setBorderPainted(false);
         createNewUserButton.setContentAreaFilled(false);
         createNewUserButton.addActionListener(new ActionListener() {
@@ -254,4 +255,3 @@ public class Login extends JFrame {
          });
     }
 }
-    
