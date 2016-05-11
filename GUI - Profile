@@ -95,12 +95,21 @@ public class Profile {
 				usernameDoesntExist = new JLabel(" ");
 				
 				//CALL METHOD TO GET IMAGE FROM DATABASE
-				BufferedImage myPicture = ImageIO.read(new File("/Users/keiththompson/Downloads/src/edu/cuny/csi/csc330/j1f9DiJi_200x200.jpeg"));
+				BufferedImage myPicture = ImageIO.read(new File("/Users/keiththompson/Downloads/src/edu/cuny/csi/csc330/bill.jpeg"));
+				if(username.toLowerCase().equals("omar"))
+					myPicture = ImageIO.read(new File("/Users/keiththompson/Downloads/src/edu/cuny/csi/csc330/bill.jpeg"));
+				else if (username.toLowerCase().equals("moshe"))
+					myPicture = ImageIO.read(new File("/Users/keiththompson/Downloads/src/edu/cuny/csi/csc330/jon.jpeg"));
+				else
+					myPicture = ImageIO.read(new File("/Users/keiththompson/Downloads/src/edu/cuny/csi/csc330/dude.png"));
+
+				
+				
 				profilePic = new JLabel(new ImageIcon(myPicture));
 	}
 	static private void setBorder(){
 		//set border
-				pnlProfile.setBorder(BorderFactory.createTitledBorder("Profile"));
+				pnlProfile.setBorder(BorderFactory.createTitledBorder("Profile                                                                        Current Temperature: 55\u00B0 F"));
 				
 				//set color
 				frmMain.getContentPane().setBackground(Color.BLUE);
@@ -124,8 +133,9 @@ public class Profile {
 	static private void registerActionListeners(){
 		//add action listeners
 				btnMyCalendar.addActionListener(new btnMyCalendar_Action());
-				btnModifyEvents.addActionListener(new btnModifyEvents_Action());
-				
+				btnAddEvent.addActionListener(new btnAddEvent_Action());
+				btnNotifications.addActionListener(new btnNotifications_Action());
+				btnGroups.addActionListener(new btnGroups_Action());
 	/*			
 				addFriendText.addActionListener(new java.awt.event.ActionListener() {
 			        public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -180,7 +190,7 @@ public class Profile {
 					mtblGroups.setValueAt(myGroups.getItem(i), i, 0);
 				
 	}
-	static private void makeFrameVisible(boolean decision){
+	static public void makeFrameVisible(boolean decision){
 		frmMain.setVisible(decision);
 		frmMain.setResizable(false);
 	}
@@ -216,18 +226,30 @@ public class Profile {
 
 	static class btnMyCalendar_Action implements ActionListener{
 		public void actionPerformed(ActionEvent e){
+			JFrame frame = frmMain;
 			CalendarProgram.paintFrame(userForProfile);
-			frmMain.repaint();
-			frmMain.setVisible(false);
+			frame.setVisible(false);
 		}
 	}
 	
-	static class btnModifyEvents_Action implements ActionListener{
+	static class btnNotifications_Action implements ActionListener{
 		public void actionPerformed(ActionEvent e){
-			
+			Profile.makeFrameVisible(false);
+			NotificationScreen.paintFrame(userForProfile);
 		}
 	}
 	
+	static class btnAddEvent_Action implements ActionListener{
+		public void actionPerformed(ActionEvent e){
+			AddEvent.paintFrame(userForProfile);
+		}
+	}
+	static class btnGroups_Action implements ActionListener{
+		public void actionPerformed(ActionEvent e){
+			GroupScreen.paintFrame(userForProfile);
+		}
+		
+	}
 
 	 
 
