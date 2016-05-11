@@ -1,4 +1,4 @@
-package cal;
+package calendarTest;
 
 import java.util.ArrayList;
 import java.awt.Component;
@@ -12,12 +12,16 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 public class EventDetails extends javax.swing.JFrame {
+
     public EventDetails(User user1) {
         initComponents();
         user = user1;
     }
 
     private void initComponents() {
+    	DailyEvents.setRowClickedToZero();
+    	
+    	
         titleLabel = new javax.swing.JLabel();
         eventNameLabel = new javax.swing.JLabel();
         eventDateLabel = new javax.swing.JLabel();
@@ -30,12 +34,14 @@ public class EventDetails extends javax.swing.JFrame {
         getEndTimeLabel = new javax.swing.JLabel();
         getGroupLabel = new javax.swing.JLabel();
         deleteEventButton = new javax.swing.JButton();
+        acceptEventButton = new javax.swing.JButton();
+        rejectEventButton = new javax.swing.JButton();
         eventDescLabel = new javax.swing.JLabel();
         getDescLabel = new javax.swing.JLabel();
         getDescLabel2 = new javax.swing.JLabel();
         getDescLabel3 = new javax.swing.JLabel();
 
-        //setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        //setDefaultCloseOperation(DailyEvents.setRowClickedToZero());
 
         titleLabel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         
@@ -58,6 +64,7 @@ public class EventDetails extends javax.swing.JFrame {
         eventGroupLabel.setText("<HTML><B>Event Group:");
 
         //need to display times as 6:30 PM, not 18:30:00
+        //need to get event data from user, not from sql
         
         Object obj = list.get(4), obj2 = list.get(5);
         
@@ -89,6 +96,8 @@ public class EventDetails extends javax.swing.JFrame {
                 deleteEventButtonActionPerformed(evt);
             }
         });
+        acceptEventButton.setText("<HTML><B>Accept Event");
+        rejectEventButton.setText("<HTML><B>Reject Event");
     	
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -178,13 +187,23 @@ public class EventDetails extends javax.swing.JFrame {
         
         if (i == 0){
         	user.deleteEvent(locTimeDate);
-        }
-
-        DailyEvents.refreshDailyEvents(list.get(3).toString().substring(0, 2) + list.get(3).toString().substring(3, 5) + list.get(3).toString().substring(6, 10), user);
-
-        SelfClosingMessage.output("Event succesfully deleted", "Success", 2500);
-        //CalendarProgram.refreshCalendar(Integer.valueOf(list.get(3).toString().substring(0, 2)), Integer.valueOf(list.get(3).toString().substring(6, 10)));
+        	/**********************************************************************************/
+        	/**********************************************************************************/
+        	/**********************************************************************************/
+        	/**********************************************************************************/
+        	//remove from the user's hashmaps
+        	/**********************************************************************************/
+        	/**********************************************************************************/
+        	/**********************************************************************************/
+        	/**********************************************************************************/
+        
         setVisible(false);
+        DailyEvents.makeFrameVisible(false);
+        String dateToView = ((String) list.get(3)).substring(0, 2) + ((String) list.get(3)).substring(3, 5) + ((String) list.get(3)).substring(6);
+        
+        DailyEvents.paintFrame(dateToView, user);
+        
+        }
     }                                                 
 
     public static int okcancel() {
@@ -192,7 +211,11 @@ public class EventDetails extends javax.swing.JFrame {
             "Delete Event", JOptionPane.OK_CANCEL_OPTION);
     return result;
   }
-
+    /*public static void makeFrameVisible(boolean decision){
+    	
+    	one.getContentPane().setVisible(decision);
+    }
+    */
     public static void centerWindow(Window frame){
    	 Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
    	 int x = (int) ((dimension.getWidth() - frame.getWidth())/4);
@@ -200,14 +223,25 @@ public class EventDetails extends javax.swing.JFrame {
    	 
    	 frame.setLocation(x, y);
     }
+   /* public static void test(){
+    	JFrame frame = (JFrame) SwingUtilities.getRoot(deleteEventButton);
+    	frame.remove(deleteEventButton);
+    	frame.getContentPane().add(acceptEventButton);
+    	frame.getContentPane().add(rejectEventButton);
+    	acceptEventButton.setBounds(110 ,frame.getHeight() -  75, 75, 50);
+    	rejectEventButton.setBounds(215 ,frame.getHeight() - 75, 75, 50);
+    	
+    }*/
     
     public static void paintFrame(Event event, User user){
     		list = event.getEventDetails();
+    		locTimeDate = event.getDateTime();
     	 	one = new EventDetails(user);
         	JFrame frame = (JFrame) SwingUtilities.getRoot(deleteEventButton);
         	one.centerWindow(frame);
-        	frame.setSize(400, 400);
+        	frame.setSize(400, 450);
         	one.setVisible(true);
+        	
     }
 
     public static void paintFrame(User user, String timeDate){
@@ -219,8 +253,9 @@ public class EventDetails extends javax.swing.JFrame {
             one = new EventDetails(user);
            	JFrame frame = (JFrame) SwingUtilities.getRoot(deleteEventButton);
            	one.centerWindow(frame);
-           	frame.setSize(400, 350);
+           	frame.setSize(400, 450);
            	one.setVisible(true);
+           	
             }
         });
    }
@@ -252,7 +287,7 @@ public class EventDetails extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                paintFrame(new User("keith"), "08/09/201608:30:00");
+                paintFrame(new User("moshe"), "04/07/201613:15:00");
             }
         });
     }
@@ -262,6 +297,8 @@ public class EventDetails extends javax.swing.JFrame {
     private User user;
     private static String locTimeDate;
     private static javax.swing.JButton deleteEventButton;
+    private static javax.swing.JButton acceptEventButton;
+    private static javax.swing.JButton rejectEventButton;
     private javax.swing.JLabel eventDateLabel;
     private javax.swing.JLabel eventDescLabel;
     private javax.swing.JLabel eventEndTimeLabel;
@@ -277,6 +314,7 @@ public class EventDetails extends javax.swing.JFrame {
     private javax.swing.JLabel getNameLabel;
     private javax.swing.JLabel getStartTimeLabel;
     private javax.swing.JLabel titleLabel;
+    
     static EventDetails one;
     // End of variables declaration                   
 }
