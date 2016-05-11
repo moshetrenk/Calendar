@@ -1,5 +1,6 @@
 package cal;
 
+
 /*
  * This class is used to prevent the GUIs from directly accessing the SQL database
  * that is used for this application. It prevents a lot of repetition and is used
@@ -127,7 +128,7 @@ public class SQLHelper {
 	 * not relevant
 	 */
 		//change this to your localhost's username and password
-		url = "jdbc:mysql://localhost/thecalendar?useSSL=false&user=root&password=6815";
+		url = "jdbc:mysql://localhost/thecalendar?useSSL=false&user=root&password=izzy1231";
 		
 		try {
 			connection = DriverManager.getConnection(url);
@@ -194,11 +195,15 @@ public class SQLHelper {
 		//this method is built around the AddEvent screens current simplest
 		//option. 
 		//TODO Change parameter to Event and have AddEvent do the same
+		String q = "insert theEvent values (" + list.get(0) + ", '" 
+				+ list.get(1) + "', '" + list.get(2) + "', '" + list.get(3)
+				+ "', " + list.get(4) + ", " + list.get (5)+ ", '" 
+                + list.get(6)  + "', 1, " + list.get(7) + ")";
+		
+		System.out.println(q);
+		
 		try {			
-			statement.execute("insert theEvent values (" + list.get(0) + ", '" 
-					+ list.get(1) + "', '" + list.get(2) + "', '" + list.get(3)
-					+ "', " + list.get(4) + ", " + list.get (5)+ ", '" 
-	                + list.get(6)  + "', 1, " + list.get(7) + ")");
+			statement.execute(q);
 		}
 		catch(SQLException ex ) {
 			System.err.println("DB Exception: " + ex); 
@@ -445,12 +450,15 @@ public class SQLHelper {
 			resultSet = statement.executeQuery("select * from calGroup where groupName= '" + groupName + "'");
 			
 			while(resultSet.next()) {
-				members.add(resultSet.getString(2));
+				
+				members.add(resultSet.getString(2).toLowerCase());
 			}
 		}
 		catch(SQLException ex ) {
 			System.err.println("DB Exception: " + ex); 
 		}
+		
+		//System.out.println("members = " + members);
 
 		return members;
 	}
@@ -551,11 +559,15 @@ public class SQLHelper {
 	
 	//needs to be tested
 	public void deleteCancelledEventNotification(CancelledEventNotification cen){
-		try {			
-			statement.execute("delete from notificationsCancelledEvent where groupName = '" + cen.getGroupName()
+		String q = "delete from notificationsCancelledEvent where groupName = '" + cen.getGroupName()
 			+ "'and recipient = '" + cen.getRecipient() + "' and eventname = '"
 			+ cen.getEventName() + "' and dateofevent = '" + cen.getDate() 
-			+ "' and startTimeEvent = " + cen.getStartTime());
+			+ "' and startTimeOfEvent = '" + cen.getStartTime() +"'";
+		
+		System.out.println(q);
+		
+		try {			
+			statement.execute(q);
 		}
 		catch(SQLException ex ) {
 			System.err.println("DB Exception: " + ex); 
@@ -564,10 +576,12 @@ public class SQLHelper {
 	
 	//needs to be tested
 	public void deleteNotificationGroup(Notification_Group n){
+		String q = "delete from notificationsGroup where sender = '" + n.getSender()
+		+ "' and recipient = '" + n.getRecipient() 
+		+ "' and groupName = '" + n.getGroupName() + "'";
+		System.out.println(q);
 		try {			
-			statement.execute("delete from notificationsGroup where sender = '" + n.getSender()
-				+ "' and recipient = '" + n.getRecipient() 
-				+ "' and groupName = '" + n.getGroupName() + "'");
+			statement.execute(q);
 		}
 		catch(SQLException ex ) {
 			System.err.println("DB Exception: " + ex); 
@@ -576,10 +590,16 @@ public class SQLHelper {
 	
 	//needs to be tested
 	public void deleteNotificationEvent(User user, Event event){
-		try {			
-			statement.execute("delete from notificationsevent where groupname = '" + event.getId()  
+		String stoe = event.getStartTime().substring(0, 2) + event.getStartTime().substring(3, 5) + event.getStartTime().substring(6, 8);
+		
+		String q = "delete from notificationsevent where groupname = '" + event.getId()  
 				+ "' and recipient = '" + user.getUsername() + "'and dateofevent = '" 
-				+ event.getEventDate() + "' and starttimeofevent = " + event.getStartTime());
+				+ event.getEventDate() + "' and starttimeofevent = " + stoe;
+		
+		System.out.println(q);
+		
+		try {			
+			statement.execute(q);
 		}
 		catch(SQLException ex ) {
 			System.err.println("DB Exception: " + ex); 
@@ -715,8 +735,11 @@ public class SQLHelper {
 			while(resultSet.next()) {
 				ArrayList<String> ohm = new ArrayList<String>();
 				
+				System.out.println(resultSet.getString(4));
 				ohm.add(resultSet.getString(4));
+				System.out.println(resultSet.getString(3));
 				ohm.add(resultSet.getString(3));
+				System.out.println(resultSet.getString(2));
 				ohm.add(resultSet.getString(2));
 				
 				Notification_Group temp = new Notification_Group(ohm);
@@ -761,10 +784,13 @@ public class SQLHelper {
 	
 	//needs to be tested
 	public void addEventCancelledNotification(CancelledEventNotification cen){
-		try{
-			statement.execute("insert notificationscancelledevent values (" + getHighestPrimaryKey("notificationscancelledevent")
+		String q = "insert notificationscancelledevent values (" + getHighestPrimaryKey("notificationscancelledevent")
 					+ ", '" + cen.getGroupName() + "', '" + cen.getRecipient() + "', '" 
-					+ cen.getEventName() + "', " + cen.getStartTime() + ")");
+					+ cen.getEventName() +"', '"+ cen.getDate() + "', " + cen.getStartTime() + ")";
+		System.out.println(q);
+		
+		try{
+			statement.execute(q);
 		} 
 		catch (SQLException ex){
 			System.err.println("DB Exception: " + ex); 
@@ -784,10 +810,15 @@ public class SQLHelper {
 	
 	//needs to be tested
 	public void addNewEventNotification(Event evt, String recipient){
+		System.out.println("we added this event to the database");
+		String q = "insert notificationsevent values (" + getHighestPrimaryKey("notificationsevent") 
+		+ ", '" + evt.getId() + "', '" + recipient + "', '" + evt.getEventDate() 
+		+ "', " + evt.getStartTime() + ", " + evt.getEndTime() + ")";
+		
+		System.out.println(q);
+		
 		try{
-			statement.execute("insert notificationsevent values (" + getHighestPrimaryKey("notificationsevent") 
-						+ ", '" + evt.getId() + "', '" + recipient + "', '" + evt.getEventDate() 
-						+ "', " + evt.getStartTime() + ", " + evt.getEndTime() + "')");
+			statement.execute(q);
 		}
 		catch(SQLException ex){
 			System.err.println("DB Exception: " + ex); 
@@ -798,8 +829,11 @@ public class SQLHelper {
 	//to keep track of approved events, when a user accepts an invite,
 	//this method is called
 	//this needs to be tested	
+		String q = "update theevent set approvalsNeeded = " + (evt.getNumberOfAccepted() + 1) + " where eventNumber =" + evt.getEventNumber();
+		System.out.println(q);
+		
 		try{
-			statement.executeQuery("update theevent set approvalsNeeded =" + (evt.getNumberOfAccepted() + 1) + "where eventNumber =" + evt.getEventNumber());
+			statement.execute(q);
 		}
 		catch (SQLException ex){
 			System.err.println("DB Exception: " + ex);
