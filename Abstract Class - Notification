@@ -3,7 +3,8 @@ package cal;
 import java.util.ArrayList;
 
 public abstract class Notification{
-	private String recipient, groupName;
+	protected String recipient;
+	protected String groupName;
 	
 	Notification(ArrayList<?> one){
 		groupName = (String) one.get(0);
@@ -22,6 +23,41 @@ public abstract class Notification{
 	public String getGroupName() {
 		return groupName;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "Notification [recipient=" + recipient + ", groupName=" + groupName + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((groupName == null) ? 0 : groupName.hashCode());
+		result = prime * result + ((recipient == null) ? 0 : recipient.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Notification other = (Notification) obj;
+		if (groupName == null) {
+			if (other.groupName != null)
+				return false;
+		} else if (!groupName.equals(other.groupName))
+			return false;
+		if (recipient == null) {
+			if (other.recipient != null)
+				return false;
+		} else if (!recipient.equals(other.recipient))
+			return false;
+		return true;
+	}
+		
 }
