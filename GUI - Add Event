@@ -9,6 +9,8 @@ import java.awt.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.awt.event.*;
+import java.io.IOException;
+
 import javax.swing.*; 
 
 @SuppressWarnings({"serial", "static-access"})
@@ -16,7 +18,7 @@ public class AddEvent extends JFrame {
     static LocalDateTime today;
     boolean startHourPicked = false, endHourPicked = false, 
     			groupPicked = false, isGroupEvent = false;
-    static User user;
+    static User user, userForAddEvent;
     private List listOfGroups;
     private static String whichGroupToAddTo, username, fullDate, eventNameAtChosenTime;
     private String[] groups;
@@ -79,6 +81,7 @@ public class AddEvent extends JFrame {
             public void windowClosing(WindowEvent e) {
             	sqlHelper.closePath();
             	System.exit(1);
+            	//setVisible(false);
             }
         });
     }
@@ -563,11 +566,11 @@ public class AddEvent extends JFrame {
     	times = new ArrayList<Object>();
     	if (groupComboBox.isEnabled()){
     		times = (ArrayList<? extends Object>) sqlHelper.isTimeAvailableForEvent(whichGroupToAddTo, "", true);
-    		System.out.println("times1 = " + times);
+    		//System.out.println("times1 = " + times);
     	}
     	else{
     		times = (ArrayList<? extends Object>) sqlHelper.isTimeAvailableForEvent("", username, false);
-    		System.out.println("times2 = " + times);
+    		//System.out.println("times2 = " + times);
     	}
        
     	//for the date to function it must be in MM/DD/YYYY form so a date such as 4/4/2016
@@ -703,13 +706,24 @@ public class AddEvent extends JFrame {
         insert.add(numMem);
         
         //if the time is available then insert the event and remove the screen
-        if(AddEvent.isEventTimeAvailable()){
+       if(AddEvent.isEventTimeAvailable()){
     	   System.out.println("insert = " + insert);
+    	   if (groupComboBox.isEnabled()){
+    		  Event event = new Event(insert);
+    		  //System.out.println(insert);
+    		  //System.out.println(username);
+    		  //System.out.println(whichGroupToAddTo);
+    		  Group group =  (new Group(username, whichGroupToAddTo));
+    		  //System.out.println(group.getGroupName());
+    		  group.sendEventNotifications(event);
+    	      
+    		   
+    	   }
     	   sqlHelper.insertEvent(insert);
-    	   user.addEvent(new Event(insert));
+    	  user.addEvent(new Event(insert));
     	   setVisible(false);
-        }
-        else{
+       }
+       else{
     	   //if the time is unavailable then if it's a group event, indicate that 
     	   //the time is unavailable, otherwise indicate the event that is clashing
     	   
@@ -719,7 +733,7 @@ public class AddEvent extends JFrame {
     		   invalidTimeLabel.setText("You have \"" + eventNameAtChosenTime + "\" at that time");
     	   
     	   invalidTimeLabel.setVisible(true);
-        }
+       }
     }   
     
     private void completeButtonActionPerformed(java.awt.event.ActionEvent evt) { 
@@ -771,9 +785,8 @@ public class AddEvent extends JFrame {
          * 6. the month, day, and year are set to today's date and the time is before the current time
          */
         
-        if(!isEventTimeAvailable() ||
-        		(buttonAmPm.getText().equals("PM") 
-        				&& buttonAmPm2.getText().equals("AM")) 
+        if((buttonAmPm.getText().equals("PM") 
+                && buttonAmPm2.getText().equals("AM")) 
                 || (startTime >= endTime) 
                 || (month < today.getMonthValue() && year == today.getYear()) 
                 || (month == today.getMonthValue() && year == today.getYear() && date < today.getDayOfMonth())
@@ -802,6 +815,17 @@ public class AddEvent extends JFrame {
         	//if nothing went wrong then hide any error messages and submit the event
             invalidTimeLabel.setVisible(false);
             addEventToDataBase();
+            Profile.makeFrameVisible(false);
+            setVisible(false);
+            
+            try {
+    			Profile.paintFrame(userForAddEvent);
+    		} catch (IOException e1) {
+    			// TODO Auto-generated catch block
+    			e1.printStackTrace();
+    		}
+	
+
         }
     }                                              
 
@@ -822,6 +846,7 @@ public class AddEvent extends JFrame {
     
     //paint frame is called by other classes to initialize this class
      public static void paintFrame(User locUser){
+    	 userForAddEvent = locUser;
     	 user = locUser;
     	 username = user.getUsername();
     	 java.awt.EventQueue.invokeLater(new Runnable() {
@@ -830,6 +855,7 @@ public class AddEvent extends JFrame {
              	 JFrame frame = (JFrame) SwingUtilities.getRoot(groupComboBox);
             	 one.centerWindow(frame);
                  one.setVisible(true);
+                 Profile.makeFrameVisible(false);
              }
          });
     }
@@ -871,5 +897,6 @@ public class AddEvent extends JFrame {
             }
         });
     }
+
 }
 
