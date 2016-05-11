@@ -1,6 +1,7 @@
 package cal;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -20,7 +21,7 @@ public class GroupScreen extends  JFrame {
     private  JScrollPane jScrollPane1 = new JScrollPane();
     private  JTable table = new JTable();
     
-	public GroupScreen() {x    	
+	public GroupScreen() {  	
         try {
     			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
     		} catch (ClassNotFoundException e) {
@@ -42,10 +43,20 @@ public class GroupScreen extends  JFrame {
 	        setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 	        addWindowListener(new WindowAdapter() {
 	            public void windowClosing(WindowEvent e) {
-	                sqlHelper.closePath();
-	                System.exit(1);
+	                //sqlHelper.closePath();
+	                //System.exit(1);
+	            	Profile.makeFrameVisible(false);
+	            	setVisible(false);
+	            	try {
+						Profile.paintFrame(user);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+	            	
 	            }
 	        });
+	        
 	    }
 
     @SuppressWarnings("unchecked")
@@ -105,7 +116,7 @@ public class GroupScreen extends  JFrame {
             }
         });
 
-        addMemberToGroupButton.setText("k");
+        addMemberToGroupButton.setText("Ok");
         addMemberToGroupButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addMemberToGroupButtonActionPerformed(evt);
@@ -142,7 +153,7 @@ public class GroupScreen extends  JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(addMemberTextBox,  GroupLayout.PREFERRED_SIZE, 107,  GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap( LayoutStyle.ComponentPlacement.RELATED,  GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(addMemberToGroupButton,  GroupLayout.PREFERRED_SIZE, 65,  GroupLayout.PREFERRED_SIZE)
+                        .addComponent(addMemberToGroupButton,  GroupLayout.PREFERRED_SIZE, 44,  GroupLayout.PREFERRED_SIZE)
                         .addGap(15, 15, 15))))
         );
         layout.setVerticalGroup(
@@ -173,6 +184,7 @@ public class GroupScreen extends  JFrame {
         );
         setResizable(false);
         JFrame frame = (JFrame) SwingUtilities.getRoot(jLabel1);
+        frame.setJMenuBar(MenuExp.PrepareMenuBar(user));
         frame.add(jLabel5);
         jLabel5.setBounds(200,155, 200,50);
         pack();
@@ -187,9 +199,9 @@ public class GroupScreen extends  JFrame {
 
     private void addMemberToGroupButtonActionPerformed(java.awt.event.ActionEvent evt) {   
     	ArrayList<String> list = new ArrayList<String>();
-    	list.add(username);
-    	list.add(addMemberTextBox.getText());
     	list.add(groups.getItem(table.getSelectedRow()));
+    	list.add(addMemberTextBox.getText());
+    	list.add(username);
     	
     	Notification_Group temp = new Notification_Group(list);
     	
@@ -233,8 +245,8 @@ public class GroupScreen extends  JFrame {
         String input = addMemberTextBox.getText();
         String get = new String(sqlHelper.getUsername(input));
 
-        ArrayList<String> membersInSelectedGroup = sqlHelper.getGroupMembersByGroupName(groups.getItem(table.getSelectedRow()));
-        
+       ArrayList<String> membersInSelectedGroup = sqlHelper.getGroupMembersByGroupName(groups.getItem(table.getSelectedRow()));
+       // ArrayList<String> membersInSelectedGroup = null;
         boolean isMemberOfGroup = false;
         
        for(int i = 0; i < membersInSelectedGroup.size(); i++){
@@ -319,5 +331,5 @@ public class GroupScreen extends  JFrame {
                	paintFrame(new User("moshe"));
             }
         });
-    }              
+    }                        
 }
