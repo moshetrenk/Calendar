@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.awt.List;
 import java.time.LocalDateTime;
 
+
 @SuppressWarnings({"static-access", "unused"})
 public class User {
 	private static SQLHelper sqlHelper = new SQLHelper();
@@ -194,7 +195,10 @@ public class User {
 	Event getEvent(String dateTime){
 		return myEvents.get(dateTime);
 	}
-	
+	public void addGroup(String groupname){
+		myGroups.add(groupname);
+		
+	}
 	public void deleteEvent(String dateTime){
 		System.out.println("Datetime = " + dateTime);
 
@@ -221,6 +225,7 @@ public class User {
 		sqlHelper.deleteNotificationEvent(new User(username), event);
 		notifications_ev.remove(event);
 		
+		
 		//send a cancelled eventNotification to all users
 		//remove event from SQL and all other places that the event
 		//has been placed into
@@ -229,12 +234,13 @@ public class User {
 	public void acceptGroupInvite(Notification_Group notif){
 		sqlHelper.addUserToGroup(username, notif.getGroupName(), 0);		
 		myGroups.add(notif.getGroupName());
-		
+		System.out.print(notif);
 		sqlHelper.deleteNotificationGroup(notif);
 		notifications_gr.remove(notif);
 	}
 	
 	public void rejectGroupInvite(Notification_Group notif){
+		System.out.print(notif);
 		sqlHelper.deleteNotificationGroup(notif);
 		notifications_gr.remove(notif);
 	}
@@ -261,8 +267,14 @@ public class User {
 	}
 	
 	public void addNewEventNotification(Event evt){
+		
 			notifications_ev.add(evt);
 			sqlHelper.addNewEventNotification(evt, username);	
+	}
+	
+	public String toString(){
+		
+		return ("Username =" + username);
 	}
 	
 }
