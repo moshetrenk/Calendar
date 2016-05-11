@@ -91,6 +91,7 @@ public class MenuExp  {
         		
         		JFrame frame = (JFrame) SwingUtilities.getRoot(menuBar);
         		frame.setVisible(false);
+        		CalendarProgram.setMonthBeforeToNull();
         		CalendarProgram.paintFrame(user);
         	}
         });
@@ -123,7 +124,7 @@ public class MenuExp  {
     	
     	
     	
-    	
+    	//onlyRunOnceLogIn = 0;
         return menuBar;
         
         
@@ -146,7 +147,7 @@ public class MenuExp  {
          	}
          });
     	}
-    	
+    	//onlyRunOnce =0;
     	onlyRunOnceLogIn = 1;
     	 return menuBarLogIn;
     	
