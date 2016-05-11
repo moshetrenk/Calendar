@@ -1,5 +1,6 @@
 package calendarTest;
 
+
 import javax.swing.*;
 
 import javax.swing.event.*;
@@ -23,10 +24,11 @@ public class DailyEvents {
 	static JButton [] dayBtns;
 	static JList listOfDays, listOfHours;
 	static Action viewEventDetails;
-	static private int rowClicked;
+	static private int rowClicked, isGroupEvent = 0;
 	static private String dateToView;
 	static private Object[] eventDetailsArray = new Object[48];
 	static private User userDailyEvents;
+	static private List groups;
 	
 	
 	static private void prepareFrame(){
@@ -63,7 +65,17 @@ public class DailyEvents {
 	    int y = (int) ((dimension.getHeight() - frame.getHeight()) / 2);
 	    frame.setLocation(x, y);
 	}
+	
+	public static void setRowClickedToZero(){
+		rowClicked = 0;
+		
+		
+		//EventDetails.makeFrameVisible(false);
+	}
 	static private void createControls(String date,User user){
+		
+		isGroupEvent =0;
+		
 		
 		tblChooseDays = new JTable(mtblChooseDays);
 		tblDailyEvents = new JTable(mtblDailyEvents);
@@ -111,7 +123,7 @@ public class DailyEvents {
 		           dateToView = dateToView.substring(0,2)+day+dateToView.substring(4);
 		        DailyEvents.paintFrame(dateToView, userDailyEvents);
 		        frame.setVisible(false);
-		        
+		        rowClicked = 0;
 		        
 		        }
 		    }
@@ -196,10 +208,25 @@ public class DailyEvents {
 			
 			Event tempEvent = null;
 			tempEvent = userDailyEvents.getEvent(dateTime);
-		
+			
+			
+			int i = 0;
+			while(tempEvent == null && i < groups.getItemCount()){
+				Group tempGroup = new Group(userDailyEvents.getUsername(),groups.getItem(i));
+				tempEvent = tempGroup.getEvent(dateTime);
+				if(tempEvent != null){
+					isGroupEvent = 1;
+				}
+				i++;
+			}
+			
+			
 			if (tempEvent != null){
 				eventDetailsArray[j] = tempEvent;
-				mtblDailyEvents.setValueAt(tempEvent.eventName, j, 1);
+				if(!tempEvent.getId().toLowerCase().equals(user.getUsername().toLowerCase())){
+					mtblDailyEvents.setValueAt("("+tempEvent.getId()+") " +tempEvent.getEventName(), j, 1);
+				}
+				else mtblDailyEvents.setValueAt(tempEvent.getEventName(), j, 1);
 			}
 			
 			
@@ -230,10 +257,18 @@ public class DailyEvents {
 			date = dateToView.substring(0,2) +"/"+ date+"/" + dateToView.substring(4);
 			
 			
+			boolean groupHasEventToday = false;
+			for(int i = 0; i < groups.getItemCount(); i++){
+				if(new Group(userDailyEvents.getUsername(),groups.getItem(i)).isThereAnEventToday(date)){
+					groupHasEventToday = true;
+					i = groups.getItemCount();
+				}
+			}
+			
 			
 			if(column +1  == Integer.valueOf((String.valueOf(dateToView.charAt(2)))+(String.valueOf(dateToView.charAt(3)))))
 				setBackground(new Color(0,191,255));
-			else if(userDailyEvents.isThereAnEventToday(date)){
+			else if(userDailyEvents.isThereAnEventToday(date)||groupHasEventToday){
 				setBackground(new Color(0, 250, 0));
 			}
 			else if (column % 2 == 0){ 
@@ -262,7 +297,7 @@ public class DailyEvents {
 				test = String.valueOf(column+1);
 			}
 			test = dateToView.substring(0,2) + test + dateToView.substring(4);
-			System.out.println(test);
+			//System.out.println(test);
 			
 			if(column +1  == Integer.valueOf((String.valueOf(dateToView.charAt(2)))+(String.valueOf(dateToView.charAt(3))))){
 				setBackground(new Color(0,191,255));
@@ -305,7 +340,6 @@ public class DailyEvents {
 			
 			
 			return this;  
-			
 			
 		}
 	}
@@ -422,7 +456,7 @@ public class DailyEvents {
 		
 	}
 	
-	static private void makeFrameVisible(boolean decision){
+	static public void makeFrameVisible(boolean decision){
 		//Make frame visible
 				frmMain.setResizable(false);
 				frmMain.setVisible(decision);
@@ -430,6 +464,7 @@ public class DailyEvents {
 	
 	public static void paintFrame(String date, User user){
 		userDailyEvents = new User(user.getUsername());
+		groups = userDailyEvents.getGroups();
 		dateToView = date;
 		prepareFrame();
 		centerWindow(frmMain);
