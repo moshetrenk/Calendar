@@ -1,84 +1,83 @@
 package cal;
 
 
-/*
- * This class is used to prevent the GUIs from directly accessing the SQL database
+/** This class is used to prevent the GUIs from directly accessing the SQL database
  * that is used for this application. It prevents a lot of repetition and is used
  * as a local instance in any GUI that uses it. This is done so that the path can 
  * be opened only once, even if multiple methods are used. The local instance will
  * call the constructor which opens the path and then the particular methods used
  * will operate using that instance until the exit button is clicked at which point
  * the closePath() method must be called
- */
-
-//the following block of code should be put into the constructor of any class that 
-//uses an instance of SQLHelper
-
-/*
-setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-        addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                help.closePath();
-                System.exit(1);
-            }
-        });
-*/
-
-//use list instead of arraylist
-
-/*I won't comment on every method in this class, for the most part
-* they operate in a manner that is almost identical. If a method has 
-* something unique about it, then I will describe it. The essential 
-* detail is that the database used is this:
-
-
-create database thecalendar;
-use thecalendar;
-
-create table friend (
-username varchar(16) primary key,
-userpassword varchar (32), 
-imgUrl varchar(100));
-
-create table theEvent (
-eventNumber int primary key,
-eventName varchar (25),
-user_groupID varchar (16),
-dateOfEvent varchar(10),
-startTimeOfEvent time,
-endTimeofEvent time,
-description varchar(140),
-approvalsNeeded int,
-approved int);
-
-create table calGroup (
-idNum int primary key,
-username varchar (16),
-groupName varchar (16),
-isAdmin bool);
-
-create table notifications (
-idNum int primary key,
-sender varchar (16),
-recipient varchar(16),
-groupName varchar(16),
-notificationType varchar(1)
-);
-
-alter table notifications drop column notificationType;
-alter table notifications drop column groupName;
-alter table notifications add column groupName varchar(16) not null;
-
-create table notificationsEvent (
-idNum int primary key,
-groupName varchar (16),
-recipient varchar(16),
-dateOfEvent varchar(16),
-startTimeOfEvent time,
-endTimeofEvent time);
-
-alter table notifications rename notificationsGroup;
-*/
+ *
+ * the following block of code should be put into the constructor of any class that 
+ * uses an instance of SQLHelper
+ *
+ *
+ * setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+ *        addWindowListener(new WindowAdapter() {
+ *            public void windowClosing(WindowEvent e) {
+ *                help.closePath();
+ *                System.exit(1);
+ *            }
+ *        });
+ *
+ *
+ * TODO: use list instead of arraylist
+ *
+ * I won't comment on every method in this class, for the most part
+ * they operate in a manner that is almost identical. If a method has 
+ * something unique about it, then I will describe it. The essential 
+ * detail is that the database used is this:
+ *
+ *
+ * create database thecalendar;
+ * use thecalendar;
+ *
+ * create table friend (
+ * username varchar(16) primary key,
+ * userpassword varchar (32), 
+ * imgUrl varchar(100));
+ *
+ * create table theEvent (
+ * eventNumber int primary key,
+ * eventName varchar (25),
+ * user_groupID varchar (16),
+ * dateOfEvent varchar(10),
+ * startTimeOfEvent time,
+ * endTimeofEvent time,
+ * description varchar(140),
+ * approvalsNeeded int,
+ * approved int);
+ *
+ * create table calGroup (
+ * idNum int primary key,
+ * username varchar (16),
+ * groupName varchar (16),
+ * isAdmin bool);
+ *
+ * create table notifications (
+ * idNum int primary key,
+ * sender varchar (16),
+ * recipient varchar(16),
+ * groupName varchar(16),
+ * notificationType varchar(1)
+ * );
+ *
+ * alter table notifications drop column notificationType;
+ * alter table notifications drop column groupName;
+ * alter table notifications add column groupName varchar(16) not null;
+ *
+ * create table notificationsEvent (
+ * idNum int primary key,
+ * groupName varchar (16),
+ * recipient varchar(16),
+ * dateOfEvent varchar(16),
+ * startTimeOfEvent time,
+ * endTimeofEvent time);
+ *
+ * alter table notifications rename notificationsGroup;
+ * 
+ * */
 
 import java.awt.List;
 import java.security.MessageDigest;
@@ -128,7 +127,7 @@ public class SQLHelper {
 	 * not relevant
 	 */
 		//change this to your localhost's username and password
-		url = "jdbc:mysql://localhost/thecalendar?useSSL=false&user=root&password=izzy1231";
+		url = "jdbc:mysql://localhost/thecalendar?useSSL=false&user=root&password=6815";
 		
 		try {
 			connection = DriverManager.getConnection(url);
@@ -160,6 +159,81 @@ public class SQLHelper {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public boolean isEventTimeAvailable(ArrayList<Object> obj){
+		String user_groupName = (String) obj.get(2), 
+				query,
+				desiredDateOfEvent  = (String) obj.get(3);
+		Integer desiredStartTime = (Integer) obj.get(4),
+				desiredEndTime = (Integer) obj.get(5);
+		
+		
+		ArrayList<Object> list = new ArrayList<Object>();
+		
+		System.out.println("obj7 = " + obj.get(7));
+		System.out.println("obj8 = " + obj.get(8));
+/*
+		if(!obj.get(7).equals(obj.get(8)))
+			query = "select distinct startTimeOfEvent, endTimeofEvent, dateOfEvent, eventNumber "
+						+ "from theevent where user_groupID in (select username from calgroup where " 
+						+ "groupname = '" + user_groupName + "') or user_groupID in "  
+						+ "(select groupName from calgroup where username in "
+						+ "(select username from calgroup where groupname = '" + user_groupName + "'))";
+		else 
+			query = "select distinct startTimeOfEvent, endTimeofEvent, dateOfEvent, eventName " 
+				+ "from theevent where user_groupID = '" + user_groupName +"' or user_groupID " 
+				+ "in (select groupName from calgroup where username = '" + user_groupName + "')";
+*/
+		if(!obj.get(7).equals(obj.get(8)))
+			query = "select distinct startTimeOfEvent, endTimeofEvent, dateOfEvent, eventNumber "
+					+ "from theevent where dateOfEvent = '" + desiredDateOfEvent +"' and ("
+					+ "user_groupID in (select username from calgroup where groupname = '"
+					+ user_groupName + "')or user_groupID in (select groupName from calgroup "
+					+ "where username in (select username from calgroup where groupname = '"
+					+ user_groupName + "'))) and ((" + desiredStartTime + " < startTimeOfEvent and " 
+					+ desiredEndTime + " > endTimeofEvent) or (" + desiredStartTime +" < startTimeOfEvent "
+					+ "and (" + desiredEndTime + "> startTimeOfEvent and " + desiredEndTime + "< endTimeofEvent)) "
+					+ "or (" + desiredStartTime + "> startTimeOfEvent and " + desiredEndTime + "< endTimeofEvent) "
+					+ "or (" + desiredStartTime + " > startTimeOfEvent and " + desiredStartTime + " < endTimeOfEvent and " + desiredEndTime +"> endTimeofEvent) "	
+					+ "or (" + desiredStartTime + "= startTimeOfEvent) "
+					+ "or (" + desiredEndTime + " = endTimeofEvent))";
+		else
+			query = "select distinct startTimeOfEvent, endTimeofEvent, dateOfEvent, eventName " 
+					+ "from theevent where dateOfEvent = '" + desiredDateOfEvent +"' and (user_groupID = '" + user_groupName +"' or user_groupID " 
+					+ "in (select groupName from calgroup where username = '" + user_groupName + "'))"
+					+ "and ((" + desiredStartTime + " < startTimeOfEvent and " 
+					+ desiredEndTime + " > endTimeofEvent) or (" + desiredStartTime +" < startTimeOfEvent "
+					+ "and (" + desiredEndTime + "> startTimeOfEvent and " + desiredEndTime + "< endTimeofEvent)) "
+					+ "or (" + desiredStartTime + "> startTimeOfEvent and " + desiredEndTime + "< endTimeofEvent) "
+					+ "or (" + desiredStartTime + " > startTimeOfEvent and " + desiredStartTime + " < endTimeOfEvent and " + desiredEndTime +"> endTimeofEvent) "	
+					+ "or (" + desiredStartTime + "= startTimeOfEvent) "
+					+ "or (" + desiredEndTime + " = endTimeofEvent))";
+		
+		System.out.println("query = " + query);
+		
+		try {
+				resultSet = statement.executeQuery(query);
+
+				while(resultSet.next()){
+					//	list.add(resultSet.getObject(1));
+					for(int i = 1; i <= 4; i++)
+						list.add(resultSet.getObject(i));
+				}
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+		}
+		
+		System.out.println("resultSet = " + list);
+		System.out.println("list.size = " + list.size());
+		
+		if(list.size() == 0)
+			return true;
+		
+		return false;
+		
 	}
 	
 	public void newGroup(String groupCreator, String groupName){
@@ -343,46 +417,6 @@ public class SQLHelper {
 		}
 	}
 	
-	public ArrayList<? extends Object> isTimeAvailableForEvent(String groupName, String username, boolean isGroupEvent){
-		/* This method is the effective combination of two methods - one for group events 
-		 * and one for personal events. What happens: if the boolean group event is true 
-		 * then a query is built around groupName, otherwise a query is built around the 
-		 * username. Either way it will return an ArrayList of the relevent data of any 
-		 * potentially clashing events. This method is arguably the most advanced bit of 
-		 * SQL we have. It's nothing too crazy but it leverages SQL's nested query function
-		 * to cut off a massive amount of work that would otherwise be required
-		 */
-		
-		ArrayList<Object> times = new ArrayList<Object>();
-		String query;
-		
-		if(isGroupEvent)
-			query = "select distinct startTimeOfEvent, endTimeofEvent, dateOfEvent, eventNumber "
-						+ "from theevent where user_groupID in (select username from calgroup where " 
-						+ "groupname = '" + groupName + "') or user_groupID in "  
-						+ "(select groupName from calgroup where username in "
-						+ "(select username from calgroup where groupname = '" + groupName + "'))";
-		else 
-			query = "select distinct startTimeOfEvent, endTimeofEvent, dateOfEvent, eventName "
-					+ "from theevent where user_groupID = '" + username + "'";
-		
-		
-		try {
-			resultSet = statement.executeQuery(query);
-			
-			int i = 0;
-			while(resultSet.next()) {
-				for(i = 1; i <=4; i++)
-					times.add(resultSet.getString(i));
-			}
-		}
-		catch(SQLException ex ) {
-			System.err.println("DB Exception: " + ex); 
-		}
-		
-		return times;
-	}
-	
 	public void addUserToGroup(String username, String groupName, int a){
 		try {			
 			statement.execute("insert calgroup values (" + (getHighestPrimaryKey("calGroup") + 1) + ", '" + username + "', '" + groupName + "'," + a + ")");
@@ -428,7 +462,7 @@ public class SQLHelper {
 	
 	public List getGroups(String username){
 		List groups = new List();
-
+		
 		try {
 			resultSet = statement.executeQuery("select * from calGroup where username = '" + username + "'");
 			
@@ -439,7 +473,7 @@ public class SQLHelper {
 		catch(SQLException ex ) {
 			System.err.println("DB Exception: " + ex); 
 		}
-
+		
 		return groups;
 	}
 	
