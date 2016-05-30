@@ -548,89 +548,9 @@ public class AddEvent extends JFrame {
             }
         }
     }                                            
+   
     
-   private static boolean isEventTimeAvailable(){
-	   /*
-	    * This method checks if the requested time should be blocked by an event you have,
-	    * by an event one of your groups has, or if you selected a group event then if the 
-	    * time is blocked by an event that any member of that group has or any event of a
-	    * group that any member of the group of choice is also a member of. For example
-	    * Group1 has members A, B, C
-	    * Group2 has members C, D, E
-	    * User A is trying to add an event at a time when group2 has an existing event
-	    * User C has a conflicting event at the time so User A cannot add the event
-	    * at theie desired time
-	    */
-	   
-    	ArrayList<? extends Object> times;
-    	times = new ArrayList<Object>();
-    	if (groupComboBox.isEnabled()){
-    		times = (ArrayList<? extends Object>) sqlHelper.isTimeAvailableForEvent(whichGroupToAddTo, "", true);
-    		//System.out.println("times1 = " + times);
-    	}
-    	else{
-    		times = (ArrayList<? extends Object>) sqlHelper.isTimeAvailableForEvent("", username, false);
-    		//System.out.println("times2 = " + times);
-    	}
-       
-    	//for the date to function it must be in MM/DD/YYYY form so a date such as 4/4/2016
-    	//must be changed to 04/04/2016
-    	
-       if(String.valueOf(month).length() == 1)
-    	   fullDate = "0" + String.valueOf(month);
-       
-       fullDate += "/";
-       
-       if(String.valueOf(date).length() == 1)
-    	   fullDate += "0" + String.valueOf(date);
-       else
-    	   fullDate += String.valueOf(date);
-       
-       fullDate += "/";
-       
-       fullDate += String.valueOf(year);
-       
-       //full events are all in the ArrayList times so the corresponding multiples of numbers are the 
-       //same member of the database, hence the i * k + r
-       Integer startTimeEvent = null, endTimeEvent = null;
-       for(int i = 0; i < times.size()/4; i++){
-			if(fullDate.equals(times.get(i * 4 + 2))){
-				startTimeEvent = Integer.valueOf(times.get(i * 4).toString().substring(0, 2) + times.get(i * 4).toString().substring(3, 5) + "00");
-				endTimeEvent = Integer.valueOf(times.get(i * 4 + 1).toString().substring(0, 2) + times.get(i * 4 + 1).toString().substring(3, 5) + "00");
-				
-				/* return false if:
-				 * event starts inside another event's time
-				 * event ends inside another event's time
-				 * event is at the same time as another event
-				 * event is entirely contained in another event
-				 * event contains an entire other event
-				 */
-				
-				if(startTime > startTimeEvent && startTime < endTimeEvent){
-					eventNameAtChosenTime = times.get(i * 4 + 3).toString();
-					return false;
-				}
-				else if (endTime > startTimeEvent && endTime < endTimeEvent){
-					eventNameAtChosenTime = times.get(i * 4 + 3).toString();
-					return false;
-				}
-				else if (startTime > startTimeEvent && endTime < endTimeEvent){
-					eventNameAtChosenTime = times.get(i * 4 + 3).toString();
-					return false;
-				}
-				else if (startTime < startTimeEvent && endTime > endTimeEvent){
-					eventNameAtChosenTime = times.get(i * 4 + 3).toString();
-					return false;
-				}
-				else if(startTime == startTimeEvent && endTime == endTimeEvent){
-					eventNameAtChosenTime = times.get(i * 4 + 3).toString();
-					return false;
-				}
-			}
-		}
-    		
-    	return true;
-    }
+  
     
     private void addEventToDataBase(){
     /*
@@ -705,8 +625,11 @@ public class AddEvent extends JFrame {
         insert.add(1);
         insert.add(numMem);
         
+        System.out.println("insert = " + insert);
+        
         //if the time is available then insert the event and remove the screen
-       if(AddEvent.isEventTimeAvailable()){
+       if(sqlHelper.isEventTimeAvailable(insert)){
+    	   System.out.println("entered if at addevent.632");
     	   System.out.println("insert = " + insert);
     	   if (groupComboBox.isEnabled()){
     		  Event event = new Event(insert);
@@ -716,22 +639,28 @@ public class AddEvent extends JFrame {
     		  Group group =  (new Group(username, whichGroupToAddTo));
     		  //System.out.println(group.getGroupName());
     		  group.sendEventNotifications(event);
-    	      
-    		   
     	   }
     	   sqlHelper.insertEvent(insert);
-    	  user.addEvent(new Event(insert));
-    	   setVisible(false);
+    	   user.addEvent(new Event(insert));
+    	   Profile.makeFrameVisible(false);
+           setVisible(false);
+           
+            try {
+   				Profile.paintFrame(userForAddEvent);
+   			} catch (IOException e1) {
+   				// TODO Auto-generated catch block
+   				e1.printStackTrace();
+   			}
        }
        else{
     	   //if the time is unavailable then if it's a group event, indicate that 
     	   //the time is unavailable, otherwise indicate the event that is clashing
     	   
-    	   if(groupComboBox.isEnabled())
+/*    	   if(groupComboBox.isEnabled())
     		   invalidTimeLabel.setText("That time is unavailable for " + whichGroupToAddTo);
     	   else
     		   invalidTimeLabel.setText("You have \"" + eventNameAtChosenTime + "\" at that time");
-    	   
+  */	   invalidTimeLabel.setText("That time is unavailable");  	   
     	   invalidTimeLabel.setVisible(true);
        }
     }   
@@ -815,15 +744,7 @@ public class AddEvent extends JFrame {
         	//if nothing went wrong then hide any error messages and submit the event
             invalidTimeLabel.setVisible(false);
             addEventToDataBase();
-            Profile.makeFrameVisible(false);
-            setVisible(false);
             
-            try {
-    			Profile.paintFrame(userForAddEvent);
-    		} catch (IOException e1) {
-    			// TODO Auto-generated catch block
-    			e1.printStackTrace();
-    		}
 	
 
         }
@@ -839,6 +760,7 @@ public class AddEvent extends JFrame {
     	
     	for(int i = 0; i < listOfGroups.getItemCount(); i++){
     		groups[i] = listOfGroups.getItem(i);
+    		System.out.println("AddEvent.getGroups print[" + i + "] = " + groups[i]);
     	}
     	
     	groupComboBox.setModel(new  DefaultComboBoxModel<>(groups));
@@ -890,7 +812,7 @@ public class AddEvent extends JFrame {
       
         java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
-            	 one = new AddEvent();
+				one = new AddEvent();
              	 JFrame frame = (JFrame) SwingUtilities.getRoot(groupComboBox);
             	 one.centerWindow(frame);
                  one.setVisible(true);
@@ -899,4 +821,3 @@ public class AddEvent extends JFrame {
     }
 
 }
-
