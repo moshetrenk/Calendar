@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.awt.event.*;
 import java.io.IOException;
-
 import javax.swing.*; 
 
 @SuppressWarnings({"serial", "static-access"})
@@ -22,29 +21,23 @@ public class AddEvent extends JFrame {
     private List listOfGroups;
     private static String whichGroupToAddTo, username, fullDate, eventNameAtChosenTime;
     private String[] groups;
-    
     private int startTimeHour, startTimeMinute, endTimeHour, endTimeMinute;
 	private static int month;
 	private static int date;
 	private static int year;
 	private static int startTime, endTime;
-    
     private static SQLHelper sqlHelper = new SQLHelper();
     private static AddEvent one;
-
     private JLabel charactersRemainingLabel = new JLabel(), eventDateLabel = new JLabel(),
     			eventDetailsLabel = new JLabel(), eventNameLabel = new JLabel(), 
     			eventTimeLabel = new JLabel(), eventTimeLabel1 = new JLabel(),
     			invalidTimeLabel = new JLabel(), titleLabel = new JLabel();
-    
     private JButton buttonAmPm = new JButton(), 
     			buttonAmPm2 = new JButton(), completeButton = new JButton();
-    
     private JComboBox<String> monthDropDown = new JComboBox<String>(), 
     		startHourDropDown = new JComboBox<String>(), startMinDropDown = new JComboBox<String>(),
     			yearDropDown = new JComboBox<String>(), dayDropDown = new JComboBox<String>(), 
     			endHourDropDown = new JComboBox<String>(), endMinDropDown = new JComboBox<String>();
-    
     private static JComboBox<String> groupComboBox = new JComboBox<String>();
     private JCheckBox isGroupEventCheckBox = new JCheckBox();
     private JScrollPane jScrollPane2 = new JScrollPane();
@@ -54,8 +47,8 @@ public class AddEvent extends JFrame {
 	private Event event;
     
     public AddEvent() {
-    	
     	//the following checks the operating system and displays the menubar accordingly
+	//that is, macs should have the menu bar up top and windows should use the current wwindow
     	try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (ClassNotFoundException e) {
@@ -71,10 +64,9 @@ public class AddEvent extends JFrame {
     	String lcOSName = System.getProperty("os.name").toLowerCase();
 		boolean IS_MAC = lcOSName.startsWith("mac os x");
 		System.setProperty("apple.laf.useScreenMenuBar", String.valueOf(IS_MAC));
-        
-		
+     
 		initComponents();
-
+		
 		//the following method is used to close the path of the local instance of SQLHelper
 		//upon the user's click of the exit button
 		addWindowListener(new WindowAdapter() {
@@ -89,35 +81,29 @@ public class AddEvent extends JFrame {
     private void initComponents() {
     	today = LocalDateTime.now();
     	setJMenuBar(MenuExp.PrepareMenuBar(user));
-        
     	setTitle("Add Event");
         titleLabel.setFont(new java.awt.Font("Tahoma", 1, 18));
         titleLabel.setText("Add Event");
         eventNameLabel.setFont(new java.awt.Font("Tahoma", 0, 16));
         eventNameLabel.setText("Event Name");
-
         eventDateLabel.setFont(new java.awt.Font("Tahoma", 0, 16)); 
         eventDateLabel.setText("Event Date");
-
         eventTimeLabel.setFont(new java.awt.Font("Tahoma", 0, 16)); 
         eventTimeLabel.setText("Event Start");
-
         eventNameTextBox.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 eventNameTextBoxKeyReleased(evt);
             }
         });
-
         eventDetailsLabel.setFont(new java.awt.Font("Tahoma", 0, 16)); 
         eventDetailsLabel.setText("Event Details");
-
         eventDescriptionTextBox.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 eventDescriptionTextBoxKeyReleased(evt);
             }
         });
         jScrollPane2.setViewportView(eventDescriptionTextBox);
-
+	
         if (today.getHour() < 12)
         	buttonAmPm.setText("AM");
         else 
@@ -744,16 +730,12 @@ public class AddEvent extends JFrame {
         	//if nothing went wrong then hide any error messages and submit the event
             invalidTimeLabel.setVisible(false);
             addEventToDataBase();
-            
-	
-
         }
-    }                                              
-
+    }  
+    
+	//This method sets the groupDropDown to the logged in user's groups
     private void getGroups(){
-		/*
-		 * This method sets the groupDropDown to the logged in user's groups
-		 */
+	
     	
     	listOfGroups = (List)sqlHelper.getGroups(username);
         groups = new String [listOfGroups.getItemCount()];
