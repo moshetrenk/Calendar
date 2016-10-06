@@ -21,28 +21,28 @@ public class getTemp{
 	public static String getTemperature(String zip){
 			StringBuffer buffer = new StringBuffer();
 			String theUrl = "https://www.bing.com/search?q=" + zip + "+weather&form=EDGEAR&qs=WA&cvid=8921203ba63844f99e376494cc5fe5f6&pq=" + zip + "%20weather";
-	    	try {
-		         URL gotoUrl = new URL(theUrl);
-		         InputStreamReader isr = new InputStreamReader(gotoUrl.openStream());
-		         BufferedReader inStream = new BufferedReader(isr);		            
-		         String inputLine;
-		         
-		         while ((inputLine = inStream.readLine()) != null && !buffer.toString().contains("on Bing")){
-		        	 buffer.append(inputLine + "\n");
-		         }
-		         
-		         StringBuilder loc = new StringBuilder();
-		         loc.append(buffer.charAt(buffer.indexOf("on Bing") + 12)); 
-		         loc.append(buffer.charAt(buffer.indexOf("on Bing") + 13));
-		         
-		         return new String(loc + "\u00B0 F");
-		         
-	    	} catch (IOException e) {
-	    		e.printStackTrace();
-	    	}	
-	    	
-	    	return "error";
-	    }      
+		try {
+			 URL gotoUrl = new URL(theUrl);
+			 InputStreamReader isr = new InputStreamReader(gotoUrl.openStream());
+			 BufferedReader inStream = new BufferedReader(isr);		            
+			 String inputLine;
+
+			 while ((inputLine = inStream.readLine()) != null && !buffer.toString().contains("on Bing")){
+				 buffer.append(inputLine + "\n");
+			 }
+
+			 StringBuilder loc = new StringBuilder();
+			 loc.append(buffer.charAt(buffer.indexOf("on Bing") + 12)); 
+			 loc.append(buffer.charAt(buffer.indexOf("on Bing") + 13));
+
+			 return new String(loc + "\u00B0 F");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
+
+		return "error";
+	}      
 
 	private static String getUserCity(){
 		System.setProperty("http.agent", "Chrome");
@@ -103,8 +103,6 @@ public class getTemp{
     	
     	return "error";
 	}
-
-
 }
 
 
