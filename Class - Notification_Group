@@ -1,6 +1,5 @@
 package cal;
 
-
 import java.util.ArrayList;
 
 public class Notification_Group extends Notification{
@@ -44,7 +43,4 @@ public class Notification_Group extends Notification{
 			return false;
 		return true;
 	}
-	
-	
-	
 }
