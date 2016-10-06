@@ -29,12 +29,6 @@ public class User {
 		ArrayList<String> list = user.getTodaysEventNames();
 		for(int i = 0; i < list.size(); i++)
 			System.out.println(list.get(i));
-		
-		//System.out.println(user.isThereAnEventToday("08/06/2017"));
-		
-		//System.out.println(user.getTodaysEventNames());
-		//System.out.println(user.getEvent("04/22/20168:30:00"));
-		
 	}
 	
 	/* Immediately upon instantiation, we want everything to be loaded into 
@@ -116,7 +110,6 @@ public class User {
 		return myGroups;
 	}
 	
-	
 	public String getUsername(){
 		return username;
 	}
@@ -128,7 +121,6 @@ public class User {
 	private boolean isAdmin(String groupName){
 		if (sqlHelper.isUserAdmin(username) == 1)
 			return true;
-
 		return false;
 	}
 	
@@ -157,10 +149,9 @@ public class User {
 	
 	public ArrayList<String> getTodaysEventNames(){
 		/* This method takes today's date and converts it into
-		 * MM/DD/YYYY format. It then gets all of the event
-		 * names based on the user's username and then
-		 * adds all the events for each group that the user
-		 * is a member of
+		 * MM/DD/YYYY format. It then gets all of the event names
+		 * based on the user's username and then adds all the
+		 * events for each group that the user is a member of
 		 */
 		
 		LocalDateTime today = LocalDateTime.now();
@@ -197,20 +188,13 @@ public class User {
 	}
 	public void addGroup(String groupname){
 		myGroups.add(groupname);
-		
 	}
+	
 	public void deleteEvent(String dateTime){
-		System.out.println("Datetime = " + dateTime);
-
 		String date = dateTime.substring(0, 10),
 				time = dateTime.substring(10, 12) + dateTime.substring(13, 15) + "00";
 		
 		sqlHelper.deleteEvent(username, date, Integer.parseInt(time));
-		
-		
-		//this needs some form of testing or verification
-		//I have no indication yet that it works...
-		
 		myEvents.remove(dateTime);
 		copyOfMyEventsForFindingIfThereIsAnEvent.remove(date);	
 	}
@@ -224,8 +208,7 @@ public class User {
 	public void rejectEventInvite(Event event){
 		sqlHelper.deleteNotificationEvent(new User(username), event);
 		notifications_ev.remove(event);
-		
-		
+
 		//send a cancelled eventNotification to all users
 		//remove event from SQL and all other places that the event
 		//has been placed into
@@ -267,13 +250,11 @@ public class User {
 	}
 	
 	public void addNewEventNotification(Event evt){
-		
 			notifications_ev.add(evt);
 			sqlHelper.addNewEventNotification(evt, username);	
 	}
 	
 	public String toString(){
-		
 		return ("Username =" + username);
 	}
 	
