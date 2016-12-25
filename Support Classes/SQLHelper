@@ -22,62 +22,9 @@ package cal;
  *        });
  *
  *
- * TODO: use list instead of arraylist
+ * use list instead of arraylist?
  *
- * I won't comment on every method in this class, for the most part
- * they operate in a manner that is almost identical. If a method has 
- * something unique about it, then I will describe it. The essential 
- * detail is that the database used is this:
- *
- *
- * create database thecalendar;
- * use thecalendar;
- *
- * create table friend (
- * username varchar(16) primary key,
- * userpassword varchar (32), 
- * imgUrl varchar(100));
- *
- * create table theEvent (
- * eventNumber int primary key,
- * eventName varchar (25),
- * user_groupID varchar (16),
- * dateOfEvent varchar(10),
- * startTimeOfEvent time,
- * endTimeofEvent time,
- * description varchar(140),
- * approvalsNeeded int,
- * approved int);
- *
- * create table calGroup (
- * idNum int primary key,
- * username varchar (16),
- * groupName varchar (16),
- * isAdmin bool);
- *
- * create table notifications (
- * idNum int primary key,
- * sender varchar (16),
- * recipient varchar(16),
- * groupName varchar(16),
- * notificationType varchar(1)
- * );
- *
- * alter table notifications drop column notificationType;
- * alter table notifications drop column groupName;
- * alter table notifications add column groupName varchar(16) not null;
- *
- * create table notificationsEvent (
- * idNum int primary key,
- * groupName varchar (16),
- * recipient varchar(16),
- * dateOfEvent varchar(16),
- * startTimeOfEvent time,
- * endTimeofEvent time);
- *
- * alter table notifications rename notificationsGroup;
- * 
- * */
+ */
 
 import java.awt.List;
 import java.security.MessageDigest;
@@ -169,7 +116,7 @@ public class SQLHelper {
 				desiredEndTime = (Integer) obj.get(5);
 		
 		
-		ArrayList<Object> list = new ArrayList<Object>();
+		List list = new ArrayList<Object>();
 		
 		System.out.println("obj7 = " + obj.get(7));
 		System.out.println("obj8 = " + obj.get(8));
@@ -357,7 +304,7 @@ public class SQLHelper {
 		
 		return queryResult;
 	}
-	
+	/*
 	public void insert(String query){
 		//This is a generic insert method, any insert statement can be sent
 		//pass an argument such as "insert into friend values ("moshe", "password", "url")
@@ -370,7 +317,7 @@ public class SQLHelper {
 		catch(SQLException ex ) {
 			System.err.println("DB Exception: " + ex); 
 		}
-	}	
+	}*/	
 	
 	//overloaded insert, pass a table and the values to give it
 	public void insert(String table, ArrayList<?> values){
@@ -433,7 +380,7 @@ public class SQLHelper {
 		 * changed but for the time being, we prefer it like this
 		 */
 		
-		ArrayList<Object> list = new ArrayList<Object>();
+		List list = new ArrayList<Object>();
 		
 		try {
 			resultSet = statement.executeQuery("select * from theevent where user_groupid = '" + userId + "'");
@@ -478,7 +425,7 @@ public class SQLHelper {
 	}
 	
 	public ArrayList<String> getGroupMembersByGroupName(String groupName){
-		ArrayList<String> members = new ArrayList<String>();
+		List members = new ArrayList<String>();
 
 		try {
 			resultSet = statement.executeQuery("select * from calGroup where groupName= '" + groupName + "'");
@@ -502,7 +449,7 @@ public class SQLHelper {
 		 * any events that they have on the relevant date
 		 */
 		
-		ArrayList<String> eventNames= new ArrayList<String>();
+		List eventNames= new ArrayList<String>();
 
 		try {
 			resultSet = statement.executeQuery("select eventName from theEvent where dateOfEvent = '" + date + "' and user_groupID = '" + username + "'");
@@ -591,7 +538,7 @@ public class SQLHelper {
 		}
 	}
 	
-	//needs to be tested
+	//needs more testing
 	public void deleteCancelledEventNotification(CancelledEventNotification cen){
 		String q = "delete from notificationsCancelledEvent where groupName = '" + cen.getGroupName()
 			+ "'and recipient = '" + cen.getRecipient() + "' and eventname = '"
@@ -663,7 +610,7 @@ public class SQLHelper {
 		}
 	}
 	
-	//needs to be tested
+	//needs more testing
 	public void insertCancelledEventNotification(CancelledEventNotification cen){
 		try{
 			statement.execute("insert notificationscancelledevent values (" 
@@ -702,8 +649,8 @@ public class SQLHelper {
 	* Easier said than done...
 	*/
 		
-		ArrayList<Event> notifs = new ArrayList<Event>();
-		ArrayList<Object> temp = new ArrayList<Object>();
+		List notifs = new ArrayList<Event>();
+		List temp = new ArrayList<Object>();
 		
 		try {
 			resultSet = statement.executeQuery("select * from notificationsEvent where recipient = '" + username + "'");
@@ -762,7 +709,7 @@ public class SQLHelper {
 	//Seriously, the getString() calls are definitely out of order
 	//Test the shit out of this
 	public ArrayList<Notification_Group> getGroupNotifications(String username){
-		ArrayList<Notification_Group> sender_and_group = new ArrayList<Notification_Group>();
+		List sender_and_group = new ArrayList<Notification_Group>();
 		
 		try {
 			resultSet = statement.executeQuery("select * from notificationsGroup where recipient = '" + username + "'");
@@ -791,9 +738,9 @@ public class SQLHelper {
 	public ArrayList<CancelledEventNotification> getCancelledEventNotifications(String username){
 		//CancelledEventNotification takes two ArrayLists, hence the one and two
 		
-		ArrayList<String> one = new ArrayList<String>();
-		ArrayList<Object> two = new ArrayList<Object>();
-		ArrayList<CancelledEventNotification> locNotifs = new ArrayList<CancelledEventNotification>();
+		List one = new ArrayList<String>();
+		List two = new ArrayList<Object>();
+		List locNotifs = new ArrayList<CancelledEventNotification>();
 		
 		try {			
 			resultSet = statement.executeQuery("select * from notificationsCancelledEvent where recipient = '" + username + "'");
@@ -875,7 +822,7 @@ public class SQLHelper {
 	}
 	
 	public ArrayList<String> getGroupsThatHaveAskedForYourPresence(String username){
-		ArrayList<String> groups = new ArrayList<String>();
+		List groups = new ArrayList<String>();
 
 		try {
 			resultSet = statement.executeQuery("select * from notificationsGroup where recipient = '" + username + "'");
