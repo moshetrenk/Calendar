@@ -1,3 +1,5 @@
+-- code to setup database and add some sample user data
+
 create database thecalendar;
 use thecalendar;
 
