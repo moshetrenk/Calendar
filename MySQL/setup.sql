@@ -41,6 +41,7 @@ insert friend values ('Chris', 'password1', 'URL');
 insert friend values ('Tom', 'password1', 'URL');
 insert friend values ('Dick', 'password1', 'URL');
 insert friend values ('Harry', 'password1', 'URL');
+insert friend values ('Guest', 'password1', 'URL');
 
 insert theEvent values(1, 'Dr Appointment', 'Moshe', '08/06/2017', 183000, 200000, '', 1, 1);
 insert theEvent values(2, 'CSC 330', 'Omar', '04/07/2016', 183000, 200000, 'Object Oriented Software Design - 1N 005', 1, 1);
