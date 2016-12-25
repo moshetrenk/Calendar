@@ -15,7 +15,7 @@ To run the current desktop app:
 
 1. copy and paste the database setup file into MySQL (will be automated soon)
 2. clone repository
-3. run the project and log in with username: moshe password: password1 (guest account coming soon)
+3. run the project and log in with username 'guest' and password 'password1'
 
 #### Technical Details
 ... To do
