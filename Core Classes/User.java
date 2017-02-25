@@ -1,7 +1,6 @@
 package cal;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.awt.List;
 import java.time.LocalDateTime;
 
@@ -72,8 +71,8 @@ public class User {
 		 * all of the user's events from the database and brings them into
 		 * memory
 		 */
-		ArrayList<? extends Object> cur = (ArrayList<? extends Object>) sqlHelper.getEvents(username);
-		ArrayList<Object> temp = new ArrayList<Object>();	
+		List cur = (ArrayList<? extends Object>) sqlHelper.getEvents(username);
+		List temp = new ArrayList<Object>();	
 		
 		//int numEvents = sqlHelper.getNumberOfEventsByUser(username);
 		HashMap<String, Event> these = new HashMap<String, Event>();
