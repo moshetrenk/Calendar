@@ -132,6 +132,7 @@ public class SQLHelper {
 				+ "from theevent where user_groupID = '" + user_groupName +"' or user_groupID " 
 				+ "in (select groupName from calgroup where username = '" + user_groupName + "')";
 */
+
 		if(!obj.get(7).equals(obj.get(8)))
 			query = "select distinct startTimeOfEvent, endTimeofEvent, dateOfEvent, eventNumber "
 					+ "from theevent where dateOfEvent = '" + desiredDateOfEvent +"' and ("
@@ -206,10 +207,7 @@ public class SQLHelper {
 			System.err.println("DB Exception: " + ex); 
 		}
 		
-		if (password.equals(queryResult))
-			return true;
-		else 
-			return false;	
+		return password.equals(queryResult);
 	}
 	
 	public void insertEvent(ArrayList<?> list){
@@ -577,7 +575,7 @@ public class SQLHelper {
 				+ "' and recipient = '" + user.getUsername() + "'and dateofevent = '" 
 				+ event.getEventDate() + "' and starttimeofevent = " + stoe;
 		
-		System.out.println(q);
+		//System.out.println(q);
 		
 		try {			
 			statement.execute(q);
@@ -676,7 +674,7 @@ public class SQLHelper {
 		}
 		
 		for(int b = 0; b < queries.length; b++){
-			ArrayList<Object> list = new ArrayList<Object>();
+			List list = new ArrayList<Object>();
 			
 			try {
 				resultSet = statement.executeQuery(queries[b]);
@@ -705,9 +703,8 @@ public class SQLHelper {
 		return notifs;
 	}
 	
-	//TEST THIS SHIT!!!
-	//Seriously, the getString() calls are definitely out of order
-	//Test the shit out of this
+	//do some more testing on this...
+	//the getString() calls may be out of order for certain notifications
 	public ArrayList<Notification_Group> getGroupNotifications(String username){
 		List sender_and_group = new ArrayList<Notification_Group>();
 		
@@ -738,9 +735,9 @@ public class SQLHelper {
 	public ArrayList<CancelledEventNotification> getCancelledEventNotifications(String username){
 		//CancelledEventNotification takes two ArrayLists, hence the one and two
 		
-		List one = new ArrayList<String>();
-		List two = new ArrayList<Object>();
-		List locNotifs = new ArrayList<CancelledEventNotification>();
+		List one = new ArrayList<String>(), 
+			two = new ArrayList<Object>(), 
+			locNotifs = new ArrayList<CancelledEventNotification>();
 		
 		try {			
 			resultSet = statement.executeQuery("select * from notificationsCancelledEvent where recipient = '" + username + "'");
@@ -768,7 +765,7 @@ public class SQLHelper {
 		String q = "insert notificationscancelledevent values (" + getHighestPrimaryKey("notificationscancelledevent")
 					+ ", '" + cen.getGroupName() + "', '" + cen.getRecipient() + "', '" 
 					+ cen.getEventName() +"', '"+ cen.getDate() + "', " + cen.getStartTime() + ")";
-		System.out.println(q);
+		//System.out.println(q);
 		
 		try{
 			statement.execute(q);
@@ -796,7 +793,7 @@ public class SQLHelper {
 		+ ", '" + evt.getId() + "', '" + recipient + "', '" + evt.getEventDate() 
 		+ "', " + evt.getStartTime() + ", " + evt.getEndTime() + ")";
 		
-		System.out.println(q);
+		//System.out.println(q);
 		
 		try{
 			statement.execute(q);
@@ -811,7 +808,7 @@ public class SQLHelper {
 	//this method is called
 	//this needs to be tested	
 		String q = "update theevent set approvalsNeeded = " + (evt.getNumberOfAccepted() + 1) + " where eventNumber =" + evt.getEventNumber();
-		System.out.println(q);
+		//System.out.println(q);
 		
 		try{
 			statement.execute(q);
