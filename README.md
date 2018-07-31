@@ -9,22 +9,15 @@
 
 ### Running the project
 
-Note: The project is currently being ported from a Java Desktop App to a web application. Within the coming months, all GUI's written in swing will be replaced with React components. We anticipate using Heroku for hosting and thus the database will also be changing to PostgreSQL but the server on my kitchen table already has MySQL running so we're not decided. 
-
 To run the current desktop app:
 
-1. copy and paste the database setup file into MySQL (will be automated soon)
-2. clone repository
-3. run the project and log in with username 'guest' and password 'password1'
-
-#### Technical Details
-... To do
-
-
-#### Features
-... To do
+1. execute setup.sql from the MySQL directory    
+2. clone repository    
+3. run the project from CalendarProgram.java (GUI directory)     
+4. log in with username 'guest' and password 'password1'    
 
 ### Contributors:
+
 Moshe Trenk    
 Omar Ahmed   
 Keith Thompson  
